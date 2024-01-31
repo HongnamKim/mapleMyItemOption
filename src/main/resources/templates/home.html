@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body class="container">
+<div class="justify-content-center align-content-center w-100 h-100 border border-dark border-4">
+    <form th:action method="post" class="flex-column" th:object="${characterDto}">
+        <div>
+            <label for="name">캐릭터 이름</label>
+            <input id="name" type="text" placeholder="캐릭터 이름" th:field="*{characterName}" >
+            <input id="date" type="date" th:max="${maxDate}" min="2024-01-18" th:field="*{date}" th:value="${maxDate}" >
+            <button type="submit">검색</button>
+        </div>
+        <span th:errors="*{characterName}"></span>
+        <span th:errors="*{date}"></span>
+    </form>
+</div>
+</body>
+</html>
