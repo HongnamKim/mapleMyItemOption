@@ -436,7 +436,7 @@ public class ItemAnalyzer {
         for (MyItem myItem : preset) {
             MyItemOption itemEtcOption = myItem.getItemEtcOption();
 
-            if(myItem.getItemName().contains("제네시스")){ // 제네 무기 제외
+            if(myItem.getItemName().contains("제네시스") || myItem.getItemEquipmentSlot().equals("기계 심장")){ // 제네 무기 제외
                 continue;
             }
 

@@ -85,7 +85,9 @@ public class CharacterService {
      * @param totalStat 캐릭터 종합 능력치 정보
      * @return Character 객체 (기본정보 + 전투력)
      */
-    public Character rawDataToCharacter(String ocid, CharacterBasicInfo basicInfo, CharacterTotalStat totalStat){
+    public Character rawDataToCharacter(String ocid, CharacterBasicInfo basicInfo,
+                                        CharacterTotalStat totalStat, CharacterPopularity characterPopularity,
+                                        CharacterUnion characterUnion,CharacterDojang dojang){
         Character character = new Character();
 
         character.setOcid(ocid);
@@ -95,6 +97,11 @@ public class CharacterService {
         character.setCharacterClass(basicInfo.getCharacterClass());
         character.setCharacterLevel(basicInfo.getCharacterLevel());
         character.setCharacterGuildName(basicInfo.getCharacterGuildName());
+
+        character.setDojangFloor(dojang.getDojangBestFloor());
+        character.setCharacterPopularity(characterPopularity.getPopularity());
+        character.setCharacterUnionLevel(characterUnion.getUnionLevel());
+
         character.setDate(basicInfo.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         character.setAssault(totalStat.getFinalStat()
                 .get(FinalStatOrder.ASSAULT.getOrder())
@@ -105,7 +112,7 @@ public class CharacterService {
     }
 
     /**
-     * 최근 2주동안 가장 높은 전투력의 정보를 가져오는 메소드
+     * 최근 1주동안 가장 높은 전투력의 정보를 가져오는 메소드
      * @param characterName 검색하고자 하는 캐릭터 닉네임
      * @param date 기준 날짜
      * @return Character 객체
@@ -116,8 +123,11 @@ public class CharacterService {
 
         CharacterBasicInfo characterBasicInfo = apiService.fetchCharacterBasicInfo(ocid, maximumAssaultDate);
         CharacterTotalStat characterTotalStat = apiService.fetchCharacterTotalStat(ocid, maximumAssaultDate);
+        CharacterDojang characterDojang = apiService.fetchCharacterDojang(ocid, maximumAssaultDate);
+        CharacterPopularity characterPopularity = apiService.fetchCharacterPopularity(ocid, maximumAssaultDate);
+        CharacterUnion characterUnion = apiService.fetchCharacterUnion(ocid, maximumAssaultDate);
 
-        return rawDataToCharacter(ocid, characterBasicInfo, characterTotalStat);
+        return rawDataToCharacter(ocid, characterBasicInfo, characterTotalStat, characterPopularity, characterUnion, characterDojang);
     }
 
     /**

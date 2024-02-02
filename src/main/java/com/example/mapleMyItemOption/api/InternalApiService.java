@@ -1,8 +1,6 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterBasicInfo;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterOcid;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterTotalStat;
+import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,6 +62,54 @@ public class InternalApiService implements ApiService{
         } catch (IOException e){
             System.out.println(e.getMessage());
         }
+        return null;
+    }
+
+    @Override
+    public CharacterPopularity fetchCharacterPopularity(String ocid, String date) {
+        String jsonFilePath = "testJson/popularity.json";
+
+        Resource resource = new ClassPathResource(jsonFilePath);
+        try{
+            String jsonString = readJsonFile(resource);
+
+            return objectMapper.readValue(jsonString, CharacterPopularity.class);
+        } catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
+    public CharacterDojang fetchCharacterDojang(String ocid, String date) {
+        String jsonFilePath = "testJson/dojang.json";
+
+        Resource resource = new ClassPathResource(jsonFilePath);
+        try{
+            String jsonString = readJsonFile(resource);
+
+            return objectMapper.readValue(jsonString, CharacterDojang.class);
+        } catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
+    public CharacterUnion fetchCharacterUnion(String ocid, String date) {
+        String jsonFilePath = "testJson/union.json";
+
+        Resource resource = new ClassPathResource(jsonFilePath);
+        try{
+            String jsonString = readJsonFile(resource);
+
+            return objectMapper.readValue(jsonString, CharacterUnion.class);
+        } catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
         return null;
     }
 

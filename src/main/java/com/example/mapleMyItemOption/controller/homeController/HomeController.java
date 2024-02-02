@@ -6,7 +6,9 @@ import com.example.mapleMyItemOption.domain.item.ItemService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.MyItemData.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -43,7 +45,7 @@ public class HomeController {
     }
 
     @PostMapping("/")
-    public String homeSearch(@Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String homeSearch(HttpServletRequest request, @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()){
             log.info("SEARCH ERROR = {}", bindingResult);
             return "home";
@@ -60,23 +62,51 @@ public class HomeController {
             return "home";
         }
 
+        /*
+        POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
+        세선에 객체 넣기
+
+        HttpSession session = request.getSession();
+        session.setAttribute("character", character);
+        session.setAttribute("myItemEquipment", myItemEquipment);
+
+        Integer presetNo = myItemEquipment.getPresetNo();
+
+        return "redirect:/my-character/" + presetNo;
+         */
+
         redirectAttributes.addAttribute("character", dto.getCharacterName());
         redirectAttributes.addAttribute("date", dto.getDate());
 
         return "redirect:/my-character";
     }
 
+    // Character, MyItemEquipment 객체를 PostMapping("/") 에서 생성
+    // 두 객체를 session 에 넣고 저장된 프리셋 번호로 redirect
+    // ex) return "redirect:/my-character/" + myEquipment.getPresetNo()
+    // GetMapping("/my-character/{presetNo}")
+    // session 에서 character, myItemEquipment 꺼내서 model 에 담고 view 에 전달
 
     @GetMapping("/my-character")
-    public String name(HttpServletResponse response,
+    public String name(HttpServletRequest request, HttpServletResponse response,
                        @ModelAttribute("characterDto") CharacterDto dto,
                        @RequestParam("character") String characterName,
                        @RequestParam("date") String date, Model model) throws IOException {
 
-        // 2주간 최대 전투력의 캐릭터 정보/날짜 불러오기
-        Character character;
+        /*
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            response.sendError(400, "Bad Request");
+        }
+        Character character = (Character) session.getAttribute("character");
+        MyItemEquipment myItemEquipment = (MyItemEquipment) session.getAttribute("myItemEquipment");
+
+        return "my-character-" + pathVariable --> 경로 변수에 따라서 view 선택 반환
+        */
+
+        // 1주간 최대 전투력의 캐릭터 정보/날짜 불러오기
         try {
-            character = characterService.searchMyCharacter(characterName, date);
+            Character character = characterService.searchMyCharacter(characterName, date);
             if(character.getWorldName().contains("리부트")){
                 model.addAttribute("isNormalServer", false);
             }else{

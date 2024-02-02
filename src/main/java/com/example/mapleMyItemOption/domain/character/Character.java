@@ -14,6 +14,10 @@ public class Character {
     String characterClass;
     Integer characterLevel;
     String characterGuildName;
+    Integer dojangFloor;
+    Integer characterPopularity;
+    Integer characterUnionLevel;
+
     LocalDate date;
     Long assault;
 

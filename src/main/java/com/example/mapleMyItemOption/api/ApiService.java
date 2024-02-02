@@ -1,8 +1,6 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterBasicInfo;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterTotalStat;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.Ranking;
+import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
 
@@ -17,6 +15,12 @@ public interface ApiService {
     CharacterBasicInfo fetchCharacterBasicInfo(String ocid, String date);
 
     CharacterTotalStat fetchCharacterTotalStat(String ocid, String date);
+
+    CharacterPopularity fetchCharacterPopularity(String ocid, String date);
+
+    CharacterDojang fetchCharacterDojang(String ocid, String date);
+
+    CharacterUnion fetchCharacterUnion(String ocid, String date);
 
     RawItemEquipment fetchItemEquipment(String ocid, String date);
 

@@ -1,12 +1,14 @@
 package com.example.mapleMyItemOption.domain.item.MyItemData;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@JsonIgnoreProperties(value = {"date_expire"})
 public class MyItem {
-    private Date dateExpire;
+    //private Date dateExpire;
     private String itemEquipmentPart;
     private String itemEquipmentSlot;
     private String itemName;

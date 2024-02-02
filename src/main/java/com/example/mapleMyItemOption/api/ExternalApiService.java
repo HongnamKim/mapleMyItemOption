@@ -1,9 +1,6 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterBasicInfo;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterOcid;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterTotalStat;
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.Ranking;
+import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +10,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -142,7 +140,55 @@ public class ExternalApiService implements ApiService{
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    @Override
+    public CharacterPopularity fetchCharacterPopularity(String ocid, String date) {
+        String fullApiUrl = API_URL + replaceParameters(ApiUrl.POPULARITY.getUrl(), ocid, date);
+
+        try{
+            ResponseEntity<String> responseEntity = getResponseEntity(fullApiUrl);
+            String result = responseEntity.getBody();
+
+            return objectMapper.readValue(result, CharacterPopularity.class);
+        } catch (HttpClientErrorException e) {
+            throw e;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CharacterDojang fetchCharacterDojang(String ocid, String date) {
+        String fullApiUrl = API_URL + replaceParameters(ApiUrl.DOJANG.getUrl(), ocid, date);
+
+
+        try {
+            ResponseEntity<String> responseEntity = getResponseEntity(fullApiUrl);
+            String result = responseEntity.getBody();
+
+            return objectMapper.readValue(result, CharacterDojang.class);
+        } catch(HttpClientErrorException e) {
+            throw e;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public CharacterUnion fetchCharacterUnion(String ocid, String date) {
+        String fullApiUrl = API_URL + replaceParameters(ApiUrl.UNION.getUrl(), ocid, date);
+
+        try {
+            ResponseEntity<String> responseEntity = getResponseEntity(fullApiUrl);
+            String result = responseEntity.getBody();
+
+            return objectMapper.readValue(result, CharacterUnion.class);
+        } catch(HttpClientErrorException e) {
+            throw e;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
