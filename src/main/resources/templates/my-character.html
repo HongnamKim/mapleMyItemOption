@@ -1,142 +1,303 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Title</title>
-    <link th:href="@{/css/bootstrap.min.css}"
-          href="../static/css/bootstrap.min.css" rel="stylesheet">
-    <link th:href="@{/css/my-character.css}"
-          href="../static/css/my-character.css" rel="stylesheet">
-</head>
-<body class="container">
-<div>
-    <form th:action="@{/}" method="post" class="flex-column" th:object="${characterDto}">
-        <div>
-            <label for="name">캐릭터 이름</label>
-            <input id="name" type="text" placeholder="캐릭터 이름" th:field="*{characterName}" >
-            <input id="date" type="date" th:max="${maxDate}" min="2024-01-18" th:field="*{date}" th:value="${maxDate}" >
+    <link
+      th:href="@{/css/bootstrap.min.css}"
+      href="../static/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      th:href="@{/css/my-character.css}"
+      href="../static/css/my-character.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="container background-body">
+    <div>
+      <div class="character-searchbar">
+        <form
+          th:action="@{/}"
+          method="post"
+          class="flex-column"
+          th:object="${characterDto}"
+        >
+          <div>
+            <label for="name" class="text-color-white"></label>
+            <input
+              id="name"
+              type="text"
+              placeholder="캐릭터 이름"
+              th:field="*{characterName}"
+              th:value="${character.characterName}"
+            />
+            <input
+              id="date"
+              type="date"
+              th:max="${maxDate}"
+              min="2024-01-18"
+              th:field="*{date}"
+              th:value="${character.date}"
+            />
             <button type="submit">검색</button>
-        </div>
-        <span th:errors="*{characterName}"></span>
-        <span th:errors="*{date}"></span>
-    </form>
+          </div>
+          <span th:errors="*{characterName}"></span>
+          <span th:errors="*{date}"></span>
+        </form>
+      </div>
 
-    <div th:object="${character}" class="character-container">
-        <img th:src="*{characterImage}" class="img-thumbnail w-25 h-25 border-0" alt="character img" src=""/>
-        <span th:text="|*{date.getYear()}년 *{date.getMonthValue()}월 *{date.getDayOfMonth()}일 기준|">2023-12-31</span>
-        <span th:text="*{characterName}">캐릭터 이름</span>
-        <span th:text="*{characterGuildName}">길드 이름</span>
-        <span th:text="*{characterClass}">캐릭터 직업</span>
-        <span th:text="*{worldName}">월드 이름</span>
-        <span th:text="|${presetNo}번 프리셋 기준|">1번 프리셋 기준</span>
-        <div>
-            <span th:if="${assault_a > 0}" th:text="|${assault_a}억|">1234억</span>
-            <span th:if="${assault_b > 0}" th:text="|${assault_b}만|">1234만</span>
-            <span th:if="${assault_c > 0}" th:text="|${assault_c}|">1234</span>
+      <div th:object="${character}" class="character-container">
+        <div class="character-container-top">
+          <div class="character-container-sub">
+            <div class="character-container-sub-sub">
+              <div class="character-text-box text-center background-main">
+                <span th:text="*{characterClass}" class="text-color-white"
+                  >소울마스터</span
+                >
+              </div>
+
+              <div class="character-text-box text-center background-sub">
+                <span th:text="*{worldName}" class="text-color-white"
+                  >루나</span
+                >
+              </div>
+            </div>
+            <div class="character-container-sub-sub">
+              <div class="character-text-box text-space-between background-sub">
+                <span class="text-color-white">유니온</span>
+                <span class="text-color-black">9000</span>
+              </div>
+              <div class="character-text-box text-space-between background-sub">
+                <span class="text-color-white">무릉도장</span>
+                <span>70층</span>
+              </div>
+              <div class="character-text-box text-space-between background-sub">
+                <span class="text-color-white">인기도</span>
+                <span>123</span>
+              </div>
+            </div>
+          </div>
+          <div class="character-container-sub pt-0">
+            <div
+              class="character-text-box text-center background-main mt-0 level-text-box"
+            >
+              <span th:text="|Lv. *{characterLevel}|" class="text-color-white"
+                >Lv. 285</span
+              >
+            </div>
+
+            <img
+              th:src="*{characterImage}"
+              class="character-img"
+              alt="character img"
+              src="https://open.api.nexon.com/static/maplestory/Character/KFKFDBBEGEDEKAGCFCHFOOFMOHGJCNLNDHFOBDIEFIIMOACGECJBNAMOMMBIMEKGPCFHBBOGOIEKEAPDIOIEHAGHCGCDBNBLBIIMPCMACMAHFACNJNJGCABEMBMCPLGCLHAFGBICMNPOHAJAOFECEGJMBCNBINAGBHPCHIALIKMODNLKIOJLGGDPHEGHNBECPFCNJOCLLMCNECKIEGCJDPKNDDDBALCLCBKHOFPIKKDCNFILOMAMGFFNOBIDJCOC.png"
+            />
+            <div class="character-text-box text-center background-point-main">
+              <span th:text="*{characterName}" class="text-color-white"
+                >캐릭터 이름</span
+              >
+            </div>
+          </div>
+          <div class="character-container-sub">
+            <div class="character-container-sub-sub">
+              <div
+                class="character-text-box text-center background-main flex-column"
+              >
+                <span
+                  th:text="|*{date.getYear()} / *{date.getMonthValue()} / *{date.getDayOfMonth()} 기준|"
+                  class="text-color-white"
+                  >2023 / 12 / 31 기준</span
+                >
+              </div>
+              <div class="character-text-box text-center background-sub">
+                <span th:text="|${presetNo}번 프리셋|" class="text-color-white"
+                  >1번 프리셋</span
+                >
+              </div>
+            </div>
+
+            <div class="character-text-box text-center background-sub">
+              <span th:text="*{characterGuildName}">길드 이름</span>
+            </div>
+          </div>
         </div>
+
+        <div class="character-container-bottom background-point-sub">
+          <div class="character-assault-box">
+            <span class="text-color-white">전투력</span>
+          </div>
+          <div class="character-assault-box assault-center">
+            <div class="character-assault-box-text">
+              <span
+                th:if="${assault_a > 0}"
+                th:text="|${assault_a}억 |"
+                class="character-assault-text"
+                >1억
+              </span>
+              <span
+                th:if="${assault_b > 0}"
+                th:text="|${assault_b}만 |"
+                class="character-assault-text"
+                >1234만
+              </span>
+              <span
+                th:if="${assault_c > 0}"
+                th:text="|${assault_c}|"
+                class="character-assault-text"
+                >1234</span
+              >
+            </div>
+          </div>
+          <div class="character-assault-box"></div>
+        </div>
+      </div>
+      <div class="preset-container">
+        <div
+          th:each="presetTotalStat, i : ${presetTotalStats}"
+          class="preset-stat-container"
+        >
+          <h4
+            th:class="${presetNo == i.count ? 'selected-preset' : ''}"
+            th:text="|${i.count} 번 프리셋|"
+          >
+            #번 프리셋
+          </h4>
+          <div class="preset-stat-specific-container">
+            <h5>스타포스</h5>
+            <h6>평균 스타포스</h6>
+            <div>
+              <span
+                th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageStarforce(), 0, 1)} 성|"
+                >21</span
+              >
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>최대 / 최소 스타포스</h6>
+            <div>
+              <span
+                th:text="|${presetTotalStat.getMaximumStarforce()} / ${presetTotalStat.getMinimumStarforce()} 성|"
+                >10</span
+              >
+            </div>
+          </div>
+          <div class="preset-stat-specific-container">
+            <h5>평균 추가옵션</h5>
+            <div th:each="addOption : ${presetTotalStat.getAverageAddOption()}">
+              <span th:text="|${addOption.key}제 장비 : ${addOption.value} 급|"
+                >150제 장비 : 150</span
+              >
+            </div>
+          </div>
+
+          <div class="preset-stat-specific-container" th:if="${isNormalServer}">
+            <h5>평균 주문서 옵션</h5>
+            <span>제네시스 무기 제외</span>
+            <span
+              th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(0), 0, 1)} / ${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(1), 0, 1)} 작|"
+            ></span>
+          </div>
+
+          <div class="preset-stat-specific-container">
+            <h5>잠재능력</h5>
+
+            <h6>등급 개수</h6>
+            <div
+              th:each="potentialGrade : ${presetTotalStat.getPotentialGradeCount()}"
+            >
+              <span
+                th:text="|${potentialGrade.key} : ${potentialGrade.value}개|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
+            <div
+              th:each="potentialValue : ${presetTotalStat.getAveragePotentialValue()}"
+            >
+              <span
+                th:if="${averageList.contains(potentialValue.key)}"
+                th:text="|${potentialValue.key} : ${potentialValue.value}|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>전체 수치</h6>
+            <div
+              th:each="potentialTotalValue : ${presetTotalStat.getTotalPotentialValue()}"
+            >
+              <span
+                th:if="${totalList.contains(potentialTotalValue.key)}"
+                th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>옵션 개수</h6>
+            <div
+              th:each="potentialLines : ${presetTotalStat.getPotentialOptionLines()}"
+            >
+              <span
+                th:if="${totalList.contains(potentialLines.key)}"
+                th:text="|${potentialLines.key} : ${#numbers.formatInteger(potentialLines.value, 0)} 줄|"
+              ></span>
+            </div>
+          </div>
+          <div class="preset-stat-specific-container" th:if="${isNormalServer}">
+            <h5>에디셔널 잠재능력</h5>
+
+            <h6>등급 개수</h6>
+            <div
+              th:each="additionalPotentialGrade : ${presetTotalStat.getAdditionalPotentialGradeCount()}"
+            >
+              <span
+                th:text="|${additionalPotentialGrade.key} : ${additionalPotentialGrade.value}개|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
+            <div
+              th:each="additionalPotentialValue : ${presetTotalStat.getAverageAdditionalPotentialValue()}"
+            >
+              <span
+                th:if="${averageList.contains(additionalPotentialValue.key)}"
+                th:text="|${additionalPotentialValue.key} : ${additionalPotentialValue.value}|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>전체 수치</h6>
+            <div
+              th:each="additionalPotentialTotalValue : ${presetTotalStat.getTotalAdditionalPotentialValue()}"
+            >
+              <span
+                th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
+                th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"
+              ></span>
+            </div>
+
+            <hr class="my-3" />
+
+            <h6>옵션 개수</h6>
+            <div
+              th:each="additionalPotentialLines : ${presetTotalStat.getAdditionalPotentialOptionLines()}"
+            >
+              <span
+                th:if="${totalList.contains(additionalPotentialLines.key)}"
+                th:text="|${additionalPotentialLines.key} : ${#numbers.formatInteger(additionalPotentialLines.value, 0)} 줄|"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="preset-container">
-        <div th:each="presetTotalStat, i : ${presetTotalStats}" class="preset-stat-container">
-
-            <h4 th:text="|${i.count} 번 프리셋|">#번 프리셋</h4>
-            <div class="preset-stat-specific-container">
-                <h5>스타포스</h5>
-                <h6>평균 스타포스</h6>
-                <div>
-                    <span th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageStarforce(), 0, 1)} 성|">21</span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>최대 / 최소 스타포스</h6>
-                <div>
-                    <span th:text="|${presetTotalStat.getMaximumStarforce()} / ${presetTotalStat.getMinimumStarforce()} 성|">10</span>
-                </div>
-
-            </div>
-            <div class="preset-stat-specific-container">
-                <h5>평균 추가옵션</h5>
-                <div th:each="addOption : ${presetTotalStat.getAverageAddOption()}">
-                    <span th:text="|${addOption.key}제 장비 : ${addOption.value} 급|">150제 장비 : 150</span>
-                </div>
-            </div>
-
-            <div class="preset-stat-specific-container" th:if="${isNormalServer}">
-                <h5>평균 주문서 옵션</h5>
-                <span>제네시스 무기 제외</span>
-                <span th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(0), 0, 1)} / ${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(1), 0, 1)} 작|"></span>
-
-            </div>
-
-            <div class="preset-stat-specific-container">
-                <h5>잠재능력</h5>
-
-                <h6>등급 개수</h6>
-                <div th:each="potentialGrade : ${presetTotalStat.getPotentialGradeCount()}">
-                    <span th:text="|${potentialGrade.key} : ${potentialGrade.value}개|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
-                <div th:each="potentialValue : ${presetTotalStat.getAveragePotentialValue()}">
-                    <span th:if="${averageList.contains(potentialValue.key)}"
-                          th:text="|${potentialValue.key} : ${potentialValue.value}|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>전체 수치</h6>
-                <div th:each="potentialTotalValue : ${presetTotalStat.getTotalPotentialValue()}">
-                    <span th:if="${totalList.contains(potentialTotalValue.key)}"
-                            th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>옵션 개수</h6>
-                <div th:each="potentialLines : ${presetTotalStat.getPotentialOptionLines()}">
-                    <span th:if="${totalList.contains(potentialLines.key)}"
-                            th:text="|${potentialLines.key} : ${#numbers.formatInteger(potentialLines.value, 0)} 줄|"></span>
-                </div>
-            </div>
-            <div class="preset-stat-specific-container" th:if="${isNormalServer}">
-                <h5>에디셔널 잠재능력</h5>
-
-                <h6>등급 개수</h6>
-                <div th:each="additionalPotentialGrade : ${presetTotalStat.getAdditionalPotentialGradeCount()}">
-                    <span th:text="|${additionalPotentialGrade.key} : ${additionalPotentialGrade.value}개|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
-                <div th:each="additionalPotentialValue : ${presetTotalStat.getAverageAdditionalPotentialValue()}">
-                    <span th:if="${averageList.contains(additionalPotentialValue.key)}"
-                          th:text="|${additionalPotentialValue.key} : ${additionalPotentialValue.value}|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>전체 수치</h6>
-                <div th:each="additionalPotentialTotalValue : ${presetTotalStat.getTotalAdditionalPotentialValue()}">
-                    <span th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
-                            th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"></span>
-                </div>
-
-                <hr class="my-3">
-
-                <h6>옵션 개수</h6>
-                <div th:each="additionalPotentialLines : ${presetTotalStat.getAdditionalPotentialOptionLines()}">
-                    <span th:if="${totalList.contains(additionalPotentialLines.key)}"
-                            th:text="|${additionalPotentialLines.key} : ${#numbers.formatInteger(additionalPotentialLines.value, 0)} 줄|"></span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-</body>
+  </body>
 </html>
