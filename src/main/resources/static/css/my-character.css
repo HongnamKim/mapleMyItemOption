@@ -50,7 +50,7 @@
 
 .character-assault-text {
   font-size: 1.5rem;
-  color: rgb(240, 244, 225);
+  color: rgb(254, 250, 206);
 }
 
 .character-container-sub {
@@ -92,6 +92,22 @@
   flex-direction: row;
 }
 
+.ability-legendary {
+  background-color: rgb(162, 192, 47);
+}
+
+.ability-unique {
+  background-color: rgb(215, 149, 44);
+}
+
+.ability-epic {
+  background-color: rgb(112, 92, 201);
+}
+
+.ability-rare {
+  background-color: rgb(87, 172, 199);
+}
+
 .text-center {
   justify-content: center;
 }
@@ -123,7 +139,7 @@
 }
 
 .background-point-sub {
-  background-color: rgb(68, 94, 115);
+  background-color: rgb(61, 84, 105);
 }
 
 .background-main {
@@ -135,7 +151,7 @@
 }
 
 .background-body {
-  background-color: rgb(52, 58, 65);
+  background-color: rgb(39, 44, 51);
 }
 
 .preset-container {

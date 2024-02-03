@@ -30,7 +30,7 @@
               type="text"
               placeholder="캐릭터 이름"
               th:field="*{characterName}"
-              th:value="${character.characterName}"
+
             />
             <input
               id="date"
@@ -102,17 +102,23 @@
               <div
                 class="character-text-box text-center background-main flex-column"
               >
-                <span
-                  th:text="|*{date.getYear()} / *{date.getMonthValue()} / *{date.getDayOfMonth()} 기준|"
-                  class="text-color-white"
-                  >2023 / 12 / 31 기준</span
-                >
+                <span th:text="|*{date.getYear()} / *{date.getMonthValue()} / *{date.getDayOfMonth()} 기준|"
+                      class="text-color-white">2023 / 12 / 31 기준</span>
               </div>
               <div class="character-text-box text-center background-sub">
-                <span th:text="|${presetNo}번 프리셋|" class="text-color-white"
-                  >1번 프리셋</span
-                >
+                <span th:text="|${presetNo}번 장비 프리셋|" class="text-color-white">1번 장비 프리셋</span>
               </div>
+
+            </div>
+            <div class="character-container-sub-sub">
+              <div class="character-text-box" th:each="ability : *{characterAbility}"
+                   th:classappend="${ability.getAbilityGrade()} == '레전드리' ? 'ability-legendary' :
+                                    (${ability.getAbilityGrade()} == '유니크' ? 'ability-unique' :
+                                    (${ability.getAbilityGrade()} == '에픽' ? 'ability-epic' :
+                                    (${ability.getAbilityGrade()} == '레어' ? 'ability-rare' : '')))">
+                <span th:text="${ability.getAbilityValue()}" class="text-color-white">어빌리티</span>
+              </div>
+
             </div>
             <div class="character-container-sub-sub">
               <div class="character-text-box text-center background-point-main">

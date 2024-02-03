@@ -9,6 +9,7 @@ import com.example.mapleMyItemOption.domain.item.PotentialOption;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -45,8 +46,10 @@ public class HomeController {
     }
 
     @PostMapping("/")
-    public String homeSearch(HttpServletRequest request, @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()){
+    public String homeSearch(HttpServletRequest request, HttpServletResponse response,
+                             @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+
+        if (bindingResult.hasErrors()){ // 캐릭터 이름 검증
             log.info("SEARCH ERROR = {}", bindingResult);
             return "home";
         }
@@ -54,7 +57,7 @@ public class HomeController {
         LocalDate inputDate = LocalDate.parse(dto.getDate(), DateTimeFormatter.ISO_DATE);
         LocalDate maxDate = LocalDate.now().minusDays(1);
 
-        if(inputDate.isAfter(maxDate)) {
+        if(inputDate.isAfter(maxDate)) { // 기준 날짜 검증
             bindingResult.reject("searchDateError", "검색할 수 없는 날짜");
 
             log.info("DATE ERROR = {}", bindingResult);
@@ -62,23 +65,30 @@ public class HomeController {
             return "home";
         }
 
+        //POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
+        //세선에 객체 넣기
+        try {
+            Character character = characterService.searchMyCharacter(dto.characterName, dto.getDate());
+            MyItemEquipment myItemEquipment = itemService.searchMyItemEquipment(dto.characterName, dto.getDate());
+
+            HttpSession session = request.getSession();
+            session.setAttribute("character", character);
+            session.setAttribute("myItemEquipment", myItemEquipment);
+
+            return "redirect:/my-character";
+        } catch (HttpClientErrorException e) {
+            System.out.println(e.getMessage());
+            response.sendError(e.getStatusCode().value());
+        }
         /*
-        POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
-        세선에 객체 넣기
-
-        HttpSession session = request.getSession();
-        session.setAttribute("character", character);
-        session.setAttribute("myItemEquipment", myItemEquipment);
-
         Integer presetNo = myItemEquipment.getPresetNo();
-
         return "redirect:/my-character/" + presetNo;
          */
 
-        redirectAttributes.addAttribute("character", dto.getCharacterName());
-        redirectAttributes.addAttribute("date", dto.getDate());
+        //redirectAttributes.addAttribute("character", dto.getCharacterName());
+        //redirectAttributes.addAttribute("date", dto.getDate());
 
-        return "redirect:/my-character";
+        return null;
     }
 
     // Character, MyItemEquipment 객체를 PostMapping("/") 에서 생성
@@ -89,32 +99,26 @@ public class HomeController {
 
     @GetMapping("/my-character")
     public String name(HttpServletRequest request, HttpServletResponse response,
-                       @ModelAttribute("characterDto") CharacterDto dto,
-                       @RequestParam("character") String characterName,
-                       @RequestParam("date") String date, Model model) throws IOException {
+                       @ModelAttribute("characterDto") CharacterDto dto, Model model) throws IOException {
 
-        /*
         HttpSession session = request.getSession(false);
         if(session == null) {
             response.sendError(400, "Bad Request");
         }
-        Character character = (Character) session.getAttribute("character");
-        MyItemEquipment myItemEquipment = (MyItemEquipment) session.getAttribute("myItemEquipment");
 
-        return "my-character-" + pathVariable --> 경로 변수에 따라서 view 선택 반환
-        */
+        try{
+            assert session != null;
+            Character character = (Character) session.getAttribute("character");
+            MyItemEquipment myItemEquipment = (MyItemEquipment) session.getAttribute("myItemEquipment");
 
-        // 1주간 최대 전투력의 캐릭터 정보/날짜 불러오기
-        try {
-            Character character = characterService.searchMyCharacter(characterName, date);
+            dto.setCharacterName(character.getCharacterName());
+            dto.setDate(character.getDate().toString());
+
             if(character.getWorldName().contains("리부트")){
                 model.addAttribute("isNormalServer", false);
             }else{
                 model.addAttribute("isNormalServer", true);
             }
-
-            String maximumAssaultDate = character.getDate().toString();
-            model.addAttribute(character);
 
             // 전투력 자릿수 분리
             Long assault = character.getAssault();
@@ -126,20 +130,21 @@ public class HomeController {
             model.addAttribute("assault_b", assault_b);
             model.addAttribute("assault_c", assault_c);
 
-            // 2주간 최대 전투력의 장비 불러오기
-            MyItemEquipment myItemEquipment = itemService.searchMyItemEquipment(characterName, maximumAssaultDate);
-
             model.addAttribute("presetNo", myItemEquipment.getPresetNo());
+            model.addAttribute(character);
 
             List<PresetTotalStat> presetTotalStats = itemService.getPresetTotalStats(myItemEquipment, character, false);
             model.addAttribute("presetTotalStats",presetTotalStats);
-            model.addAttribute("averageList", PotentialOption.AVERAGE_LIST);
-            model.addAttribute("totalList", PotentialOption.TOTAL_LIST);
+            model.addAttribute("averageList", PotentialOption.AVERAGE_LIST); // 잠재 옵션 표시 조건문을 위함
+            model.addAttribute("totalList", PotentialOption.TOTAL_LIST); // 잠재 옵션 표시 조건문을 위함
 
+            // return "my-character-" + pathVariable --> 경로 변수에 따라서 view 선택 반환
             return "my-character";
 
-        } catch (HttpClientErrorException e) {
-            response.sendError(e.getStatusCode().value());
+        } catch (NullPointerException exception) {
+            response.sendError(400, "Bad Request");
+        } catch (AssertionError exception) {
+            response.sendError(400, "Session Expire");
         }
 
         return null;

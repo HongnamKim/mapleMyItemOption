@@ -114,6 +114,23 @@ public class InternalApiService implements ApiService{
     }
 
     @Override
+    public CharacterAbility fetchCharacterAbility(String ocid, String date) {
+        String jsonFilePath = "testJson/ability.json";
+
+        Resource resource = new ClassPathResource(jsonFilePath);
+
+        try{
+            String jsonString = readJsonFile(resource);
+
+            return objectMapper.readValue(jsonString, CharacterAbility.class);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    @Override
     public RawItemEquipment fetchItemEquipment(String ocid, String date){
         String jsonFilePath = "testJson/itemEquipment.json";
 

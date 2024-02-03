@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfig {
     @Bean
     public ApiService apiService(){
-        //return new ExternalApiService();
-        return new InternalApiService();
+        return new ExternalApiService();
+        //return new InternalApiService();
     }
 }

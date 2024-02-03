@@ -192,6 +192,23 @@ public class ExternalApiService implements ApiService{
     }
 
     @Override
+    public CharacterAbility fetchCharacterAbility(String ocid, String date) {
+        String fullApiUrl = API_URL + replaceParameters(ApiUrl.ABILITY.getUrl(), ocid, date);
+
+        try{
+            ResponseEntity<String> responseEntity = getResponseEntity(fullApiUrl);
+            String result = responseEntity.getBody();
+
+            return objectMapper.readValue(result, CharacterAbility.class);
+
+        } catch (HttpClientErrorException e) {
+            throw e;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public RawItemEquipment fetchItemEquipment(String ocid, String date){
         String fullApiUrl = API_URL + replaceParameters(ApiUrl.ITEM_EQUIPMENT.getUrl(), ocid, date);
 

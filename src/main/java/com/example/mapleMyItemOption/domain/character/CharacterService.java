@@ -87,7 +87,7 @@ public class CharacterService {
      */
     public Character rawDataToCharacter(String ocid, CharacterBasicInfo basicInfo,
                                         CharacterTotalStat totalStat, CharacterPopularity characterPopularity,
-                                        CharacterUnion characterUnion,CharacterDojang dojang){
+                                        CharacterUnion characterUnion, CharacterAbility characterAbility, CharacterDojang dojang){
         Character character = new Character();
 
         character.setOcid(ocid);
@@ -101,6 +101,7 @@ public class CharacterService {
         character.setDojangFloor(dojang.getDojangBestFloor());
         character.setCharacterPopularity(characterPopularity.getPopularity());
         character.setCharacterUnionLevel(characterUnion.getUnionLevel());
+        character.setCharacterAbility(characterAbility.getAbilityInfo());
 
         character.setDate(basicInfo.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         character.setAssault(totalStat.getFinalStat()
@@ -126,8 +127,9 @@ public class CharacterService {
         CharacterDojang characterDojang = apiService.fetchCharacterDojang(ocid, maximumAssaultDate);
         CharacterPopularity characterPopularity = apiService.fetchCharacterPopularity(ocid, maximumAssaultDate);
         CharacterUnion characterUnion = apiService.fetchCharacterUnion(ocid, maximumAssaultDate);
+        CharacterAbility characterAbility = apiService.fetchCharacterAbility(ocid, maximumAssaultDate);
 
-        return rawDataToCharacter(ocid, characterBasicInfo, characterTotalStat, characterPopularity, characterUnion, characterDojang);
+        return rawDataToCharacter(ocid, characterBasicInfo, characterTotalStat, characterPopularity, characterUnion, characterAbility, characterDojang);
     }
 
     /**

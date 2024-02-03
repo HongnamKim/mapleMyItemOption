@@ -8,6 +8,7 @@ public enum ApiUrl {
     CHARACTER_RANKING("/ranking/overall?date={}&page={}"),
     POPULARITY("/character/popularity?ocid={}&date={}"),
     UNION("/user/union?ocid={}&date={}"),
+    ABILITY("/character/ability?ocid={}&date={}"),
     DOJANG("/character/dojang?ocid={}&date={}");
 
 

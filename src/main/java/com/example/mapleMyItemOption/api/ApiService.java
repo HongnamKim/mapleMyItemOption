@@ -22,6 +22,8 @@ public interface ApiService {
 
     CharacterUnion fetchCharacterUnion(String ocid, String date);
 
+    CharacterAbility fetchCharacterAbility(String ocid, String date);
+
     RawItemEquipment fetchItemEquipment(String ocid, String date);
 
     MyItemEquipment fetchMyItemEquipment(String ocid, String date);

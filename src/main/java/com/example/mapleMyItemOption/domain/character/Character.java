@@ -1,8 +1,10 @@
 package com.example.mapleMyItemOption.domain.character;
 
+import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterAbility;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class Character {
@@ -17,6 +19,7 @@ public class Character {
     Integer dojangFloor;
     Integer characterPopularity;
     Integer characterUnionLevel;
+    List<CharacterAbility.Ability> characterAbility;
 
     LocalDate date;
     Long assault;
