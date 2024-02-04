@@ -155,6 +155,19 @@ my-character.html<!DOCTYPE html>
           <div class="character-assault-box"></div>
         </div>
       </div>
+      <div class="preset-button-container">
+        <button th:onclick="|location.href='@{/my-character/1}'|"
+                th:classappend="${presetNo == 1 ? 'background-sub' : ''}"
+                class="preset-button text-color-white">1번 프리셋</button>
+
+        <button th:onclick="|location.href='@{/my-character/2}'|"
+                th:classappend="${presetNo == 2 ? 'background-sub' : 'background-main'}"
+                class="preset-button text-color-white">2번 프리셋</button>
+
+        <button th:onclick="|location.href='@{/my-character/3}'|"
+                th:classappend="${presetNo == 3 ? 'background-sub' : 'background-main'}"
+                class="preset-button text-color-white">3번 프리셋</button>
+      </div>
       <div class="preset-container">
         <div
           th:each="presetTotalStat, i : ${presetTotalStats}"

@@ -1,4 +1,4 @@
-package com.example.mapleMyItemOption.controller.homeController;
+package com.example.mapleMyItemOption.web.controller.homeController;
 
 import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.domain.character.CharacterService;
@@ -6,10 +6,12 @@ import com.example.mapleMyItemOption.domain.item.ItemService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.MyItemData.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
+import com.example.mapleMyItemOption.web.SessionConst;
+import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
+import com.example.mapleMyItemOption.web.argumentResolver.SessionMyItemEquipment;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,13 +20,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -35,11 +38,16 @@ public class HomeController {
 
     private final CharacterService characterService;
     private final ItemService itemService;
-//    private final ItemAnalyzer itemAnalyzer;
 
     @GetMapping("/")
     public String home(@ModelAttribute("characterDto") CharacterDto dto, Model model){
-        String maxDate = LocalDate.now().minusDays(1).toString();
+        int hour = LocalTime.now().getHour();
+        int minusDay = 1;
+        if(hour < 1) {
+            minusDay = 2;
+        }
+        String maxDate = LocalDate.now().minusDays(minusDay).toString();
+
         dto.setDate(maxDate);
         model.addAttribute("maxDate", maxDate);
         return "home";
@@ -47,7 +55,7 @@ public class HomeController {
 
     @PostMapping("/")
     public String homeSearch(HttpServletRequest request, HttpServletResponse response,
-                             @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+                             @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult) throws IOException {
 
         if (bindingResult.hasErrors()){ // 캐릭터 이름 검증
             log.info("SEARCH ERROR = {}", bindingResult);
@@ -72,10 +80,14 @@ public class HomeController {
             MyItemEquipment myItemEquipment = itemService.searchMyItemEquipment(dto.characterName, dto.getDate());
 
             HttpSession session = request.getSession();
-            session.setAttribute("character", character);
-            session.setAttribute("myItemEquipment", myItemEquipment);
+            session.setAttribute(SessionConst.CHARACTER, character);
+            session.setAttribute(SessionConst.MY_ITEM_EQUIPMENT, myItemEquipment);
 
-            return "redirect:/my-character";
+            Integer presetNo = myItemEquipment.getPresetNo();
+
+            return "redirect:/my-character/" + presetNo;
+
+            //return "redirect:/my-character";
         } catch (HttpClientErrorException e) {
             System.out.println(e.getMessage());
             response.sendError(e.getStatusCode().value());
@@ -97,20 +109,20 @@ public class HomeController {
     // GetMapping("/my-character/{presetNo}")
     // session 에서 character, myItemEquipment 꺼내서 model 에 담고 view 에 전달
 
-    @GetMapping("/my-character")
-    public String name(HttpServletRequest request, HttpServletResponse response,
-                       @ModelAttribute("characterDto") CharacterDto dto, Model model) throws IOException {
+    @GetMapping("/my-character/{preset}")
+    public String name(HttpServletResponse response,
+                       @PathVariable("preset") Integer preset,
+                       @ModelAttribute("characterDto") CharacterDto dto, Model model,
+                       @SessionCharacter Character character,
+                       @SessionMyItemEquipment MyItemEquipment myItemEquipment) throws IOException {
 
-        HttpSession session = request.getSession(false);
-        if(session == null) {
-            response.sendError(400, "Bad Request");
+
+        if(character == null || myItemEquipment == null) {
+            return "redirect:/";
         }
 
         try{
-            assert session != null;
-            Character character = (Character) session.getAttribute("character");
-            MyItemEquipment myItemEquipment = (MyItemEquipment) session.getAttribute("myItemEquipment");
-
+            // 검색 input 초기값 설정
             dto.setCharacterName(character.getCharacterName());
             dto.setDate(character.getDate().toString());
 
@@ -130,24 +142,33 @@ public class HomeController {
             model.addAttribute("assault_b", assault_b);
             model.addAttribute("assault_c", assault_c);
 
-            model.addAttribute("presetNo", myItemEquipment.getPresetNo());
+            //model.addAttribute("presetNo", myItemEquipment.getPresetNo());
+            model.addAttribute("presetNo", preset);
             model.addAttribute(character);
 
             List<PresetTotalStat> presetTotalStats = itemService.getPresetTotalStats(myItemEquipment, character, false);
+            PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
+            model.addAttribute("presetTotalStat", presetTotalStat);
+
+            switch (preset){
+                case 1 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset1());
+                case 2 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset2());
+                case 3 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset3());
+            }
+
+
             model.addAttribute("presetTotalStats",presetTotalStats);
             model.addAttribute("averageList", PotentialOption.AVERAGE_LIST); // 잠재 옵션 표시 조건문을 위함
             model.addAttribute("totalList", PotentialOption.TOTAL_LIST); // 잠재 옵션 표시 조건문을 위함
 
             // return "my-character-" + pathVariable --> 경로 변수에 따라서 view 선택 반환
-            return "my-character";
+            return "my-character-1";
 
         } catch (NullPointerException exception) {
+            System.out.println(exception.getMessage());
             response.sendError(400, "Bad Request");
-        } catch (AssertionError exception) {
-            response.sendError(400, "Session Expire");
+            return "home";
         }
-
-        return null;
     }
 
 }

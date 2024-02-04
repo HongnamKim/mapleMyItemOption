@@ -134,6 +134,10 @@
   color: rgb(240, 244, 225);
 }
 
+.background-white {
+  background-color: white;
+}
+
 .background-point-main {
   background-color: rgb(100, 190, 200);
 }
@@ -154,34 +158,63 @@
   background-color: rgb(39, 44, 51);
 }
 
+.preset-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.preset-button {
+  width: 32%;
+  height: 3rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border: none;
+
+  font-size: 1.2rem;
+}
+
+.preset-button-left {
+  margin-right: 0.5rem;
+}
+
+.preset-button-center {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 .preset-container {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem;
 }
 
 .selected-preset {
   font-weight: bolder;
 }
 
+.preset-item-container {
+  width: 31%;
+  border: 1px solid blue;
+}
+
 .preset-stat-container {
-  width: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-  border: 1px black solid;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  background-color: white;
+
+  border: 1px solid green;
 }
 
 .preset-stat-specific-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
   margin-bottom: 0.5rem;
+  width: 100%;
   border: 1px red solid;
-  background-color: white;
 
   border-radius: 0.5rem;
 }

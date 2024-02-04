@@ -1,4 +1,4 @@
-package com.example.mapleMyItemOption.controller.homeController;
+package com.example.mapleMyItemOption.web.controller.homeController;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
