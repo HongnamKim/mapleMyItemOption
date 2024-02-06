@@ -44,6 +44,10 @@
   display: flex;
 }
 
+.character-assault-box-right {
+  flex-direction: row-reverse;
+}
+
 .assault-center {
   justify-content: center;
 }
@@ -188,6 +192,8 @@
   flex-direction: row;
   justify-content: space-between;
   padding: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 .selected-preset {
@@ -196,7 +202,35 @@
 
 .preset-item-container {
   width: 31%;
-  border: 1px solid blue;
+}
+
+.preset-item {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0.5rem;
+  margin-right: 0.5rem;
+  border-radius: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preset-item-sub {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-img {
+
+  /*height: 3rem;*/
+
+}
+
+.preset-item-text-box{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .preset-stat-container {
@@ -204,8 +238,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  border: 1px solid green;
 }
 
 .preset-stat-specific-container {

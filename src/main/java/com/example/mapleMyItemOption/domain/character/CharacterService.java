@@ -120,7 +120,8 @@ public class CharacterService {
      */
     public Character searchMyCharacter(String characterName, String date) {
         String ocid = apiService.fetchCharacterOcid(characterName);
-        String maximumAssaultDate = findMaximumAssaultDate(ocid, date);
+        String maximumAssaultDate = date;
+        //String maximumAssaultDate = findMaximumAssaultDate(ocid, date);
 
         CharacterBasicInfo characterBasicInfo = apiService.fetchCharacterBasicInfo(ocid, maximumAssaultDate);
         CharacterTotalStat characterTotalStat = apiService.fetchCharacterTotalStat(ocid, maximumAssaultDate);

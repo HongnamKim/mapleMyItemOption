@@ -1,4 +1,4 @@
-my-character.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
@@ -14,7 +14,7 @@ my-character.html<!DOCTYPE html>
       rel="stylesheet"
     />
   </head>
-  <body class="container background-body">
+  <body class="container background-body pt-2 pb-2">
     <div>
       <div class="character-searchbar">
         <form
@@ -30,6 +30,7 @@ my-character.html<!DOCTYPE html>
               type="text"
               placeholder="캐릭터 이름"
               th:field="*{characterName}"
+
             />
             <input
               id="date"
@@ -37,9 +38,12 @@ my-character.html<!DOCTYPE html>
               th:max="${maxDate}"
               min="2024-01-18"
               th:field="*{date}"
+              th:value="${character.date}"
             />
             <button type="submit">검색</button>
           </div>
+          <span th:errors="*{characterName}"></span>
+          <span th:errors="*{date}"></span>
         </form>
       </div>
 
@@ -98,17 +102,23 @@ my-character.html<!DOCTYPE html>
               <div
                 class="character-text-box text-center background-main flex-column"
               >
-                <span
-                  th:text="|*{date.getYear()} / *{date.getMonthValue()} / *{date.getDayOfMonth()} 기준|"
-                  class="text-color-white"
-                  >2023 / 12 / 31 기준</span
-                >
+                <span th:text="|*{date.getYear()} / *{date.getMonthValue()} / *{date.getDayOfMonth()} 기준|"
+                      class="text-color-white">2023 / 12 / 31 기준</span>
               </div>
               <div class="character-text-box text-center background-sub">
-                <span th:text="|${presetNo}번 프리셋|" class="text-color-white"
-                  >1번 프리셋</span
-                >
+                <span th:text="|${presetNo}번 장비 프리셋|" class="text-color-white">1번 장비 프리셋</span>
               </div>
+
+            </div>
+            <div class="character-container-sub-sub">
+              <div class="character-text-box" th:each="ability : *{characterAbility}"
+                   th:classappend="${ability.getAbilityGrade()} == '레전드리' ? 'ability-legendary' :
+                                    (${ability.getAbilityGrade()} == '유니크' ? 'ability-unique' :
+                                    (${ability.getAbilityGrade()} == '에픽' ? 'ability-epic' :
+                                    (${ability.getAbilityGrade()} == '레어' ? 'ability-rare' : '')))">
+                <span th:text="${ability.getAbilityValue()}" class="text-color-white">어빌리티</span>
+              </div>
+
             </div>
             <div class="character-container-sub-sub">
               <div class="character-text-box text-center background-point-main">
@@ -152,23 +162,29 @@ my-character.html<!DOCTYPE html>
         </div>
       </div>
       <div class="preset-button-container">
-        <button th:onclick="|location.href='@{/my-character/1}'|"
-                th:classappend="${presetNo == 1 ? 'background-white text-color-black' : 'background-main text-color-white'}"
-                class="preset-button">1번 프리셋</button>
+          <button th:onclick="|location.href='@{/my-character/1}'|"
+                  th:classappend="${presetNo == 1 ? 'background-sub' : ''}"
+                  class="preset-button text-color-white">1번 프리셋</button>
 
-        <button th:onclick="|location.href='@{/my-character/2}'|"
-                th:classappend="${presetNo == 2 ? 'background-white text-color-black' : 'background-main text-color-white'}"
-                class="preset-button">2번 프리셋</button>
+          <button th:onclick="|location.href='@{/my-character/2}'|"
+                  th:classappend="${presetNo == 2 ? 'background-sub' : 'background-main'}"
+                  class="preset-button text-color-white">2번 프리셋</button>
 
-        <button th:onclick="|location.href='@{/my-character/3}'|"
-                th:classappend="${presetNo == 3 ? 'background-white text-color-black' : 'background-main text-color-white'}"
-                class="preset-button">3번 프리셋</button>
+          <button th:onclick="|location.href='@{/my-character/3}'|"
+                  th:classappend="${presetNo == 3 ? 'background-sub' : 'background-main'}"
+                  class="preset-button text-color-white">3번 프리셋</button>
       </div>
-      <div class="preset-container background-white">
-        <div class="preset-item-container">
-          <p th:each="item : ${presetItemEquipment}" th:text="${item.getItemName()}"></p>
-        </div>
-        <div class="preset-stat-container">
+      <div class="preset-container">
+        <div
+          th:each="presetTotalStat, i : ${presetTotalStats}"
+          class="preset-stat-container"
+        >
+          <h4
+            th:class="${presetNo == i.count ? 'selected-preset' : ''}"
+            th:text="|${i.count} 번 프리셋|"
+          >
+            #번 프리셋
+          </h4>
           <div class="preset-stat-specific-container">
             <h5>스타포스</h5>
             <h6>평균 스타포스</h6>
@@ -179,7 +195,7 @@ my-character.html<!DOCTYPE html>
               >
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>최대 / 최소 스타포스</h6>
             <div>
@@ -218,7 +234,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
             <div
@@ -230,7 +246,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>전체 수치</h6>
             <div
@@ -242,7 +258,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>옵션 개수</h6>
             <div
@@ -266,7 +282,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
             <div
@@ -278,7 +294,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>전체 수치</h6>
             <div
@@ -290,7 +306,7 @@ my-character.html<!DOCTYPE html>
               ></span>
             </div>
 
-            <hr class="my-1" />
+            <hr class="my-3" />
 
             <h6>옵션 개수</h6>
             <div
