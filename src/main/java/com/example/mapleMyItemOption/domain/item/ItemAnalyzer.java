@@ -55,6 +55,10 @@ public class ItemAnalyzer {
 
         for (MyItem myItem : preset) {
 
+            Map<String, Float> itemPotentialValue = new HashMap<>();
+            // additional 이 true 일 경우 MyItem 의 totalAdditionalPotentialValue 에 Map
+            //              false 일 경우 MyItem 의 totalPotentialValue 에 Map 넣기
+
             List<String> potentialOptions = new ArrayList<>();
             String potentialOption1; // 윗잠 첫째줄
             String potentialOption2; // 윗잠 둘째줄
@@ -186,7 +190,7 @@ public class ItemAnalyzer {
                 Float currentItemCount = presetPotentialItems.getOrDefault(option, 0F);
                 presetPotentialItems.put(option, currentItemCount + 1);
             }
-        }
+        } // 한 개의 아이템 분석 완료
 
 
 

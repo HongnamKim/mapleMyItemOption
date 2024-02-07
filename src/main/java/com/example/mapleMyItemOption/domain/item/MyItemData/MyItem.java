@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(value = {"date_expire"})
@@ -53,4 +55,9 @@ public class MyItem {
     private String soulOption;
 
     private Integer specialRingLevel;
+
+    private Map<String, Float> totalPotentialValue;
+    private Map<String, Float> totalAdditionalvalue;
+    private Float totalAddOption;
+    private List<Float> totalEtcOption;
 }
