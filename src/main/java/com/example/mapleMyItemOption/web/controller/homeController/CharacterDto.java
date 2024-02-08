@@ -11,4 +11,6 @@ public class CharacterDto {
     String characterName;
     @NotBlank
     String date;
+
+    Boolean maximumAssaultDate;
 }

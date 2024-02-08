@@ -1,4 +1,4 @@
-package com.example.mapleMyItemOption.domain.character.rawCharaterData;
+package com.example.mapleMyItemOption.domain.character.charaterDataDto;
 
 public enum FinalStatOrder {
         MINIMUM_STAT_OFFENSE(0),

@@ -1,10 +1,10 @@
 package com.example.mapleMyItemOption.web.controller.homeController;
 
 import com.example.mapleMyItemOption.domain.character.Character;
-import com.example.mapleMyItemOption.domain.character.CharacterService;
-import com.example.mapleMyItemOption.domain.item.ItemService;
+import com.example.mapleMyItemOption.domain.character.characterSearch.CharacterSearchService;
+import com.example.mapleMyItemOption.domain.item.itemSearch.ItemSearchService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
-import com.example.mapleMyItemOption.domain.item.MyItemData.PresetTotalStat;
+import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
 import com.example.mapleMyItemOption.web.SessionConst;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -37,8 +36,8 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    private final CharacterService characterService;
-    private final ItemService itemService;
+    private final CharacterSearchService characterSearchService;
+    private final ItemSearchService itemSearchService;
 
     @GetMapping("/")
     public String home(@ModelAttribute("characterDto") CharacterDto dto, Model model){
@@ -80,8 +79,15 @@ public class HomeController {
         //POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
         //세선에 객체 넣기
         try {
-            Character character = characterService.searchMyCharacter(characterName, dto.getDate());
-            MyItemEquipment myItemEquipment = itemService.searchMyItemEquipment(characterName, dto.getDate());
+            String date;
+            date = dto.getDate();
+
+            if(dto.getMaximumAssaultDate()){
+                date = characterSearchService.findMaximumAssaultDate(characterName, dto.getDate());
+            }
+
+            Character character = characterSearchService.searchMyCharacter(characterName, date);
+            MyItemEquipment myItemEquipment = itemSearchService.searchMyItemEquipment(characterName, date);
 
             HttpSession session = request.getSession();
             session.setAttribute(SessionConst.CHARACTER, character);
@@ -138,7 +144,7 @@ public class HomeController {
         model.addAttribute(character);
 
         // 장비 프리셋의 평균 수치
-        List<PresetTotalStat> presetTotalStats = itemService.getPresetTotalStats(myItemEquipment, character, false);
+        List<PresetTotalStat> presetTotalStats = itemSearchService.getPresetTotalStats(myItemEquipment, character, false);
         PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
         model.addAttribute("presetTotalStat", presetTotalStat);
 

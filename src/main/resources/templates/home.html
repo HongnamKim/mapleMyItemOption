@@ -11,6 +11,8 @@
             <label for="name">캐릭터 이름</label>
             <input id="name" type="text" placeholder="캐릭터 이름" th:field="*{characterName}" required>
             <input id="date" type="date" th:max="${maxDate}" min="2024-01-18" th:field="*{date}" th:value="${maxDate}" required>
+            <label for="maximumAssaultDate">최근 최대 전투력 찾기</label>
+            <input id="maximumAssaultDate" type="checkbox" th:field="*{maximumAssaultDate}"/>
             <button type="submit">검색</button>
         </div>
         <span th:errors="*{characterName}"></span>

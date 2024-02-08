@@ -55,9 +55,4 @@ public class MyItem {
     private String soulOption;
 
     private Integer specialRingLevel;
-
-    private Map<String, Float> totalPotentialValue;
-    private Map<String, Float> totalAdditionalvalue;
-    private Float totalAddOption;
-    private List<Float> totalEtcOption;
 }

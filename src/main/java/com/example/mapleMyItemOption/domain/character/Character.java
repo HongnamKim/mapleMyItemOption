@@ -1,6 +1,6 @@
 package com.example.mapleMyItemOption.domain.character;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.CharacterAbility;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.CharacterAbility;
 import lombok.Data;
 
 import java.time.LocalDate;

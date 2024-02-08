@@ -1,9 +1,7 @@
-package com.example.mapleMyItemOption.domain.character.rawCharaterData;
+package com.example.mapleMyItemOption.domain.character.charaterDataDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-
-import java.util.Date;
 
 @Data
 @JsonIgnoreProperties(value = {"date", "character_class", "world_name", "date_dojang_record", "dojang_best_time"})

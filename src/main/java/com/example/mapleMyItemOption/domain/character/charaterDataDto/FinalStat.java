@@ -1,4 +1,4 @@
-package com.example.mapleMyItemOption.domain.character.rawCharaterData;
+package com.example.mapleMyItemOption.domain.character.charaterDataDto;
 
 import lombok.Getter;
 import lombok.Setter;

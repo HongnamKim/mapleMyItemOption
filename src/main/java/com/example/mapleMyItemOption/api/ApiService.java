@@ -1,8 +1,9 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.Ranking;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
-import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
+
 
 public interface ApiService {
     String API_URL = "https://open.api.nexon.com/maplestory/v1";
@@ -23,8 +24,6 @@ public interface ApiService {
     CharacterUnion fetchCharacterUnion(String ocid, String date);
 
     CharacterAbility fetchCharacterAbility(String ocid, String date);
-
-    RawItemEquipment fetchItemEquipment(String ocid, String date);
 
     MyItemEquipment fetchMyItemEquipment(String ocid, String date);
 }

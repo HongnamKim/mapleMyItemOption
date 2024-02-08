@@ -1,8 +1,8 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.Ranking;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
-import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -58,6 +55,7 @@ public class ExternalApiService implements ApiService{
             return objectMapper.readValue(result, CharacterOcid.class).getOcid();
 
         } catch (HttpClientErrorException e){ // 429 코드 수신 시
+
             String message = e.getMessage();
             String statusCode = message.substring(0, 3);
 
@@ -200,23 +198,6 @@ public class ExternalApiService implements ApiService{
             String result = responseEntity.getBody();
 
             return objectMapper.readValue(result, CharacterAbility.class);
-
-        } catch (HttpClientErrorException e) {
-            throw e;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public RawItemEquipment fetchItemEquipment(String ocid, String date){
-        String fullApiUrl = API_URL + replaceParameters(ApiUrl.ITEM_EQUIPMENT.getUrl(), ocid, date);
-
-        try{
-            ResponseEntity<String> responseEntity = getResponseEntity(fullApiUrl);
-            String result = responseEntity.getBody();
-
-            return objectMapper.readValue(result, RawItemEquipment.class);
 
         } catch (HttpClientErrorException e) {
             throw e;

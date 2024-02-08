@@ -1,8 +1,7 @@
 package com.example.mapleMyItemOption.api;
 
-import com.example.mapleMyItemOption.domain.character.rawCharaterData.*;
+import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
-import com.example.mapleMyItemOption.domain.item.rawItemData.RawItemEquipment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.springframework.core.io.ClassPathResource;
@@ -124,24 +123,6 @@ public class InternalApiService implements ApiService{
 
             return objectMapper.readValue(jsonString, CharacterAbility.class);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return null;
-    }
-
-    @Override
-    public RawItemEquipment fetchItemEquipment(String ocid, String date){
-        String jsonFilePath = "testJson/itemEquipment.json";
-
-        Resource resource = new ClassPathResource(jsonFilePath);
-
-        try{
-            String jsonString = readJsonFile(resource);
-
-            return objectMapper.readValue(jsonString, RawItemEquipment.class);
-
-        } catch (IOException e){
             System.out.println(e.getMessage());
         }
 

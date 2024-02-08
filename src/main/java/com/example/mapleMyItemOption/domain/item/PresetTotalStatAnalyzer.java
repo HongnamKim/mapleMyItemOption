@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class ItemAnalyzer {
+public class PresetTotalStatAnalyzer {
 
     /**
      * 각각 프리셋 별로 잠재능력 옵션들의 수치를 구하는 메소드
@@ -401,6 +401,7 @@ public class ItemAnalyzer {
             case "DEX" -> mainStatPoint = itemAddOption.getDex();
             case "LUK" -> mainStatPoint = itemAddOption.getLuk();
             case "INT" -> mainStatPoint = itemAddOption.getIntel();
+            case ClassMainStat.HP -> mainStatPoint = itemAddOption.getMaxHp();
         }
 
         if(mainStat.equals("INT")){
@@ -468,6 +469,8 @@ public class ItemAnalyzer {
 
             totalUpgradeCount += myItem.getScrollUpgrade();
         }
+
+        // 주문서 없는 리부트 유저인 경우
         if(totalUpgradeCount == 0){
             return new ArrayList<>(List.of(0F, 0F));
         }

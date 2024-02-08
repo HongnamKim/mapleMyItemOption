@@ -22,6 +22,8 @@
             <label for="name" class="text-color-white"></label>
             <input id="name" type="text" placeholder="캐릭터 이름" th:field="*{characterName}" required/>
             <input id="date" type="date" th:max="${maxDate}" min="2024-01-18" th:field="*{date}" required/>
+            <label id="maximumAssaultDate" class="text-color-white">최대 전투력 찾기</label>
+            <input type="checkbox" th:field="*{maximumAssaultDate}"/>
             <button type="submit">검색</button>
           </div>
         </form>
@@ -163,11 +165,15 @@
             </div>
             <div class="preset-item-sub preset-item-text-box">
               <span th:text="${item.getItemName()}">아이템 이름</span>
-              <span th:text="|${item.getStarforce()}성|"></span>
-              <span th:text="${item.getPotentialOption_1()}"></span>
-              <span th:text="${item.getAdditionalPotentialOption_1()}"></span>
-            </div>
+              <div>
+                <span th:if="${item.getStarforce() != 0}" th:text="|${item.getStarforce()}성|"></span>
+                <!--
+                <span th:if="${item.getAddOption() != null}" th:text="|${item.getAddOption()}급|">150급</span>
+                <span  th:text="|${item.getEtcOption()[0]} / ${item.getEtcOption()[1]} 작|">6 / 2 작</span>
+                -->
+              </div>
 
+            </div>
           </div>
 
         </div>
@@ -184,10 +190,7 @@
 
             <h6>최대 / 최소 스타포스</h6>
             <div>
-              <span
-                th:text="|${presetTotalStat.getMaximumStarforce()} / ${presetTotalStat.getMinimumStarforce()} 성|"
-                >10</span
-              >
+              <span th:text="|${presetTotalStat.getMaximumStarforce()} / ${presetTotalStat.getMinimumStarforce()} 성|">10</span>
             </div>
           </div>
           <div class="preset-stat-specific-container">

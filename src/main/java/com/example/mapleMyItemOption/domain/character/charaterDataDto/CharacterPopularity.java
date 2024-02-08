@@ -1,4 +1,4 @@
-package com.example.mapleMyItemOption.domain.character.rawCharaterData;
+package com.example.mapleMyItemOption.domain.character.charaterDataDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
