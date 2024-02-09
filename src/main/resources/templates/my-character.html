@@ -156,21 +156,32 @@
                 class="preset-button">3번 프리셋</button>
       </div>
       <div class="preset-container background-white">
+
         <div class="preset-item-container">
           <div th:each="item : ${presetItemEquipment}" class="preset-item background-sub">
             <div class="preset-item-sub">
-              <img th:src="${item.getItemIcon()}"
+              <img th:src="${item.getItemImage()}"
               alt="item image"
               class="item-img"/>
             </div>
             <div class="preset-item-sub preset-item-text-box">
               <span th:text="${item.getItemName()}">아이템 이름</span>
-              <div>
+              <div class="d-flex flex-column">
                 <span th:if="${item.getStarforce() != 0}" th:text="|${item.getStarforce()}성|"></span>
-                <!--
-                <span th:if="${item.getAddOption() != null}" th:text="|${item.getAddOption()}급|">150급</span>
-                <span  th:text="|${item.getEtcOption()[0]} / ${item.getEtcOption()[1]} 작|">6 / 2 작</span>
-                -->
+
+                <div th:if="${weaponList.contains(item.getItemEquipmentSlot()) && item.addOption != null}" th:object="${item.getAddOption()}">
+                  <span th:if="*{power != 0}" th:text="|공/마 *{power}|"></span>
+                  <span th:if="*{bossDamage != 0}" th:text="|보뎀 *{bossDamage}|"></span>
+                  <span th:if="*{damage != 0}" th:text="| + *{damage}|"></span>
+                  <span th:if="*{allStat != 0}" th:text="|올스탯 *{allStat}|"></span>
+                </div>
+                <span th:if="${!weaponList.contains(item.getItemEquipmentSlot()) && item.addOption != null}"
+                      th:text="|${item.getAddOption().getMainStat()}급|"
+                ></span>
+                <span th:if="${item.etcOption != null}"
+                      th:text="|${#numbers.formatDecimal(item.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.etcOption[1], 1, 1)} 작|"></span>
+                <span th:if="${item.potentialValue != null}" th:each="potential : ${item.potentialValue}"
+                      th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|">잠재옵션</span>
               </div>
 
             </div>
@@ -183,7 +194,7 @@
             <h6>평균 스타포스</h6>
             <div>
               <span
-                th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageStarforce(), 0, 1)} 성|">21</span>
+                th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageStarforce(), 1, 1)} 성|">21</span>
             </div>
 
             <hr class="my-1" />
@@ -206,7 +217,7 @@
             <h5>평균 주문서 옵션</h5>
             <span>제네시스 무기 제외</span>
             <span
-              th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(0), 0, 1)} / ${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(1), 0, 1)} 작|"
+              th:text="|${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(0), 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.getAverageEtcOption().get(1), 1, 1)} 작|"
             ></span>
           </div>
 

@@ -106,4 +106,39 @@ public class ItemSearchService {
         return presetTotalStats;
     }
 
+    public List<Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum){
+        // [[1번 프리셋 아이템 수치들], [2번 프리셋 아이템 수치들], [3번 프리셋 아이템 수치들]]
+
+        List<MyItem> preset = myItemEquipment.getPreset1();
+        List<Item> presetItemStats = new ArrayList<>();
+
+        switch (presetNum){
+            case 2 -> preset = myItemEquipment.getPreset2();
+            case 3 -> preset = myItemEquipment.getPreset3();
+        }
+
+        for(MyItem myItem : preset) {
+            Item item = new Item();
+            item.setItemName(myItem.getItemName());
+            item.setItemImage(myItem.getItemIcon());
+            item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
+
+
+
+            presetItemAnalyzer.getStarforce(myItem, item);
+            presetItemAnalyzer.getAddOption(myItem, item, character);
+            presetItemAnalyzer.getEtcOption(myItem, item, character);
+
+            presetItemAnalyzer.getPotentialValue(myItem, item, character);
+
+
+
+            //System.out.println(item);
+            presetItemStats.add(item);
+        }
+
+
+        return presetItemStats;
+    }
+
 }

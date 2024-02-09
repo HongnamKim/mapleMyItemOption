@@ -149,11 +149,13 @@ public class HomeController {
         model.addAttribute("presetTotalStat", presetTotalStat);
 
         // 장비 프리셋 아이템 목록
-        switch (preset){
-            case 1 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset1());
+        /*switch (preset){
+            case 1 -> model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, 1));
             case 2 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset2());
             case 3 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset3());
-        }
+        }*/
+        model.addAttribute("weaponList", new ArrayList<>(List.of("무기", "보조무기", "엠블렘")));
+        model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, preset));
 
         model.addAttribute("averageList", PotentialOption.AVERAGE_LIST); // 잠재 옵션 표시 조건문을 위함
         model.addAttribute("totalList", PotentialOption.TOTAL_LIST); // 잠재 옵션 표시 조건문을 위함

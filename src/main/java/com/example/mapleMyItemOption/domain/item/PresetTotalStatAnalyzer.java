@@ -336,7 +336,7 @@ public class PresetTotalStatAnalyzer {
 
         for(MyItem myItem : preset){
 
-            if(myItem.getItemEquipmentSlot().equals("무기")){ // 무기 제외
+            if(myItem.getItemEquipmentSlot().equals("무기")){
                 continue;
             }
 
@@ -652,7 +652,7 @@ public class PresetTotalStatAnalyzer {
         }
 
         // 초보자 계열은 str
-        return ItemOptionStat.STR;
+        return ClassMainStat.STR;
     }
 
     private List<List<MyItem>> getPresets(MyItemEquipment myItemEquipment) {
