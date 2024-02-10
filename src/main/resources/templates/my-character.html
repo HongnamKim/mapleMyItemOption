@@ -178,10 +178,12 @@
                 <span th:if="${!weaponList.contains(item.getItemEquipmentSlot()) && item.addOption != null}"
                       th:text="|${item.getAddOption().getMainStat()}급|"
                 ></span>
-                <span th:if="${item.etcOption != null}"
+                <span th:if="${item.etcOption != null && isNormalServer}"
                       th:text="|${#numbers.formatDecimal(item.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.etcOption[1], 1, 1)} 작|"></span>
                 <span th:if="${item.potentialValue != null}" th:each="potential : ${item.potentialValue}"
                       th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|">잠재옵션</span>
+                <span th:if="${item.additionalPotentialValue != null}" th:each="potential : ${item.additionalPotentialValue}"
+                      th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|">에디 잠재옵션</span>
               </div>
 
             </div>

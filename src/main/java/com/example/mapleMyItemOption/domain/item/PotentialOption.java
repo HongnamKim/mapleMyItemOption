@@ -25,6 +25,7 @@ public interface PotentialOption {
     String ALL_STAT_PERCENT = "올스탯%";
     String TOTAL_STAT = "주스탯";
     String TOTAL_STAT_PERCENT = "주스탯%";
+    String SKILL_COOL_TIME = "모든 스킬의 재사용 대기시간";
     String ATTACK_POWER = "공격력";
     String ATTACK_POWER_PERCENT = "공격력%";
     String MAGIC_POWER = "마력";
@@ -42,9 +43,9 @@ public interface PotentialOption {
     String MONEY_DROP = "메소 획득량";
     String MONEY_DROP_PERCENT = MONEY_DROP + "%";
 
-    List<String> OPTION_LIST = new ArrayList<>(List.of(ATTACK_POWER, MAGIC_POWER, CRITICAL_DAMAGE, BOSS_DAMAGE, NORMAL_DAMAGE, IGNORE_ARMOR, ITEM_DROP, MONEY_DROP));
+    List<String> OPTION_LIST = new ArrayList<>(List.of(SKILL_COOL_TIME, ATTACK_POWER, MAGIC_POWER, CRITICAL_DAMAGE, BOSS_DAMAGE, NORMAL_DAMAGE, IGNORE_ARMOR, ITEM_DROP, MONEY_DROP));
 
     List<String> AVERAGE_LIST = new ArrayList<>(List.of(TOTAL_STAT_PERCENT, PER_LEVEL+" 주스탯", ATTACK_POWER, MAGIC_POWER));
-    List<String> TOTAL_LIST = new ArrayList<>(List.of(ATTACK_POWER_PERCENT, MAGIC_POWER_PERCENT, CRITICAL_DAMAGE,
+    List<String> TOTAL_LIST = new ArrayList<>(List.of(SKILL_COOL_TIME, ATTACK_POWER_PERCENT, MAGIC_POWER_PERCENT, CRITICAL_DAMAGE,
             BOSS_DAMAGE_PERCENT, NORMAL_DAMAGE_PERCENT, IGNORE_ARMOR_PERCENT, ITEM_DROP_PERCENT, MONEY_DROP_PERCENT));
 }

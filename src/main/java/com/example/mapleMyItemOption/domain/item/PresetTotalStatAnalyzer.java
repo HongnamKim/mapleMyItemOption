@@ -55,11 +55,6 @@ public class PresetTotalStatAnalyzer {
 
         for (MyItem myItem : preset) {
 
-            Map<String, Float> itemPotentialValue = new HashMap<>();
-            // additional 이 true 일 경우 MyItem 의 totalAdditionalPotentialValue 에 Map
-            //              false 일 경우 MyItem 의 totalPotentialValue 에 Map 넣기
-
-            List<String> potentialOptions = new ArrayList<>();
             String potentialOption1; // 윗잠 첫째줄
             String potentialOption2; // 윗잠 둘째줄
             String potentialOption3; // 윗잠 셋째줄
@@ -75,9 +70,7 @@ public class PresetTotalStatAnalyzer {
                 potentialOption3 = Optional.ofNullable(myItem.getPotentialOption_3()).orElse("");
 
             }
-            potentialOptions.add(potentialOption1);
-            potentialOptions.add(potentialOption2);
-            potentialOptions.add(potentialOption3);
+            List<String> potentialOptions = new ArrayList<>(List.of(potentialOption1, potentialOption2, potentialOption3));
 
             Set<String> potentialOptionCategory = new HashSet<>(); // 하나의 아이템이 갖고 있는 옵션 종류
 
@@ -91,9 +84,8 @@ public class PresetTotalStatAnalyzer {
                 String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
                 String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat;
 
-                if((potentialOption.startsWith(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT)
-                        && potentialOption.endsWith("%"))){ // 주스탯, 올스탯 퍼센트 옵션
-
+                if((potentialOption.contains(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
+                        && potentialOption.endsWith("%")){ // 주스탯, 올스탯 퍼센트 옵션
                     potentialOptionCategory.add(PotentialOption.TOTAL_STAT_PERCENT); // 옵션 종류 추가
                     // "STR : +4%" or "올스탯 : +6%"
                     String optionValueString;
@@ -101,8 +93,14 @@ public class PresetTotalStatAnalyzer {
 
                     if(potentialOption.contains(mainStat)) { // 주스탯
 
-                        optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
-                        optionValue = Float.parseFloat(optionValueString);
+                        try{
+                            optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
+                            optionValue = Float.parseFloat(optionValueString);
+                        } catch (Exception e){
+                            System.out.println(potentialOption);
+                            throw e;
+                        }
+
 
                         if(specificStat){
                             potentialOptionCategory.add(mainStatPercent); // 옵션 종류 추가
@@ -170,7 +168,11 @@ public class PresetTotalStatAnalyzer {
                             // 퍼센트 옵션일 경우 뒤에 % 제거
                             String optionValueString = potentialOption.endsWith("%") ?
                                     potentialOption.replace(option + " : +", "").replace("%", "") :
-                                    potentialOption.replace(option + " : +", "");
+                                    (potentialOption.contains(PotentialOption.SKILL_COOL_TIME) ?
+                                            potentialOption.replace(option + " : ", "")
+                                                    .replace("초(10초 이하는 10%감소, 5초 미만으로 감소 불가)", "")
+                                                    .replace("초(10초 이하는 5%감소, 5초 미만으로 감소 불가)", "") :
+                                            potentialOption.replace(option + " : +", ""));
 
                             Float optionValue = Float.parseFloat(optionValueString);
 
@@ -342,13 +344,14 @@ public class PresetTotalStatAnalyzer {
 
             MyItemOption itemAddOption = myItem.getItemAddOption();
 
-            if(itemAddOption.getStr() == 0 && itemAddOption.getDex() == 0 && itemAddOption.getLuk() == 0 && itemAddOption.getIntel() == 0){
+            if(itemAddOption.getStr() == 0 && itemAddOption.getDex() == 0 && itemAddOption.getLuk() == 0 && itemAddOption.getIntel() == 0 && itemAddOption.getMaxHp() == 0){
                 // 추가옵션이 없는 아이템 제외 (견장)
                 continue;
             }
 
             // 아이템 추가 옵션, 레벨대
             int itemAddOptionStats = getAddOptionStat(itemAddOption, mainStat);
+
             int equipmentLevelCategory = myItem.getItemBaseOption().getBaseEquipmentLevel() / 10 * 10;
 
             // 레벨대 별로 추가옵션 총합, 카운트
@@ -397,10 +400,10 @@ public class PresetTotalStatAnalyzer {
         int itemAddOptionStats;
 
         switch (mainStat) {
-            case "STR" -> mainStatPoint = itemAddOption.getStr();
-            case "DEX" -> mainStatPoint = itemAddOption.getDex();
-            case "LUK" -> mainStatPoint = itemAddOption.getLuk();
-            case "INT" -> mainStatPoint = itemAddOption.getIntel();
+            case ClassMainStat.STR -> mainStatPoint = itemAddOption.getStr();
+            case ClassMainStat.DEX -> mainStatPoint = itemAddOption.getDex();
+            case ClassMainStat.LUK -> mainStatPoint = itemAddOption.getLuk();
+            case ClassMainStat.INT -> mainStatPoint = itemAddOption.getIntel();
             case ClassMainStat.HP -> mainStatPoint = itemAddOption.getMaxHp();
         }
 
@@ -412,7 +415,7 @@ public class PresetTotalStatAnalyzer {
 
         allStat = itemAddOption.getAllStat();
 
-        itemAddOptionStats = mainStatPoint + allStat * 10 + power * 4;
+        itemAddOptionStats = mainStat.equals(ClassMainStat.HP) ? mainStatPoint : mainStatPoint + allStat * 10 + power * 4;
 
         return itemAddOptionStats;
     }

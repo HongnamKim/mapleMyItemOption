@@ -7,10 +7,7 @@ import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemOption;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 개별 아이템의 주요 능력치만 분석
@@ -33,7 +30,7 @@ public class PresetItemAnalyzer {
 
         String mainStat = getMainStat(character);
         MyItemOption itemAddOption = myItem.getItemAddOption();
-        if(itemAddOption.getStr() == 0 && itemAddOption.getDex() == 0 && itemAddOption.getLuk() == 0 && itemAddOption.getIntel() == 0){
+        if(itemAddOption.getStr() == 0 && itemAddOption.getDex() == 0 && itemAddOption.getLuk() == 0 && itemAddOption.getIntel() == 0 && itemAddOption.getMaxHp() == 0){
             // 추가옵션이 없는 아이템 제외 (견장)
             return;
         }
@@ -70,7 +67,12 @@ public class PresetItemAnalyzer {
         } else {
 
             Item.AddOption addOption = new Item.AddOption();
-            addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
+            if(mainStat.equals(ClassMainStat.HP)){
+                addOption.setMainStat(mainStatPoint);
+            }else{
+                addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
+            }
+
 
             item.setAddOption(addOption);
         }
@@ -84,6 +86,7 @@ public class PresetItemAnalyzer {
             // 주문서 작 못하는 아이템 제외
             return;
         }
+
         List<Float> etcOption = new ArrayList<>();
 
         MyItemOption itemEtcOption = myItem.getItemEtcOption();
@@ -109,8 +112,13 @@ public class PresetItemAnalyzer {
         item.setEtcOption(etcOption);
     }
 
-    public void getPotentialValue(MyItem myItem, Item item, Character character){
-        if(myItem.getPotentialOptionGrade() == null){
+    public void getPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
+
+        if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
+            return;
+        }
+
+        if(!additional && myItem.getPotentialOptionGrade() == null){
             return;
         }
 
@@ -119,13 +127,24 @@ public class PresetItemAnalyzer {
         String mainStat = getMainStat(character);
         String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
 
-        String potentialOption1 = myItem.getPotentialOption_1();
-        String potentialOption2 = myItem.getPotentialOption_2();
-        String potentialOption3 = myItem.getPotentialOption_3();
+        String potentialOption1;
+        String potentialOption2;
+        String potentialOption3;
+
+        if(additional){
+            potentialOption1 = Optional.ofNullable(myItem.getAdditionalPotentialOption_1()).orElse("");
+            potentialOption2 = Optional.ofNullable(myItem.getAdditionalPotentialOption_2()).orElse("");
+            potentialOption3 = Optional.ofNullable(myItem.getAdditionalPotentialOption_3()).orElse("");
+        } else {
+            potentialOption1 = Optional.ofNullable(myItem.getPotentialOption_1()).orElse("");
+            potentialOption2 = Optional.ofNullable(myItem.getPotentialOption_2()).orElse("");
+            potentialOption3 = Optional.ofNullable(myItem.getPotentialOption_3()).orElse("");
+        }
 
         List<String> potentialOptions = new ArrayList<>(List.of(potentialOption1, potentialOption2, potentialOption3));
 
         String mainStatPercent = mainStat+"%";
+        String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat;
         for (String potentialOption : potentialOptions){
             // 주스탯 % 체크
             if((potentialOption.startsWith(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
@@ -138,12 +157,22 @@ public class PresetItemAnalyzer {
                     potentialValue.put(mainStatPercent, currentValue + optionValue);
                 } else if (!mainStat.equals(ClassMainStat.HP)) {
                     String optionValueString = potentialOption.replace(PotentialOption.ALL_STAT + " : +", "").replace("%", "");
-                    Float optionValue = Float.parseFloat(optionValueString);
+                    float optionValue = Float.parseFloat(optionValueString);
 
-                    Float currentValue = potentialValue.getOrDefault(mainStatPercent, 0F);
+                    float currentValue = potentialValue.getOrDefault(mainStatPercent, 0F);
                     potentialValue.put(mainStatPercent, currentValue + optionValue * 1.12F);
                 }
 
+            }
+
+            if (potentialOption.startsWith(perLevelStat)) { // 렙당 주스탯
+                // "캐릭터 기준 9레벨 당 STR : +1"
+
+                String optionValueString = potentialOption.replace(perLevelStat + " : +", "");
+                Float optionValue = Float.parseFloat(optionValueString);
+
+                Float currentOptionValue = potentialValue.getOrDefault("렙당", 0F);
+                potentialValue.put("렙당", currentOptionValue + optionValue);
 
             }
 
@@ -169,12 +198,18 @@ public class PresetItemAnalyzer {
                         optionCategory = "아획%";
                     } else if(optionCategory.contains(PotentialOption.MONEY_DROP)){
                         optionCategory = "메획%";
+                    } else if(optionCategory.contains(PotentialOption.SKILL_COOL_TIME)){
+                        optionCategory = "쿨감";
                     }
 
                     // 퍼센트 옵션일 경우 뒤에 % 제거
                     String optionValueString = potentialOption.endsWith("%") ?
                             potentialOption.replace(option + " : +", "").replace("%", "") :
-                            potentialOption.replace(option + " : +", "");
+                            (potentialOption.contains(PotentialOption.SKILL_COOL_TIME) ?
+                                    potentialOption.replace(option + " : ", "")
+                                            .replace("초(10초 이하는 10%감소, 5초 미만으로 감소 불가)", "")
+                                            .replace("초(10초 이하는 5%감소, 5초 미만으로 감소 불가)", "") :
+                                    potentialOption.replace(option + " : +", ""));
 
                     Float optionValue = Float.parseFloat(optionValueString);
 
@@ -184,9 +219,11 @@ public class PresetItemAnalyzer {
                 }
             }
         }
-
-        item.setPotentialValue(potentialValue);
-
+        if(additional){
+            item.setAdditionalPotentialValue(potentialValue);
+        } else {
+            item.setPotentialValue(potentialValue);
+        }
     }
 
     private String getMainStat(Character character){

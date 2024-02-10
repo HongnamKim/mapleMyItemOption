@@ -9,7 +9,7 @@ public interface ClassMainStat {
     List<String> LUK_CLASS = new ArrayList<>(List.of("나이트로드", "섀도어", "듀얼블레이드", "나이트워커", "팬텀", "카데나", "칼리", "호영"));
     List<String> INT_CLASS = new ArrayList<>(List.of("아크메이지(불,독)", "아크메이지(썬,콜)", "비숍", "플레임위자드", "베틀메이지", "에반", "루미너스", "일리움", "라라", "키네시스"));
 
-    List<String> HP_CLASS = new ArrayList<>(List.of("데몬 어벤져"));
+    List<String> HP_CLASS = new ArrayList<>(List.of("데몬어벤져"));
 
     List<String> ALL_STAT_CLASS = new ArrayList<>(List.of("제논"));
 

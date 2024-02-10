@@ -5,7 +5,6 @@ import com.example.mapleMyItemOption.api.ApiService;
 import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
-import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemOption;
 import com.example.mapleMyItemOption.domain.item.PresetItemAnalyzer;
 import com.example.mapleMyItemOption.domain.item.PresetTotalStatAnalyzer;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +46,8 @@ public class ItemSearchService {
 
     /**
      * 프리셋 별 종합 옵션 정보 (스타포스, 추가옵션, 잠재, 에디셔널, 주문서)
-     * @param myItemEquipment
-     * @param character
+     * @param myItemEquipment MyItemEquipment 캐릭터 장비 정보
+     * @param character Character 캐릭터 기본 정보
      * @param specificStat 주스탯% 올스탯% 따로할지, 합쳐서 할지
      * @return
      */
@@ -123,13 +121,12 @@ public class ItemSearchService {
             item.setItemImage(myItem.getItemIcon());
             item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
 
-
-
             presetItemAnalyzer.getStarforce(myItem, item);
             presetItemAnalyzer.getAddOption(myItem, item, character);
             presetItemAnalyzer.getEtcOption(myItem, item, character);
 
-            presetItemAnalyzer.getPotentialValue(myItem, item, character);
+            presetItemAnalyzer.getPotentialValue(myItem, item, character, false);
+            presetItemAnalyzer.getPotentialValue(myItem, item, character, true);
 
 
 
