@@ -26,10 +26,8 @@ public class PresetTotalStatAnalyzer {
 
         List<List<MyItem>> presets = getPresets(myItemEquipment);
 
-        String mainStat = getMainStat(character);
-
         for (List<MyItem> preset : presets) {
-            presetPotentialValues.add(getPresetPotentialValue(preset, mainStat, additional, specificStat, dataOption));
+            presetPotentialValues.add(getPresetPotentialValue(preset, character, additional, specificStat, dataOption));
         }
 
         return presetPotentialValues;
@@ -38,14 +36,16 @@ public class PresetTotalStatAnalyzer {
     /**
      * 하나의 프리셋에서 잠재능력 별 수치 총합 구하는 함수
      * @param preset MyItemEquipment 의 프리셋 (List<MyItem>)
-     * @param mainStat 조회하는 캐릭터의 주스탯
+     * @param character 조회하는 캐릭터 정보
      * @param additional 에디셔널을 조회하는지
      * @param specificStat 주스탯% 와 올스탯% 를 분리하여 데이터를 얻을지
      * @param dataOption 평균 / 총합 / 개수
      * @return Map<옵션종류, 수치>
      */
-    private Map<String, Float> getPresetPotentialValue(List<MyItem> preset, String mainStat, boolean additional, boolean specificStat, PotentialValuesOption dataOption) {
+    private Map<String, Float> getPresetPotentialValue(List<MyItem> preset, Character character, boolean additional, boolean specificStat, PotentialValuesOption dataOption) {
         // mainStat == "STR", "DEX", "INT", "LUK", "HP", "올스탯"
+        String mainStat = getMainStat(character);
+
         Map<String, Float> presetPotentialValue = new HashMap<>(); // 옵션별 수치 총합
                                                                    // {"STR%" : 150, "공격력%" : 90}
         Map<String, Float> presetPotentialItems = new HashMap<>(); // 해당 옵션이 있는 아이템 개수
@@ -85,7 +85,8 @@ public class PresetTotalStatAnalyzer {
                 String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat;
 
                 if((potentialOption.contains(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
-                        && potentialOption.endsWith("%")){ // 주스탯, 올스탯 퍼센트 옵션
+                        && potentialOption.endsWith("%")){ // 주스탯 퍼센트, 올스탯 퍼센트 옵션
+
                     potentialOptionCategory.add(PotentialOption.TOTAL_STAT_PERCENT); // 옵션 종류 추가
                     // "STR : +4%" or "올스탯 : +6%"
                     String optionValueString;
@@ -93,14 +94,8 @@ public class PresetTotalStatAnalyzer {
 
                     if(potentialOption.contains(mainStat)) { // 주스탯
 
-                        try{
-                            optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
-                            optionValue = Float.parseFloat(optionValueString);
-                        } catch (Exception e){
-                            System.out.println(potentialOption);
-                            throw e;
-                        }
-
+                        optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
+                        optionValue = Float.parseFloat(optionValueString);
 
                         if(specificStat){
                             potentialOptionCategory.add(mainStatPercent); // 옵션 종류 추가
@@ -126,8 +121,8 @@ public class PresetTotalStatAnalyzer {
                             presetPotentialLines.put(PotentialOption.ALL_STAT_PERCENT, currentOptionLine + 1);
                         }
 
-                        // 총 스탯 계산용
-                        optionValue = optionValue * 1.12F;
+                        // 총 스탯 계산용 (듀섀카 1.23 효율로 계산)
+                        optionValue = ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass()) ? optionValue * 1.23F : optionValue * 1.12F;
                     }
                     Float currentOptionValue = presetPotentialValue.getOrDefault(PotentialOption.TOTAL_STAT_PERCENT, 0F);
 

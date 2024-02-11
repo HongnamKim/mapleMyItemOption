@@ -18,7 +18,10 @@ public class Item {
 
     List<Float> etcOption; //[공/마, 주스탯]
 
+    String potentialGrade;
     Map<String, Float> potentialValue;
+
+    String additionalPotentialGrade;
     Map<String, Float> additionalPotentialValue;
 
     @Data

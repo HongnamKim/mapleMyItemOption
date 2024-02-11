@@ -13,6 +13,8 @@ public interface ClassMainStat {
 
     List<String> ALL_STAT_CLASS = new ArrayList<>(List.of("제논"));
 
+    List<String> TWO_SUB_STAT_CLASS = new ArrayList<>(List.of("듀얼블레이드", "섀도어", "카데나"));
+
     String STR = "STR";
     String DEX = "DEX";
     String LUK = "LUK";

@@ -3,6 +3,7 @@ package com.example.mapleMyItemOption.domain.item.itemSearch;
 
 import com.example.mapleMyItemOption.api.ApiService;
 import com.example.mapleMyItemOption.domain.character.Character;
+import com.example.mapleMyItemOption.domain.item.ItemSlot;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
 import com.example.mapleMyItemOption.domain.item.PresetItemAnalyzer;
@@ -13,18 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * API 응답으로 받은 Item Equipment 데이터를 ItemEquipment, Item, ItemOption 으로 분리
- * ItemEquipment 는 ocid 로 캐릭터 관계 설정
- * Item 은 ocid 와 preset_id 로 관계 설정 --> 어떤 캐릭터의 어떤 프리셋에 포함된 아이템인지
- * ItemOption 은 item_id 로 아이템 관계 설정 --> 어떤 아이템에 붙은 옵션인지
- *
- * 캐릭터 검색으로 착용 아이템을 불러올 경우 ItemEquipment, MyItem, ItemOption 으로 분리
- * ItemEquipment 는 ocid 로 캐릭터 관계 설정
- */
 @Service
 @RequiredArgsConstructor
 public class ItemSearchService {
@@ -108,7 +101,8 @@ public class ItemSearchService {
         // [[1번 프리셋 아이템 수치들], [2번 프리셋 아이템 수치들], [3번 프리셋 아이템 수치들]]
 
         List<MyItem> preset = myItemEquipment.getPreset1();
-        List<Item> presetItemStats = new ArrayList<>();
+        //List<Item> presetItemStats = new ArrayList<>();
+        Map<String, Item> presetItemStats = new HashMap<>();
 
         switch (presetNum){
             case 2 -> preset = myItemEquipment.getPreset2();
@@ -121,6 +115,9 @@ public class ItemSearchService {
             item.setItemImage(myItem.getItemIcon());
             item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
 
+            item.setPotentialGrade(myItem.getPotentialOptionGrade());
+            item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
+
             presetItemAnalyzer.getStarforce(myItem, item);
             presetItemAnalyzer.getAddOption(myItem, item, character);
             presetItemAnalyzer.getEtcOption(myItem, item, character);
@@ -128,14 +125,49 @@ public class ItemSearchService {
             presetItemAnalyzer.getPotentialValue(myItem, item, character, false);
             presetItemAnalyzer.getPotentialValue(myItem, item, character, true);
 
-
-
             //System.out.println(item);
-            presetItemStats.add(item);
+            //presetItemStats.add(item);
+            presetItemStats.put(myItem.getItemEquipmentSlot(), item);
+
+        }
+
+        List<Item> orderedPresetItemStats = new ArrayList<>();
+        for(String slot : ItemSlot.WEAPONS){
+            Item item = presetItemStats.get(slot);
+            if(item == null){
+                continue;
+            }
+            orderedPresetItemStats.add(item);
+        }
+
+        for(String slot : ItemSlot.ARMORS){
+            Item item = presetItemStats.get(slot);
+            if(item == null){
+                continue;
+            }
+            orderedPresetItemStats.add(item);
+        }
+
+        for(String slot : ItemSlot.ACCESSORIES){
+            Item item = presetItemStats.get(slot);
+            if(item == null){
+                continue;
+            }
+            orderedPresetItemStats.add(item);
+        }
+
+        for(String slot : ItemSlot.OTHERS){
+            Item item = presetItemStats.get(slot);
+            if(item == null){
+                continue;
+            }
+            orderedPresetItemStats.add(item);
         }
 
 
-        return presetItemStats;
+
+
+        return orderedPresetItemStats;
     }
 
 }
