@@ -87,6 +87,11 @@ public class PresetItemAnalyzer {
             return;
         }
 
+        // 주문서 작 안한 아이템 제외
+        if(myItem.getScrollUpgrade() == 0){
+            return;
+        }
+
         List<Float> etcOption = new ArrayList<>();
 
         MyItemOption itemEtcOption = myItem.getItemEtcOption();

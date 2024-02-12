@@ -2,6 +2,8 @@ package com.example.mapleMyItemOption.web.controller.homeController;
 
 import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.domain.character.characterSearch.CharacterSearchService;
+import com.example.mapleMyItemOption.domain.item.ItemSlotCategory;
+import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.itemSearch.ItemSearchService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
@@ -30,6 +32,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -149,13 +152,17 @@ public class HomeController {
         model.addAttribute("presetTotalStat", presetTotalStat);
 
         // 장비 프리셋 아이템 목록
-        /*switch (preset){
-            case 1 -> model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, 1));
-            case 2 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset2());
-            case 3 -> model.addAttribute("presetItemEquipment", myItemEquipment.getPreset3());
-        }*/
         model.addAttribute("weaponList", new ArrayList<>(List.of("무기", "보조무기", "엠블렘")));
-        model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, preset));
+        //model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, preset));
+        Map<String, Item> presetItemStatsWeapons = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlotCategory.WEAPONS);
+        Map<String, Item> presetItemStatsArmors = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlotCategory.ARMORS);
+        Map<String, Item> presetItemStatsAccessories = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlotCategory.ACCESSORIES);
+        Map<String, Item> presetItemStatsOthers = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlotCategory.OTHERS);
+        model.addAttribute("itemWeapons", presetItemStatsWeapons);
+        model.addAttribute("itemArmors", presetItemStatsArmors);
+        model.addAttribute("itemAccessories", presetItemStatsAccessories);
+        model.addAttribute("itemOthers", presetItemStatsOthers);
+
 
         model.addAttribute("averageList", PotentialOption.AVERAGE_LIST); // 잠재 옵션 표시 조건문을 위함
         model.addAttribute("totalList", PotentialOption.TOTAL_LIST); // 잠재 옵션 표시 조건문을 위함

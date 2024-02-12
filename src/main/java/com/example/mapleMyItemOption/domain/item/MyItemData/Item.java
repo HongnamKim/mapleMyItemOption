@@ -10,6 +10,7 @@ public class Item {
     String itemName;
     String itemImage;
     String itemEquipmentSlot;
+    Integer specialRingLevel;
 
     Integer starforce;
     Boolean starforceScroll;

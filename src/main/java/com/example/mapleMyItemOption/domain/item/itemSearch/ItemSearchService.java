@@ -3,20 +3,14 @@ package com.example.mapleMyItemOption.domain.item.itemSearch;
 
 import com.example.mapleMyItemOption.api.ApiService;
 import com.example.mapleMyItemOption.domain.character.Character;
-import com.example.mapleMyItemOption.domain.item.ItemSlot;
+import com.example.mapleMyItemOption.domain.item.*;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
-import com.example.mapleMyItemOption.domain.item.PresetItemAnalyzer;
-import com.example.mapleMyItemOption.domain.item.PresetTotalStatAnalyzer;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
-import com.example.mapleMyItemOption.domain.item.PotentialValuesOption;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,11 +91,10 @@ public class ItemSearchService {
         return presetTotalStats;
     }
 
-    public List<Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum){
-        // [[1번 프리셋 아이템 수치들], [2번 프리셋 아이템 수치들], [3번 프리셋 아이템 수치들]]
+    public Map<String, Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum, ItemSlotCategory category){
 
         List<MyItem> preset = myItemEquipment.getPreset1();
-        //List<Item> presetItemStats = new ArrayList<>();
+
         Map<String, Item> presetItemStats = new HashMap<>();
 
         switch (presetNum){
@@ -114,6 +107,7 @@ public class ItemSearchService {
             item.setItemName(myItem.getItemName());
             item.setItemImage(myItem.getItemIcon());
             item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
+            item.setSpecialRingLevel(myItem.getSpecialRingLevel());
 
             item.setPotentialGrade(myItem.getPotentialOptionGrade());
             item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
@@ -125,49 +119,61 @@ public class ItemSearchService {
             presetItemAnalyzer.getPotentialValue(myItem, item, character, false);
             presetItemAnalyzer.getPotentialValue(myItem, item, character, true);
 
-            //System.out.println(item);
-            //presetItemStats.add(item);
             presetItemStats.put(myItem.getItemEquipmentSlot(), item);
 
         }
 
-        List<Item> orderedPresetItemStats = new ArrayList<>();
+        Map<String, Item> presetItemStatsWeapon = new LinkedHashMap<>();
         for(String slot : ItemSlot.WEAPONS){
-            Item item = presetItemStats.get(slot);
+            Optional.ofNullable(presetItemStats.get(slot))
+                    .ifPresent(item -> presetItemStatsWeapon.put(slot, item));
+            /*Item item = presetItemStats.get(slot);
             if(item == null){
                 continue;
             }
-            orderedPresetItemStats.add(item);
+            presetItemStatsWeapon.put(slot, item);*/
         }
 
+        Map<String, Item> presetItemStatsArmors = new LinkedHashMap<>();
         for(String slot : ItemSlot.ARMORS){
-            Item item = presetItemStats.get(slot);
+            Optional.ofNullable(presetItemStats.get(slot))
+                    .ifPresent(item -> presetItemStatsArmors.put(slot, item));
+            /*Item item = presetItemStats.get(slot);
             if(item == null){
                 continue;
             }
-            orderedPresetItemStats.add(item);
+            presetItemStatsArmors.put(slot, item);*/
         }
 
+        Map<String, Item> presetItemStatsAccessories = new LinkedHashMap<>();
         for(String slot : ItemSlot.ACCESSORIES){
-            Item item = presetItemStats.get(slot);
+            Optional.ofNullable(presetItemStats.get(slot)).ifPresent(item1 -> presetItemStatsAccessories.put(slot, item1));
+            /*Item item = presetItemStats.get(slot);
             if(item == null){
                 continue;
             }
-            orderedPresetItemStats.add(item);
+            presetItemStatsAccessories.put(slot, item);*/
         }
 
+        Map<String, Item> presetItemStatsOthers = new LinkedHashMap<>();
         for(String slot : ItemSlot.OTHERS){
-            Item item = presetItemStats.get(slot);
+            Optional.ofNullable(presetItemStats.get(slot))
+                    .ifPresent(item -> presetItemStatsOthers.put(slot, item));
+            /*Item item = presetItemStats.get(slot);
             if(item == null){
                 continue;
             }
-            orderedPresetItemStats.add(item);
+            presetItemStatsOthers.put(slot, item);*/
         }
 
+        switch (category){
+            case WEAPONS -> {return presetItemStatsWeapon;}
+            case ARMORS -> {return presetItemStatsArmors;}
+            case ACCESSORIES -> {return presetItemStatsAccessories;}
+            case OTHERS -> {return presetItemStatsOthers;}
+        }
 
-
-
-        return orderedPresetItemStats;
+        return null;
     }
 
 }
