@@ -8,12 +8,14 @@
       href="../static/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link
-      th:href="@{/css/my-character.css}"
-      href="../static/css/my-character.css"
-      rel="stylesheet"
+    <link th:href="@{/my-character.css}" href="../static/my-character.css" rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+
   </head>
   <body class="container background-body pt-2 pb-2">
     <div class="character-searchbar">
@@ -208,126 +210,156 @@
 
     <div class="preset-container background-sub-light">
       <div class="preset-item-container accordion" id="accordionExample">
-
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+            >
               무보엠
             </button>
           </h2>
-          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <div
+            id="collapseOne"
+            class="accordion-collapse collapse show"
+            aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample"
+          >
             <div class="accordion-body px-2">
               <div class="preset-item-container-category">
                 <div
-                        th:each="item : ${itemWeapons}"
-                        class="preset-item background-sub-light"
-                        th:object="${item.value}"
+                  th:each="item : ${itemWeapons}"
+                  class="preset-item background-sub-light"
+                  th:object="${item.value}"
                 >
                   <div class="preset-item-sub">
-                    <img th:src="*{itemImage}" alt="item image" class="item-img" />
+                    <img
+                      th:src="*{itemImage}"
+                      alt="item image"
+                      class="item-img"
+                    />
                   </div>
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
                       <span
-                      th:if="*{starforce != 0}"
-                      th:text="|★*{starforce}|"
-                      class="preset-item-starforce"
-                      th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
-                      >★22</span
+                        th:if="*{starforce != 0}"
+                        th:text="|★*{starforce}|"
+                        class="preset-item-starforce"
+                        th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
+                        >★22</span
                       >
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
                     <div class="preset-item-text-options">
                       <div class="preset-item-text-potential">
-                <span th:if="*{addOption != null}"
-                      class="preset-item-text-potential-grade">
-                  추가옵션
-                </span>
+                        <span
+                          th:if="*{addOption != null}"
+                          class="preset-item-text-potential-grade"
+                        >
+                          추가옵션
+                        </span>
                         <!--th:object="*{addOption}"-->
                         <div
-                                th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-
+                          th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
                         >
-                          <span th:if="*{addOption.power != 0}" th:text="|공/마 *{addOption.power}|"></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0}"
-                                  th:text="|보뎀 *{addOption.bossDamage}|"
+                            th:if="*{addOption.power != 0}"
+                            th:text="|공/마 *{addOption.power}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
-                                  th:text="| + *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0}"
+                            th:text="|보뎀 *{addOption.bossDamage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
-                                  th:text="|뎀 *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
+                            th:text="| + *{addOption.damage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.allStat != 0}"
-                                  th:text="|올스탯 *{addOption.allStat}|"
+                            th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
+                            th:text="|뎀 *{addOption.damage}|"
+                          ></span>
+                          <span
+                            th:if="*{addOption.allStat != 0}"
+                            th:text="|올스탯 *{addOption.allStat}|"
                           ></span>
                         </div>
                         <span
-                                th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-                                th:text="|*{addOption.mainStat}급|"
-                        >150급</span
+                          th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
+                          th:text="|*{addOption.mainStat}급|"
+                          >150급</span
                         >
                       </div>
 
                       <div th:if="*{addOption != null}" class="divider"></div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="preset-item-text-potential">
-                        <span class="preset-item-text-potential-grade">주문서</span>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="preset-item-text-potential"
+                      >
+                        <span class="preset-item-text-potential-grade"
+                          >주문서</span
+                        >
                         <span
-                                th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
-                        >6 / 2작</span>
+                          th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
+                          >6 / 2작</span
+                        >
                       </div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="divider"></div>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{potentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{potentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{potentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{potentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{potentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >잠재옵션</span>
+                          >잠재옵션</span
+                        >
                         <div class="d-flex flex-column">
-                <span
-                        th:if="*{potentialValue != null}"
-                        th:each="potential : *{potentialValue}"
-                        th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                >STR% : 33</span>
+                          <span
+                            th:if="*{potentialValue != null}"
+                            th:each="potential : *{potentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 33</span
+                          >
                         </div>
                       </div>
 
-                      <div th:if="*{additionalPotentialValue != null}" class="divider"></div>
+                      <div
+                        th:if="*{additionalPotentialValue != null}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{additionalPotentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{additionalPotentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{additionalPotentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{additionalPotentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{additionalPotentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >에디셔널</span
-                >
+                          >에디셔널</span
+                        >
                         <div class="d-flex flex-column">
-                  <span
-                          th:if="*{additionalPotentialValue != null}"
-                          th:each="potential : *{additionalPotentialValue}"
-                          th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                  >STR% : 20</span>
+                          <span
+                            th:if="*{additionalPotentialValue != null}"
+                            th:each="potential : *{additionalPotentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 20</span
+                          >
                         </div>
-
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -338,123 +370,154 @@
 
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+            >
               방어구
             </button>
           </h2>
-          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+          <div
+            id="collapseTwo"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample"
+          >
             <div class="accordion-body px-2">
               <div class="preset-item-container-category">
                 <div
-                        th:each="item : ${itemArmors}"
-                        class="preset-item background-white"
-                        th:object="${item.value}"
+                  th:each="item : ${itemArmors}"
+                  class="preset-item background-sub-light"
+                  th:object="${item.value}"
                 >
                   <div class="preset-item-sub">
-                    <img th:src="*{itemImage}" alt="item image" class="item-img" />
+                    <img
+                      th:src="*{itemImage}"
+                      alt="item image"
+                      class="item-img"
+                    />
                   </div>
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-              <span
-                      th:if="*{starforce != 0}"
-                      th:text="|★*{starforce}|"
-                      class="preset-item-starforce"
-                      th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
-              >★22</span
-              >
+                      <span
+                        th:if="*{starforce != 0}"
+                        th:text="|★*{starforce}|"
+                        class="preset-item-starforce"
+                        th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
+                        >★22</span
+                      >
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
                     <div class="preset-item-text-options">
                       <div class="preset-item-text-potential">
-                <span th:if="*{addOption != null}"
-                      class="preset-item-text-potential-grade">
-                  추가옵션
-                </span>
+                        <span
+                          th:if="*{addOption != null}"
+                          class="preset-item-text-potential-grade"
+                        >
+                          추가옵션
+                        </span>
                         <!--th:object="*{addOption}"-->
                         <div
-                                th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-
+                          th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
                         >
-                          <span th:if="*{addOption.power != 0}" th:text="|공/마 *{addOption.power}|"></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0}"
-                                  th:text="|보뎀 *{addOption.bossDamage}|"
+                            th:if="*{addOption.power != 0}"
+                            th:text="|공/마 *{addOption.power}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
-                                  th:text="| + *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0}"
+                            th:text="|보뎀 *{addOption.bossDamage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
-                                  th:text="|뎀 *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
+                            th:text="| + *{addOption.damage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.allStat != 0}"
-                                  th:text="|올스탯 *{addOption.allStat}|"
+                            th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
+                            th:text="|뎀 *{addOption.damage}|"
+                          ></span>
+                          <span
+                            th:if="*{addOption.allStat != 0}"
+                            th:text="|올스탯 *{addOption.allStat}|"
                           ></span>
                         </div>
                         <span
-                                th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-                                th:text="|*{addOption.mainStat}급|"
-                        >150급</span
+                          th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
+                          th:text="|*{addOption.mainStat}급|"
+                          >150급</span
                         >
                       </div>
 
                       <div th:if="*{addOption != null}" class="divider"></div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="preset-item-text-potential">
-                        <span class="preset-item-text-potential-grade">주문서</span>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="preset-item-text-potential"
+                      >
+                        <span class="preset-item-text-potential-grade"
+                          >주문서</span
+                        >
                         <span
-                                th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
-                        >6 / 2작</span>
+                          th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
+                          >6 / 2작</span
+                        >
                       </div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="divider"></div>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{potentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{potentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{potentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{potentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{potentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >잠재옵션</span>
+                          >잠재옵션</span
+                        >
                         <div class="d-flex flex-column">
-                <span
-                        th:if="*{potentialValue != null}"
-                        th:each="potential : *{potentialValue}"
-                        th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                >STR% : 33</span>
+                          <span
+                            th:if="*{potentialValue != null}"
+                            th:each="potential : *{potentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 33</span
+                          >
                         </div>
                       </div>
 
-                      <div th:if="*{additionalPotentialValue != null}" class="divider"></div>
+                      <div
+                        th:if="*{additionalPotentialValue != null}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{additionalPotentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{additionalPotentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{additionalPotentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{additionalPotentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{additionalPotentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >에디셔널</span
-                >
+                          >에디셔널</span
+                        >
                         <div class="d-flex flex-column">
-                  <span
-                          th:if="*{additionalPotentialValue != null}"
-                          th:each="potential : *{additionalPotentialValue}"
-                          th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                  >STR% : 20</span>
+                          <span
+                            th:if="*{additionalPotentialValue != null}"
+                            th:each="potential : *{additionalPotentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 20</span
+                          >
                         </div>
-
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -465,127 +528,163 @@
 
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingThree">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseThree"
+              aria-expanded="false"
+              aria-controls="collapseThree"
+            >
               장신구
             </button>
           </h2>
-          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+          <div
+            id="collapseThree"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingThree"
+            data-bs-parent="#accordionExample"
+          >
             <div class="accordion-body px-2">
               <div class="preset-item-container-category">
                 <div
-                        th:each="item : ${itemAccessories}"
-                        class="preset-item background-white"
-                        th:object="${item.value}"
+                  th:each="item : ${itemAccessories}"
+                  class="preset-item background-sub-light"
+                  th:object="${item.value}"
                 >
                   <div class="preset-item-sub">
-                    <img th:src="*{itemImage}" alt="item image" class="item-img" />
+                    <img
+                      th:src="*{itemImage}"
+                      alt="item image"
+                      class="item-img"
+                    />
                   </div>
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-              <span
-                      th:if="*{starforce != 0}"
-                      th:text="|★*{starforce}|"
-                      class="preset-item-starforce"
-                      th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
-              >★22</span
-              >
+                      <span
+                        th:if="*{starforce != 0}"
+                        th:text="|★*{starforce}|"
+                        class="preset-item-starforce"
+                        th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
+                        >★22</span
+                      >
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
                     <div class="preset-item-text-options">
-                      <div th:if="*{specialRingLevel != 0}" class="preset-item-text-potential">
-                        <span class="preset-item-text-potential-grade">특수반지</span>
+                      <div
+                        th:if="*{specialRingLevel != 0}"
+                        class="preset-item-text-potential"
+                      >
+                        <span class="preset-item-text-potential-grade"
+                          >특수반지</span
+                        >
                         <span th:text="|*{specialRingLevel} 레벨|"></span>
                       </div>
                       <div class="preset-item-text-potential">
-                <span th:if="*{addOption != null}"
-                      class="preset-item-text-potential-grade">
-                  추가옵션
-                </span>
+                        <span
+                          th:if="*{addOption != null}"
+                          class="preset-item-text-potential-grade"
+                        >
+                          추가옵션
+                        </span>
                         <!--th:object="*{addOption}"-->
                         <div
-                                th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-
+                          th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
                         >
-                          <span th:if="*{addOption.power != 0}" th:text="|공/마 *{addOption.power}|"></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0}"
-                                  th:text="|보뎀 *{addOption.bossDamage}|"
+                            th:if="*{addOption.power != 0}"
+                            th:text="|공/마 *{addOption.power}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
-                                  th:text="| + *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0}"
+                            th:text="|보뎀 *{addOption.bossDamage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
-                                  th:text="|뎀 *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
+                            th:text="| + *{addOption.damage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.allStat != 0}"
-                                  th:text="|올스탯 *{addOption.allStat}|"
+                            th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
+                            th:text="|뎀 *{addOption.damage}|"
+                          ></span>
+                          <span
+                            th:if="*{addOption.allStat != 0}"
+                            th:text="|올스탯 *{addOption.allStat}|"
                           ></span>
                         </div>
                         <span
-                                th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-                                th:text="|*{addOption.mainStat}급|"
-                        >150급</span
+                          th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
+                          th:text="|*{addOption.mainStat}급|"
+                          >150급</span
                         >
                       </div>
 
                       <div th:if="*{addOption != null}" class="divider"></div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="preset-item-text-potential">
-                        <span class="preset-item-text-potential-grade">주문서</span>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="preset-item-text-potential"
+                      >
+                        <span class="preset-item-text-potential-grade"
+                          >주문서</span
+                        >
                         <span
-                                th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
-                        >6 / 2작</span>
+                          th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
+                          >6 / 2작</span
+                        >
                       </div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="divider"></div>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{potentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{potentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{potentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{potentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{potentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >잠재옵션</span>
+                          >잠재옵션</span
+                        >
                         <div class="d-flex flex-column">
-                <span
-                        th:if="*{potentialValue != null}"
-                        th:each="potential : *{potentialValue}"
-                        th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                >STR% : 33</span>
+                          <span
+                            th:if="*{potentialValue != null}"
+                            th:each="potential : *{potentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 33</span
+                          >
                         </div>
                       </div>
 
-                      <div th:if="*{additionalPotentialValue != null}" class="divider"></div>
+                      <div
+                        th:if="*{additionalPotentialValue != null}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{additionalPotentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{additionalPotentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{additionalPotentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{additionalPotentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{additionalPotentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >에디셔널</span
-                >
+                          >에디셔널</span
+                        >
                         <div class="d-flex flex-column">
-                  <span
-                          th:if="*{additionalPotentialValue != null}"
-                          th:each="potential : *{additionalPotentialValue}"
-                          th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                  >STR% : 20</span>
+                          <span
+                            th:if="*{additionalPotentialValue != null}"
+                            th:each="potential : *{additionalPotentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 20</span
+                          >
                         </div>
-
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -596,123 +695,154 @@
 
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingFour">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFour"
+              aria-expanded="false"
+              aria-controls="collapseFour"
+            >
               기타 장비
             </button>
           </h2>
-          <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+          <div
+            id="collapseFour"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingFour"
+            data-bs-parent="#accordionExample"
+          >
             <div class="accordion-body px-2">
               <div class="preset-item-container-category">
                 <div
-                        th:each="item : ${itemOthers}"
-                        class="preset-item background-white"
-                        th:object="${item.value}"
+                  th:each="item : ${itemOthers}"
+                  class="preset-item background-sub-light"
+                  th:object="${item.value}"
                 >
                   <div class="preset-item-sub">
-                    <img th:src="*{itemImage}" alt="item image" class="item-img" />
+                    <img
+                      th:src="*{itemImage}"
+                      alt="item image"
+                      class="item-img"
+                    />
                   </div>
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-              <span
-                      th:if="*{starforce != 0}"
-                      th:text="|★*{starforce}|"
-                      class="preset-item-starforce"
-                      th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
-              >★22</span
-              >
+                      <span
+                        th:if="*{starforce != 0}"
+                        th:text="|★*{starforce}|"
+                        class="preset-item-starforce"
+                        th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
+                        >★22</span
+                      >
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
                     <div class="preset-item-text-options">
                       <div class="preset-item-text-potential">
-                <span th:if="*{addOption != null}"
-                      class="preset-item-text-potential-grade">
-                  추가옵션
-                </span>
+                        <span
+                          th:if="*{addOption != null}"
+                          class="preset-item-text-potential-grade"
+                        >
+                          추가옵션
+                        </span>
                         <!--th:object="*{addOption}"-->
                         <div
-                                th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-
+                          th:if="${weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
                         >
-                          <span th:if="*{addOption.power != 0}" th:text="|공/마 *{addOption.power}|"></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0}"
-                                  th:text="|보뎀 *{addOption.bossDamage}|"
+                            th:if="*{addOption.power != 0}"
+                            th:text="|공/마 *{addOption.power}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
-                                  th:text="| + *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0}"
+                            th:text="|보뎀 *{addOption.bossDamage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
-                                  th:text="|뎀 *{addOption.damage}|"
+                            th:if="*{addOption.bossDamage != 0 && addOption.damage != 0}"
+                            th:text="| + *{addOption.damage}|"
                           ></span>
                           <span
-                                  th:if="*{addOption.allStat != 0}"
-                                  th:text="|올스탯 *{addOption.allStat}|"
+                            th:if="*{addOption.bossDamage == 0 && addOption.damage != 0}"
+                            th:text="|뎀 *{addOption.damage}|"
+                          ></span>
+                          <span
+                            th:if="*{addOption.allStat != 0}"
+                            th:text="|올스탯 *{addOption.allStat}|"
                           ></span>
                         </div>
                         <span
-                                th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
-                                th:text="|*{addOption.mainStat}급|"
-                        >150급</span
+                          th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
+                          th:text="|*{addOption.mainStat}급|"
+                          >150급</span
                         >
                       </div>
 
                       <div th:if="*{addOption != null}" class="divider"></div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="preset-item-text-potential">
-                        <span class="preset-item-text-potential-grade">주문서</span>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="preset-item-text-potential"
+                      >
+                        <span class="preset-item-text-potential-grade"
+                          >주문서</span
+                        >
                         <span
-                                th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
-                        >6 / 2작</span>
+                          th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
+                          >6 / 2작</span
+                        >
                       </div>
 
-
-                      <div th:if="${item.value.etcOption != null && isNormalServer}" class="divider"></div>
+                      <div
+                        th:if="${item.value.etcOption != null && isNormalServer}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{potentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{potentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{potentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{potentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{potentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{potentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >잠재옵션</span>
+                          >잠재옵션</span
+                        >
                         <div class="d-flex flex-column">
-                <span
-                        th:if="*{potentialValue != null}"
-                        th:each="potential : *{potentialValue}"
-                        th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                >STR% : 33</span>
+                          <span
+                            th:if="*{potentialValue != null}"
+                            th:each="potential : *{potentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 33</span
+                          >
                         </div>
                       </div>
 
-                      <div th:if="*{additionalPotentialValue != null}" class="divider"></div>
+                      <div
+                        th:if="*{additionalPotentialValue != null}"
+                        class="divider"
+                      ></div>
 
                       <div class="preset-item-text-potential">
-                <span
-                        th:if="*{additionalPotentialValue != null}"
-                        class="preset-item-text-potential-grade"
-                        th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
+                        <span
+                          th:if="*{additionalPotentialValue != null}"
+                          class="preset-item-text-potential-grade"
+                          th:classappend="*{additionalPotentialGrade} == '레전드리' ? 'text-color-legendary' :
                                     (*{additionalPotentialGrade} == '유니크' ? 'text-color-unique' :
                                     (*{additionalPotentialGrade} == '에픽' ? 'text-color-epic' :
                                     (*{additionalPotentialGrade} == '레어' ? 'text-color-rare' : '')))"
-                >에디셔널</span
-                >
+                          >에디셔널</span
+                        >
                         <div class="d-flex flex-column">
-                  <span
-                          th:if="*{additionalPotentialValue != null}"
-                          th:each="potential : *{additionalPotentialValue}"
-                          th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
-                  >STR% : 20</span>
+                          <span
+                            th:if="*{additionalPotentialValue != null}"
+                            th:each="potential : *{additionalPotentialValue}"
+                            th:text="|${potential.key} : ${#numbers.formatDecimal(potential.value, 1, 1)}|"
+                            >STR% : 20</span
+                          >
                         </div>
-
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -720,148 +850,179 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <div class="preset-stat-container">
         <div class="preset-stat-container-upper">
           <div class="preset-stat-specific-container background-white">
+            <div class="preset-stat-title">
+              <span class="preset-stat-title-text">스타포스</span>
+              <div class="preset-stat-title-spacer"></div>
+            </div>
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span class="preset-stat-value-title">평균</span>
+                <span
+                  class="preset-stat-value-text"
+                  th:text="|${#numbers.formatDecimal(presetTotalStat.averageStarforce, 1, 1)} 성|"
+                  >21</span>
+              </div>
 
-          <h5>스타포스</h5>
-          <h6>평균 스타포스</h6>
-          <div>
+              <div class="divider"></div>
+
+              <div class="preset-stat-value">
+              <span class="preset-stat-value-title">최대 / 최소</span>
+              <span
+                class="preset-stat-value-text"
+                th:text="|${presetTotalStat.maximumStarforce} / ${presetTotalStat.minimumStarforce} 성|"
+                >22 / 10</span
+              >
+            </div>
+            </div>
+          </div>
+
+          <div
+            class="preset-stat-specific-container preset-stat-specific-container-center background-white"
+          >
+            <div class="preset-stat-title">
+              <span class="preset-stat-title-text">추가옵션</span>
+              <div class="preset-stat-title-spacer"></div>
+            </div>
+
+            <div class="preset-stat-value-container">
+              <div th:each="addOption, count : ${presetTotalStat.averageAddOption}">
+                <span th:text="|${addOption.key}제 장비 : ${addOption.value} 급|"
+                  >150제 장비 : 150</span>
+                <div th:if="${count.count != count.size}" class="divider"></div>
+            </div>
+            </div>
+          </div>
+          <div
+            class="preset-stat-specific-container background-white"
+            th:if="${isNormalServer}"
+          >
+            <h5>평균 주문서 옵션</h5>
+            <span>제네시스 무기 제외</span>
             <span
-              th:text="|${#numbers.formatDecimal(presetTotalStat.averageStarforce, 1, 1)} 성|"
-              >21</span
-            >
+              th:text="|${#numbers.formatDecimal(presetTotalStat.averageEtcOption[0], 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.averageEtcOption[1], 1, 1)} 작|"
+            ></span>
           </div>
-
-          <hr class="my-1" />
-
-          <h6>최대 / 최소 스타포스</h6>
-          <div>
-            <span
-              th:text="|${presetTotalStat.maximumStarforce} / ${presetTotalStat.minimumStarforce} 성|"
-              >22 / 10</span
-            >
-          </div>
-        </div>
-          <div class="preset-stat-specific-container background-white">
-          <h5>평균 추가옵션</h5>
-          <div th:each="addOption : ${presetTotalStat.averageAddOption}">
-            <span th:text="|${addOption.key}제 장비 : ${addOption.value} 급|"
-              >150제 장비 : 150</span
-            >
-          </div>
-        </div>
-
-          <div class="preset-stat-specific-container background-white" th:if="${isNormalServer}">
-          <h5>평균 주문서 옵션</h5>
-          <span>제네시스 무기 제외</span>
-          <span
-            th:text="|${#numbers.formatDecimal(presetTotalStat.averageEtcOption[0], 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.averageEtcOption[1], 1, 1)} 작|"
-          ></span>
-        </div>
         </div>
 
         <div class="preset-stat-container-upper">
-          <div class="preset-stat-specific-container background-white">
-          <h5>잠재능력</h5>
-
-          <h6>등급 개수</h6>
           <div
-            th:each="potentialGrade : ${presetTotalStat.potentialGradeCount}"
+            class="preset-stat-specific-container background-white"
+            th:classappend="${isNormalServer ? 'margin-right-p5rem' : ''}"
           >
-            <span
-              th:text="|${potentialGrade.key} : ${potentialGrade.value}개|"
-            ></span>
-          </div>
+            <h5>잠재능력</h5>
 
-          <hr class="my-1" />
-
-          <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
-          <div
-            th:each="potentialValue : ${presetTotalStat.averagePotentialValue}"
-          >
-            <span
-              th:if="${averageList.contains(potentialValue.key)}"
-              th:text="|${potentialValue.key} : ${potentialValue.value}|"
-            ></span>
-          </div>
-
-          <hr class="my-1" />
-
-          <h6>전체 수치</h6>
-          <div
-            th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}"
-          >
-            <span
-              th:if="${totalList.contains(potentialTotalValue.key)}"
-              th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
-            ></span>
-          </div>
-
-          <hr class="my-1" />
-
-          <h6>옵션 개수</h6>
-          <div
-            th:each="potentialLines : ${presetTotalStat.potentialOptionLines}"
-          >
-            <span
-              th:if="${totalList.contains(potentialLines.key)}"
-              th:text="|${potentialLines.key} : ${#numbers.formatInteger(potentialLines.value, 0)} 줄|"
-            ></span>
-          </div>
-        </div>
-          <div class="preset-stat-specific-container background-white" th:if="${isNormalServer}">
-          <h5>에디셔널 잠재능력</h5>
-
-          <h6>등급 개수</h6>
-          <div
-            th:each="additionalPotentialGrade : ${presetTotalStat.additionalPotentialGradeCount}"
-          >
-            <span
-              th:text="|${additionalPotentialGrade.key} : ${additionalPotentialGrade.value}개|"
-              >레전드리 : 3개</span
+            <h6>등급 개수</h6>
+            <div
+              th:each="potentialGrade : ${presetTotalStat.potentialGradeCount}"
             >
+              <span
+                th:text="|${potentialGrade.key} : ${potentialGrade.value}개|"
+              ></span>
+            </div>
+
+            <hr class="my-1" />
+
+            <h6>평균 수치</h6>
+            <div
+              th:each="potentialValue : ${presetTotalStat.averagePotentialValue}"
+            >
+              <span
+                th:if="${averageList.contains(potentialValue.key)}"
+                th:text="|${potentialValue.key} : ${potentialValue.value}|"
+              ></span>
+            </div>
+
+            <hr class="my-1" />
+
+            <h6>전체 수치</h6>
+            <div
+              th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}"
+            >
+              <span
+                th:if="${totalList.contains(potentialTotalValue.key)}"
+                th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
+              ></span>
+              <span
+                th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"
+              ></span>
+            </div>
+
+            <!--
+              <hr class="my-1" />
+
+              <h6>옵션 개수</h6>
+              <div
+                th:each="potentialLines : ${presetTotalStat.potentialOptionLines}"
+              >
+                <span
+                  th:if="${totalList.contains(potentialLines.key)}"
+                  th:text="|${potentialLines.key} : ${#numbers.formatInteger(potentialLines.value, 0)} 줄|"
+                ></span>
+              </div>
+              -->
           </div>
-
-          <hr class="my-1" />
-
-          <h6>평균 수치 (옵션 총합 / 옵션 보유 아이템 개수)</h6>
           <div
-            th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}"
+            class="preset-stat-specific-container background-white"
+            th:if="${isNormalServer}"
           >
-            <span
-              th:if="${averageList.contains(additionalPotentialValue.key)}"
-              th:text="|${additionalPotentialValue.key} : ${additionalPotentialValue.value}|"
-            ></span>
+            <h5>에디셔널 잠재능력</h5>
+
+            <h6>등급 개수</h6>
+            <div
+              th:each="additionalPotentialGrade : ${presetTotalStat.additionalPotentialGradeCount}"
+            >
+              <span
+                th:text="|${additionalPotentialGrade.key} : ${additionalPotentialGrade.value}개|"
+                >레전드리 : 3개</span
+              >
+            </div>
+
+            <hr class="my-1" />
+
+            <h6>평균 수치</h6>
+            <div
+              th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}"
+            >
+              <span
+                th:if="${averageList.contains(additionalPotentialValue.key)}"
+                th:text="|${additionalPotentialValue.key} : ${additionalPotentialValue.value}|"
+              ></span>
+            </div>
+
+            <hr class="my-1" />
+
+            <h6>전체 수치</h6>
+            <div
+              th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}"
+            >
+              <span
+                th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
+                th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"
+              ></span>
+              <span
+                th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"
+              ></span>
+            </div>
+
+            <!--
+              <hr class="my-1" />
+
+              <h6>옵션 개수</h6>
+              <div
+                th:each="additionalPotentialLines : ${presetTotalStat.additionalPotentialOptionLines}"
+              >
+                <span
+                  th:if="${totalList.contains(additionalPotentialLines.key)}"
+                  th:text="|${additionalPotentialLines.key} : ${#numbers.formatInteger(additionalPotentialLines.value, 0)} 줄|"
+                ></span>
+              </div>
+              -->
           </div>
-
-          <hr class="my-1" />
-
-          <h6>전체 수치</h6>
-          <div
-            th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}"
-          >
-            <span
-              th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
-              th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"
-            ></span>
-          </div>
-
-          <hr class="my-1" />
-
-          <h6>옵션 개수</h6>
-          <div
-            th:each="additionalPotentialLines : ${presetTotalStat.additionalPotentialOptionLines}"
-          >
-            <span
-              th:if="${totalList.contains(additionalPotentialLines.key)}"
-              th:text="|${additionalPotentialLines.key} : ${#numbers.formatInteger(additionalPotentialLines.value, 0)} 줄|"
-            ></span>
-          </div>
-        </div>
         </div>
       </div>
     </div>

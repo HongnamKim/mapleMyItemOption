@@ -174,7 +174,7 @@
   background-color: rgb(200, 200, 200);
 }
 
-.background-sub-light{
+.background-sub-light {
   background-color: rgb(233, 234, 237);
 }
 
@@ -287,7 +287,7 @@
   flex-direction: row;
 }
 
-.preset-item-text-potential-grade{
+.preset-item-text-potential-grade {
   width: 30%;
   margin-right: 0.5rem;
 }
@@ -297,17 +297,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  border: 1px solid blue;
 }
 
-.preset-stat-container-upper{
+.preset-stat-container-upper {
   display: flex;
   flex-direction: row;
 
   width: 100%;
-
-  border: 1px solid green;
 }
 
 .preset-stat-specific-container {
@@ -315,8 +311,55 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 0.5rem;
-  border: 1px red solid;
-  flex:1;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+
+  width: 100%;
 
   border-radius: 0.5rem;
+  border: 1px solid red;
+}
+
+.preset-stat-specific-container-center {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.margin-right-p5rem {
+  margin-right: 0.5rem;
+}
+
+.preset-stat-title {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.preset-stat-title-text {
+
+
+}
+
+.preset-stat-title-space {
+  flex: 1;
+  border: 1px solid red;
+}
+
+.preset-stat-value-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+
+  border: 1px solid red;
+}
+
+.preset-stat-value {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }

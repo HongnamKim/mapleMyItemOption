@@ -8,6 +8,7 @@ import com.example.mapleMyItemOption.domain.item.itemSearch.ItemSearchService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
+import com.example.mapleMyItemOption.domain.searchHistory.SearchHistoryService;
 import com.example.mapleMyItemOption.web.SessionConst;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionMyItemEquipment;
@@ -41,6 +42,7 @@ public class HomeController {
 
     private final CharacterSearchService characterSearchService;
     private final ItemSearchService itemSearchService;
+    private final SearchHistoryService searchHistoryService;
 
     @GetMapping("/")
     public String home(@ModelAttribute("characterDto") CharacterDto dto, Model model){
@@ -82,8 +84,9 @@ public class HomeController {
         //POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
         //세선에 객체 넣기
         try {
-            String date;
-            date = dto.getDate();
+            String date = dto.getDate();
+
+            searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
 
             if(dto.getMaximumAssaultDate()){
                 date = characterSearchService.findMaximumAssaultDate(characterName, dto.getDate());
