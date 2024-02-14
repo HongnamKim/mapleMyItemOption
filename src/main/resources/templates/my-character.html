@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
   <head>
     <meta charset="UTF-8" />
     <title>Title</title>
@@ -8,7 +8,7 @@
       href="../static/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link th:href="@{/my-character.css}" href="../static/my-character.css" rel="stylesheet"
+    <link th:href="@{/css/my-character.css}" href="../static/css/my-character.css" rel="stylesheet"
     />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
@@ -34,6 +34,7 @@
             th:field="*{characterName}"
             required
           />
+          <label for="date" hidden></label>
           <input
             id="date"
             type="date"
@@ -891,21 +892,28 @@
 
             <div class="preset-stat-value-container">
               <div th:each="addOption, count : ${presetTotalStat.averageAddOption}">
-                <span th:text="|${addOption.key}제 장비 : ${addOption.value} 급|"
-                  >150제 장비 : 150</span>
+                <div class="preset-stat-value">
+                  <span th:text="|${addOption.key}제|"
+                   >150제</span>
+                  <span th:text="|${addOption.value} 급|">150</span>
+
+                </div>
                 <div th:if="${count.count != count.size}" class="divider"></div>
-            </div>
+              </div>
             </div>
           </div>
-          <div
-            class="preset-stat-specific-container background-white"
-            th:if="${isNormalServer}"
-          >
-            <h5>평균 주문서 옵션</h5>
-            <span>제네시스 무기 제외</span>
-            <span
-              th:text="|${#numbers.formatDecimal(presetTotalStat.averageEtcOption[0], 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.averageEtcOption[1], 1, 1)} 작|"
-            ></span>
+
+          <div class="preset-stat-specific-container background-white" th:if="${isNormalServer}">
+            <div class="preset-stat-title">
+              <span class="preset-stat-title-text">평균 주문서 옵션</span>
+              <div class="preset-stat-title-spacer"></div>
+            </div>
+
+            <div class="preset-stat-value-container">
+              <span
+                      th:text="|${#numbers.formatDecimal(presetTotalStat.averageEtcOption[0], 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.averageEtcOption[1], 1, 1)} 작|"
+              ></span>
+            </div>
           </div>
         </div>
 
@@ -914,114 +922,117 @@
             class="preset-stat-specific-container background-white"
             th:classappend="${isNormalServer ? 'margin-right-p5rem' : ''}"
           >
-            <h5>잠재능력</h5>
-
-            <h6>등급 개수</h6>
-            <div
-              th:each="potentialGrade : ${presetTotalStat.potentialGradeCount}"
-            >
-              <span
-                th:text="|${potentialGrade.key} : ${potentialGrade.value}개|"
-              ></span>
+            <div class="preset-stat-title">
+              <span class="preset-stat-title-text">잠재능력</span>
+              <div class="preset-stat-title-spacer"></div>
             </div>
 
-            <hr class="my-1" />
-
-            <h6>평균 수치</h6>
-            <div
-              th:each="potentialValue : ${presetTotalStat.averagePotentialValue}"
-            >
-              <span
-                th:if="${averageList.contains(potentialValue.key)}"
-                th:text="|${potentialValue.key} : ${potentialValue.value}|"
-              ></span>
-            </div>
-
-            <hr class="my-1" />
-
-            <h6>전체 수치</h6>
-            <div
-              th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}"
-            >
-              <span
-                th:if="${totalList.contains(potentialTotalValue.key)}"
-                th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
-              ></span>
-              <span
-                th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"
-              ></span>
-            </div>
-
-            <!--
-              <hr class="my-1" />
-
-              <h6>옵션 개수</h6>
-              <div
-                th:each="potentialLines : ${presetTotalStat.potentialOptionLines}"
-              >
-                <span
-                  th:if="${totalList.contains(potentialLines.key)}"
-                  th:text="|${potentialLines.key} : ${#numbers.formatInteger(potentialLines.value, 0)} 줄|"
-                ></span>
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>등급 개수</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="potentialGrade : ${presetTotalStat.potentialGradeCount}">
+                    <span th:text="|${potentialGrade.key}|"></span>
+                    <span th:text="|${potentialGrade.value} 개|"></span>
+                  </div>
+                </div>
               </div>
-              -->
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>평균 수치</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="potentialValue : ${presetTotalStat.averagePotentialValue}">
+                    <span
+                      th:if="${averageList.contains(potentialValue.key)}"
+                      th:text="|${potentialValue.key}|"></span>
+                    <span
+                            th:if="${averageList.contains(potentialValue.key)}"
+                            th:text="|${potentialValue.value}|"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>전체 수치</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}">
+                    <span
+                      th:if="${totalList.contains(potentialTotalValue.key)}"
+                      th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
+                    ></span>
+                    <span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"
+                    ></span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
           </div>
+
+
           <div
             class="preset-stat-specific-container background-white"
             th:if="${isNormalServer}"
           >
-            <h5>에디셔널 잠재능력</h5>
-
-            <h6>등급 개수</h6>
-            <div
-              th:each="additionalPotentialGrade : ${presetTotalStat.additionalPotentialGradeCount}"
-            >
-              <span
-                th:text="|${additionalPotentialGrade.key} : ${additionalPotentialGrade.value}개|"
-                >레전드리 : 3개</span
-              >
+            <div class="preset-stat-title">
+              <span class="preset-stat-title-text">에디셔널 잠재능력</span>
+              <div class="preset-stat-title-spacer"></div>
             </div>
 
-            <hr class="my-1" />
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>등급 개수</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="additionalPotentialGrade : ${presetTotalStat.additionalPotentialGradeCount}">
+                    <span th:text="|${additionalPotentialGrade.key}|">레전드리</span>
+                    <span th:text="|${additionalPotentialGrade.value}개|">3 개</span>
+                  </div>
+                </div>
 
-            <h6>평균 수치</h6>
-            <div
-              th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}"
-            >
-              <span
-                th:if="${averageList.contains(additionalPotentialValue.key)}"
-                th:text="|${additionalPotentialValue.key} : ${additionalPotentialValue.value}|"
-              ></span>
-            </div>
-
-            <hr class="my-1" />
-
-            <h6>전체 수치</h6>
-            <div
-              th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}"
-            >
-              <span
-                th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
-                th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"
-              ></span>
-              <span
-                th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"
-              ></span>
-            </div>
-
-            <!--
-              <hr class="my-1" />
-
-              <h6>옵션 개수</h6>
-              <div
-                th:each="additionalPotentialLines : ${presetTotalStat.additionalPotentialOptionLines}"
-              >
-                <span
-                  th:if="${totalList.contains(additionalPotentialLines.key)}"
-                  th:text="|${additionalPotentialLines.key} : ${#numbers.formatInteger(additionalPotentialLines.value, 0)} 줄|"
-                ></span>
               </div>
-              -->
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>평균 수치</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}">
+                    <span
+                      th:if="${averageList.contains(additionalPotentialValue.key)}"
+                      th:text="|${additionalPotentialValue.key}|"></span>
+                    <span th:if="${averageList.contains(additionalPotentialValue.key)}" th:text="| ${additionalPotentialValue.value}|"></span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="preset-stat-value-container">
+              <div class="preset-stat-value">
+                <span>전체 수치</span>
+                <div class="preset-stat-value-potential">
+                  <div th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}">
+                    <span
+                      th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
+                      th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"></span>
+                    <span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

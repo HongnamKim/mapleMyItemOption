@@ -23,8 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ApiService apiService(){
-        return new ExternalApiService();
-        //return new InternalApiService();
+        //return new ExternalApiService();
+        return new InternalApiService();
     }
 
     @Bean
