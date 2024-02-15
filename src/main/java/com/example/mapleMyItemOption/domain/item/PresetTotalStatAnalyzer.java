@@ -417,6 +417,7 @@ public class PresetTotalStatAnalyzer {
 
     public List<List<Float>> getPresetAverageEtcOption(MyItemEquipment myItemEquipment, Character character){
         List<List<Float>> presetAverageEtcOption = new ArrayList<>();
+        List<Map<String, Float>> presetAverageEtcOptionCategory = new ArrayList<>();
 
         String mainStat = getMainStat(character);
         List<List<MyItem>> presets = getPresets(myItemEquipment);

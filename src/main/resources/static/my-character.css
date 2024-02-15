@@ -1,3 +1,7 @@
+.container-min-width {
+  min-width: 1000px;
+}
+
 .character-searchbar {
   display: flex;
   flex-direction: row-reverse;
@@ -179,6 +183,7 @@
 }
 
 .background-body {
+
   background-color: rgb(39, 44, 51);
 }
 
@@ -366,4 +371,6 @@
   display: flex;
   flex-direction: column;
   align-items: end;
+  width: 80%;
+  border: 1px solid red;
 }

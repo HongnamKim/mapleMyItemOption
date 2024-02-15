@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(value = {"date", "artifact_exp", "artifact_point"})
+@JsonIgnoreProperties(value = {"date", "artifact_exp", "artifact_point"}, ignoreUnknown = true)
 public class CharacterUnion {
     private Integer unionLevel;
     private String unionGrade;

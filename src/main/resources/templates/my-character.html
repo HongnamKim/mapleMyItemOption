@@ -8,7 +8,7 @@
       href="../static/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link th:href="@{/css/my-character.css}" href="../static/css/my-character.css" rel="stylesheet"
+    <link th:href="@{/my-character.css}" href="../static/my-character.css" rel="stylesheet"
     />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
@@ -17,7 +17,7 @@
     ></script>
 
   </head>
-  <body class="container background-body pt-2 pb-2">
+  <body class="container container-min-width background-body pt-2 pb-2">
     <div class="character-searchbar">
       <form
         th:action="@{/}"
@@ -932,7 +932,11 @@
                 <span>등급 개수</span>
                 <div class="preset-stat-value-potential">
                   <div th:each="potentialGrade : ${presetTotalStat.potentialGradeCount}">
-                    <span th:text="|${potentialGrade.key}|"></span>
+                    <span th:text="|${potentialGrade.key}|"
+                          th:classappend="*{potentialGrade.key} == '레전드리' ? 'text-color-legendary' :
+                                    (*{potentialGrade.key} == '유니크' ? 'text-color-unique' :
+                                    (*{potentialGrade.key} == '에픽' ? 'text-color-epic' :
+                                    (*{potentialGrade.key} == '레어' ? 'text-color-rare' : '')))"></span>
                     <span th:text="|${potentialGrade.value} 개|"></span>
                   </div>
                 </div>
@@ -948,10 +952,10 @@
                   <div th:each="potentialValue : ${presetTotalStat.averagePotentialValue}">
                     <span
                       th:if="${averageList.contains(potentialValue.key)}"
-                      th:text="|${potentialValue.key}|"></span>
+                      th:text="|${potentialValue.key.replace('%','')}|"></span>
                     <span
                             th:if="${averageList.contains(potentialValue.key)}"
-                            th:text="|${potentialValue.value}|"></span>
+                            th:text="|${potentialValue.key.contains('%') ? potentialValue.value+'%': potentialValue.value}|"></span>
                   </div>
                 </div>
               </div>
@@ -966,8 +970,8 @@
                   <div th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}">
                     <span
                       th:if="${totalList.contains(potentialTotalValue.key)}"
-                      th:text="|${potentialTotalValue.key} : ${#numbers.formatInteger(potentialTotalValue.value, 0)}|"
-                    ></span>
+                      th:text="${potentialTotalValue.key.replace('%', '')}"></span>
+                    <span th:text="|${#numbers.formatInteger(potentialTotalValue.value, 0)}${potentialTotalValue.key.contains('%')?'%':''}|"></span>
                     <span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"
                     ></span>
                   </div>
@@ -992,11 +996,14 @@
                 <span>등급 개수</span>
                 <div class="preset-stat-value-potential">
                   <div th:each="additionalPotentialGrade : ${presetTotalStat.additionalPotentialGradeCount}">
-                    <span th:text="|${additionalPotentialGrade.key}|">레전드리</span>
+                    <span th:text="|${additionalPotentialGrade.key}|"
+                          th:classappend="*{additionalPotentialGrade.key} == '레전드리' ? 'text-color-legendary' :
+                                    (*{additionalPotentialGrade.key} == '유니크' ? 'text-color-unique' :
+                                    (*{additionalPotentialGrade.key} == '에픽' ? 'text-color-epic' :
+                                    (*{additionalPotentialGrade.key} == '레어' ? 'text-color-rare' : '')))">레전드리</span>
                     <span th:text="|${additionalPotentialGrade.value}개|">3 개</span>
                   </div>
                 </div>
-
               </div>
             </div>
 
@@ -1009,11 +1016,11 @@
                   <div th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}">
                     <span
                       th:if="${averageList.contains(additionalPotentialValue.key)}"
-                      th:text="|${additionalPotentialValue.key}|"></span>
-                    <span th:if="${averageList.contains(additionalPotentialValue.key)}" th:text="| ${additionalPotentialValue.value}|"></span>
+                      th:text="|${additionalPotentialValue.key.replace('%', '')}|"></span>
+                    <span th:if="${averageList.contains(additionalPotentialValue.key)}"
+                          th:text="|${additionalPotentialValue.key.contains('%') ? additionalPotentialValue.value + '%' : additionalPotentialValue.value}|"></span>
                   </div>
                 </div>
-
               </div>
             </div>
 
@@ -1026,7 +1033,10 @@
                   <div th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}">
                     <span
                       th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
-                      th:text="|${additionalPotentialTotalValue.key} : ${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}|"></span>
+                      th:text="|${additionalPotentialTotalValue.key.replace('%', '')}|"></span>
+                    <span
+                            th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
+                            th:text="|${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}${additionalPotentialTotalValue.key.contains('%') ? '%':''}|"></span>
                     <span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>
                   </div>
                 </div>
