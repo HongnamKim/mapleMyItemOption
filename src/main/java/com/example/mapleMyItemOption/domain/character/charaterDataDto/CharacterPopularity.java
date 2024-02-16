@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(value = {"date"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CharacterPopularity {
     private Integer popularity;
 }

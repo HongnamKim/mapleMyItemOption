@@ -47,7 +47,7 @@ public class ItemSearchService {
 
         List<Map<Integer, Float>> presetAverageAddOption = presetTotalStatAnalyzer.getPresetAverageAddOption(myItemEquipment, character);
 
-        List<List<Float>> presetAverageEtcOption = presetTotalStatAnalyzer.getPresetAverageEtcOption(myItemEquipment, character);
+        List<Map<String, List<Float>>> presetAverageEtcOption = presetTotalStatAnalyzer.getPresetAverageEtcOption(myItemEquipment, character);
 
         List<Map<String, Integer>> presetPotentialGradeCount = presetTotalStatAnalyzer.getPresetPotentialGradeCount(myItemEquipment, false);
         List<Map<String, Integer>> presetAdditionalPotentialGradeCount = presetTotalStatAnalyzer.getPresetPotentialGradeCount(myItemEquipment, true);

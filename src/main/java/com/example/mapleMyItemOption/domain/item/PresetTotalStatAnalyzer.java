@@ -5,12 +5,16 @@ import com.example.mapleMyItemOption.domain.character.ClassMainStat;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemOption;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class PresetTotalStatAnalyzer {
+
+    private final PresetItemAnalyzer presetItemAnalyzer;
 
     /**
      * 각각 프리셋 별로 잠재능력 옵션들의 수치를 구하는 메소드
@@ -415,39 +419,90 @@ public class PresetTotalStatAnalyzer {
         return itemAddOptionStats;
     }
 
-    public List<List<Float>> getPresetAverageEtcOption(MyItemEquipment myItemEquipment, Character character){
-        List<List<Float>> presetAverageEtcOption = new ArrayList<>();
-        List<Map<String, Float>> presetAverageEtcOptionCategory = new ArrayList<>();
+    public List<Map<String, List<Float>>> getPresetAverageEtcOption(MyItemEquipment myItemEquipment, Character character){
+        //List<List<Float>> presetAverageEtcOption = new ArrayList<>();
+
+        List<Map<String, List<Float>>> presetAverageEtcOptionCategory = new ArrayList<>();
 
         String mainStat = getMainStat(character);
         List<List<MyItem>> presets = getPresets(myItemEquipment);
 
 
         for(List<MyItem> preset : presets) {
-            presetAverageEtcOption.add(getAverageEtcOption(preset, mainStat));
+            //presetAverageEtcOption.add(getAverageEtcOption(preset, mainStat));
+            presetAverageEtcOptionCategory.add(getAverageEtcOption(preset, mainStat));
         }
 
-        //presetAverageEtcOption.add(getAverageEtcOption(presets.get(0), mainStat));
-
-        return presetAverageEtcOption;
+        //return presetAverageEtcOption;
+        return presetAverageEtcOptionCategory;
     }
 
-    private List<Float> getAverageEtcOption(List<MyItem> preset, String mainStat) {
+    private Map<String, List<Float>> getAverageEtcOption(List<MyItem> preset, String mainStat) {
+        /*
         Float totalMainStatOption = 0F; // 주스탯 총합
         Float totalPowerOption = 0F; // 공마 총합
         Float totalUpgradeCount = 0F; // 총 업그레이드 횟수
+        */
 
-        for (MyItem myItem : preset) {
-            MyItemOption itemEtcOption = myItem.getItemEtcOption();
+        Map<String, float[]> averageEtcOptionTotal = new HashMap<>(); // 장비 카테고리 별 주문서 옵션 합
+        String[] categoryKey = {"무보엠", "방어구", "장신구", "기타 장비"};
+        for(String key : categoryKey){
+            averageEtcOptionTotal.put(key, new float[]{0, 0});
+        }
 
-            if(myItem.getItemName().contains("제네시스") || myItem.getItemEquipmentSlot().equals("기계 심장")){ // 제네 무기 제외
+        Map<String, Integer> averageEtcOptionCount = new HashMap<>(); // 장비 카테고리 별 주문서 업그레이드 횟수
+
+
+        for (MyItem myItem : preset){
+            // 주문서 적용하지 않은 아이템 제외
+            if(myItem.getScrollUpgrade() == 0){
                 continue;
             }
 
-            if(myItem.getScrollUpgrade() == 0 &&
+            MyItemOption itemEtcOption = myItem.getItemEtcOption();
+
+            String itemEquipmentSlot = myItem.getItemEquipmentSlot();
+
+            String itemCategory;
+            if(ItemSlot.WEAPONS.contains(itemEquipmentSlot)){
+                itemCategory = "무보엠";
+            } else if (ItemSlot.ARMORS.contains(itemEquipmentSlot)) {
+                itemCategory = "방어구";
+            } else if (ItemSlot.ACCESSORIES.contains(itemEquipmentSlot)) {
+                itemCategory = "장신구";
+            } else {
+                itemCategory = "기타 장비";
+            }
+
+            List<Integer> starforceScrollValue = new ArrayList<>(List.of(0, 0));
+            if(myItem.getStarforceScrollFlag().equals("사용")) {
+                starforceScrollValue = presetItemAnalyzer.getStarforceScrollValue(myItem);
+            }
+
+            switch (mainStat){
+                case "STR" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getStr() - starforceScrollValue.get(1);
+                case "DEX" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getDex() - starforceScrollValue.get(1);
+                case "INT" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getIntel() - starforceScrollValue.get(1);
+                case "LUK" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getLuk() - starforceScrollValue.get(1);
+            }
+
+            if(mainStat.equals("INT")){
+                averageEtcOptionTotal.get(itemCategory)[0] += itemEtcOption.getMagicPower() - starforceScrollValue.get(0);
+            } else {
+                averageEtcOptionTotal.get(itemCategory)[0] += itemEtcOption.getAttackPower() - starforceScrollValue.get(0);
+            }
+
+            Integer currentCount = averageEtcOptionCount.getOrDefault(itemCategory, 0);
+            averageEtcOptionCount.put(itemCategory, currentCount + myItem.getScrollUpgrade());
+
+            /*if(myItem.getScrollUpgrade() == 0 &&
                     myItem.getScrollUpgradeableCount() == 0 &&
                     myItem.getScrollResilienceCount() == 0){
                 // 주문서 작 못하는 아이템 제외
+                continue;
+            }
+
+            if(myItem.getItemName().contains("제네시스") || myItem.getItemEquipmentSlot().equals("기계 심장")){ // 제네 무기 제외
                 continue;
             }
 
@@ -464,24 +519,47 @@ public class PresetTotalStatAnalyzer {
                 totalPowerOption += itemEtcOption.getAttackPower();
             }
 
-            //System.out.println(myItem.getItemName() + " : " + itemEtcOption.getStr() + "/" + itemEtcOption.getAttackPower());
-
-            totalUpgradeCount += myItem.getScrollUpgrade();
+            totalUpgradeCount += myItem.getScrollUpgrade();*/
         }
+
+        /*System.out.println(averageEtcOptionTotal.get("무보엠")[0] + " " + averageEtcOptionTotal.get("무보엠")[1]);
+        System.out.println(averageEtcOptionTotal.get("장신구")[0] + " " + averageEtcOptionTotal.get("장신구")[1]);
+        System.out.println(averageEtcOptionTotal.get("방어구")[0] + " " + averageEtcOptionTotal.get("방어구")[1]);
+        System.out.println(averageEtcOptionTotal.get("기타 장비")[0] + " " + averageEtcOptionTotal.get("기타 장비")[1]);*/
 
         // 주문서 없는 리부트 유저인 경우
-        if(totalUpgradeCount == 0){
+        /*if(totalUpgradeCount == 0){
             return new ArrayList<>(List.of(0F, 0F));
+        }*/
+
+
+        Map<String, List<Float>> result = new LinkedHashMap<>();
+
+
+
+        for(String key : categoryKey){
+            int count = Optional.ofNullable(averageEtcOptionCount.get(key)).orElse(0);
+
+            if (count == 0) {
+                result.put(key, new ArrayList<>(List.of(0F, 0F)));
+            } else {
+                float avgPower = averageEtcOptionTotal.get(key)[0] / count;
+                float avgStat = averageEtcOptionTotal.get(key)[1] / count;
+
+                result.put(key, new ArrayList<>(List.of(avgPower, avgStat)));
+            }
         }
 
-        float avgStat = totalMainStatOption / totalUpgradeCount;
+        return result;
+
+        /*float avgStat = totalMainStatOption / totalUpgradeCount;
         float avgPower = totalPowerOption / totalUpgradeCount;
 
         List<Float> averageEtcPowerStat = new ArrayList<>();
         averageEtcPowerStat.add(avgPower);
         averageEtcPowerStat.add(avgStat);
 
-        return averageEtcPowerStat;
+        return averageEtcPowerStat;*/
     }
 
 
@@ -559,7 +637,7 @@ public class PresetTotalStatAnalyzer {
             Integer starforce = myItem.getStarforce();
             if(starforce != 0){
 
-                if(myItem.getItemName().contains("타일런트")){
+                if(myItem.getItemName().contains("타일런트") || myItem.getStarforceScrollFlag().equals("사용")){
                     starforce += 10;
                 }
 
@@ -585,9 +663,10 @@ public class PresetTotalStatAnalyzer {
             }
 
             int starforce = myItem.getStarforce();
-            if(myItem.getItemName().contains("타일런트")){
+            if(myItem.getItemName().contains("타일런트") || myItem.getStarforceScrollFlag().equals("사용")){
                 starforce += 10;
             }
+
             if(starforce > maxStarforce){
                 maxStarforce = starforce;
             }
@@ -608,9 +687,10 @@ public class PresetTotalStatAnalyzer {
             }
 
             int starforce = myItem.getStarforce();
-            if(myItem.getItemName().contains("타일런트")){
+            if(myItem.getItemName().contains("타일런트") || myItem.getStarforceScrollFlag().equals("사용")){
                 starforce += 10;
             }
+
             if(starforce != 0 && starforce < minStarforce){
                 minStarforce = starforce;
             }

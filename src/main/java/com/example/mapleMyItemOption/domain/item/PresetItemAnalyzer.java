@@ -19,11 +19,7 @@ public class PresetItemAnalyzer {
     public void getStarforce(MyItem myItem, Item item) {
         item.setStarforce(myItem.getStarforce());
 
-        if(myItem.getStarforceScrollFlag().equals("사용")){
-            item.setStarforceScroll(true);
-        } else{
-            item.setStarforceScroll(false);
-        }
+        item.setStarforceScroll(myItem.getStarforceScrollFlag().equals("사용"));
     }
 
     public void getAddOption(MyItem myItem, Item item, Character character) {
@@ -78,6 +74,37 @@ public class PresetItemAnalyzer {
         }
     }
 
+    public List<Integer> getStarforceScrollValue(MyItem myItem){
+        Integer equipmentLevel = myItem.getItemBaseOption().getBaseEquipmentLevel();
+        Integer starforce = myItem.getStarforce();
+
+        int statTwoCount = (int) Math.ceil((double) (equipmentLevel - 80) / 10 / 2);
+        int statThreeCount = (int) Math.floor((double) (equipmentLevel - 80) / 10 / 2);
+        int baseStat = 2 + statTwoCount * 2 + statThreeCount * 3;
+        int totalStat = 0;
+        int basePower = 2 + (equipmentLevel - 80) / 10;
+        int totalPower = 0;
+
+
+        for (int i = 1; i <= starforce; i++) {
+            if (i < 6) {
+                int addStat = baseStat + ((i + 2) * (i - 1) / 2) - i + 1;
+                totalStat += addStat;
+            } else if(i < 13){
+                int addPower = i - 6 + basePower;
+                if(i == 12){
+                    addPower++;
+                }
+                totalPower += addPower;
+            }
+        }
+        List<Integer> starforceScrollValue = new ArrayList<>();
+        starforceScrollValue.add(totalPower);
+        starforceScrollValue.add(totalStat);
+
+        return starforceScrollValue;
+    }
+
     public void getEtcOption(MyItem myItem, Item item, Character character){
 
         if(myItem.getScrollUpgrade() == 0 &&
@@ -92,26 +119,34 @@ public class PresetItemAnalyzer {
             return;
         }
 
+        List<Integer> starforceScrollValue = new ArrayList<>(List.of(0, 0));
+        if(myItem.getStarforceScrollFlag().equals("사용")) {
+            starforceScrollValue = getStarforceScrollValue(myItem);
+            /*System.out.print(myItem.getItemName() + " ");
+            System.out.println(starforceScrollValue);*/
+        }
+
         List<Float> etcOption = new ArrayList<>();
 
         MyItemOption itemEtcOption = myItem.getItemEtcOption();
 
         String mainStat = getMainStat(character);
 
+        float power;
         if(mainStat.equals(ClassMainStat.INT)){
-            float power = Float.parseFloat(String.format("%.1f", (float) itemEtcOption.getMagicPower() / myItem.getScrollUpgrade()));
+            power = Float.parseFloat(String.format("%.1f", (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade()));
             etcOption.add(power);
         } else {
-            float power = Float.parseFloat(String.format("%.1f", (float) itemEtcOption.getAttackPower() / myItem.getScrollUpgrade()));
+            power = Float.parseFloat(String.format("%.1f", (float) (itemEtcOption.getAttackPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade()));
             etcOption.add(power);
         }
 
         switch (mainStat){
-            case ClassMainStat.STR -> etcOption.add((float) itemEtcOption.getStr() / myItem.getScrollUpgrade());
-            case ClassMainStat.DEX -> etcOption.add((float) itemEtcOption.getDex() / myItem.getScrollUpgrade());
-            case ClassMainStat.INT -> etcOption.add((float) itemEtcOption.getIntel() / myItem.getScrollUpgrade());
-            case ClassMainStat.LUK -> etcOption.add((float) itemEtcOption.getLuk() / myItem.getScrollUpgrade());
-            case ClassMainStat.HP -> etcOption.add((float) itemEtcOption.getMaxHp() / myItem.getScrollUpgrade());
+            case ClassMainStat.STR -> etcOption.add((float) (itemEtcOption.getStr() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+            case ClassMainStat.DEX -> etcOption.add((float) (itemEtcOption.getDex() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+            case ClassMainStat.INT -> etcOption.add((float) (itemEtcOption.getIntel() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+            case ClassMainStat.LUK -> etcOption.add((float) (itemEtcOption.getLuk() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+            case ClassMainStat.HP -> etcOption.add((float) (itemEtcOption.getMaxHp() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
         }
 
         item.setEtcOption(etcOption);

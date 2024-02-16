@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@JsonIgnoreProperties(value = {"date", "ability_grade", "remain_fame", "preset_no", "ability_preset_1", "ability_preset_2", "ability_preset_3"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CharacterAbility {
 
     List<Ability> abilityInfo;

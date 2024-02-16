@@ -1,11 +1,13 @@
 package com.example.mapleMyItemOption.domain.character.charaterDataDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CharacterTotalStat {
     private Date date;
     private String characterClass;

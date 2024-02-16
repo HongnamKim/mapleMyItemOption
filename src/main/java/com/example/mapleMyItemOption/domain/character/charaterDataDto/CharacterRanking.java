@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@JsonIgnoreProperties(value = {"character_exp", "character_popularity"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CharacterRanking {
     private Date date;
     private String worldName;

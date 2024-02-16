@@ -910,9 +910,13 @@
             </div>
 
             <div class="preset-stat-value-container">
-              <span
+              <div th:each="etcOption : ${presetTotalStat.averageEtcOption}" class="preset-stat-value">
+                <span th:text="|${etcOption.key}|"></span>
+                <span th:text="|${#numbers.formatDecimal(etcOption.value[0], 1, 1)} / ${#numbers.formatDecimal(etcOption.value[1], 1, 1)} 작|"></span>
+              </div>
+              <!--<span
                       th:text="|${#numbers.formatDecimal(presetTotalStat.averageEtcOption[0], 1, 1)} / ${#numbers.formatDecimal(presetTotalStat.averageEtcOption[1], 1, 1)} 작|"
-              ></span>
+              ></span>-->
             </div>
           </div>
         </div>
@@ -949,13 +953,9 @@
               <div class="preset-stat-value">
                 <span>평균 수치</span>
                 <div class="preset-stat-value-potential">
-                  <div th:each="potentialValue : ${presetTotalStat.averagePotentialValue}">
-                    <span
-                      th:if="${averageList.contains(potentialValue.key)}"
-                      th:text="|${potentialValue.key.replace('%','')}|"></span>
-                    <span
-                            th:if="${averageList.contains(potentialValue.key)}"
-                            th:text="|${potentialValue.key.contains('%') ? potentialValue.value+'%': potentialValue.value}|"></span>
+                  <div th:each="potentialValue : ${presetTotalStat.averagePotentialValue}" class="d-flex flex-row justify-content-between w-100">
+                    <span th:if="${averageList.contains(potentialValue.key)}" th:text="|${potentialValue.key.replace('%','')}|"></span>
+                    <span th:if="${averageList.contains(potentialValue.key)}" th:text="|${potentialValue.key.contains('%') ? potentialValue.value+'%': potentialValue.value}|"></span>
                   </div>
                 </div>
               </div>
@@ -967,13 +967,14 @@
               <div class="preset-stat-value">
                 <span>전체 수치</span>
                 <div class="preset-stat-value-potential">
-                  <div th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}">
+                  <div th:each="potentialTotalValue : ${presetTotalStat.totalPotentialValue}" class="d-flex flex-row justify-content-between w-100">
                     <span
                       th:if="${totalList.contains(potentialTotalValue.key)}"
                       th:text="${potentialTotalValue.key.replace('%', '')}"></span>
-                    <span th:text="|${#numbers.formatInteger(potentialTotalValue.value, 0)}${potentialTotalValue.key.contains('%')?'%':''}|"></span>
-                    <span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"
-                    ></span>
+                    <div th:if="${totalList.contains(potentialTotalValue.key)}">
+                      <span th:text="|${#numbers.formatInteger(potentialTotalValue.value, 0)}${potentialTotalValue.key.contains('%')?'%':''}|"></span>
+                      <span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"></span>
+                    </div>
                   </div>
 
                 </div>
@@ -1013,10 +1014,9 @@
               <div class="preset-stat-value">
                 <span>평균 수치</span>
                 <div class="preset-stat-value-potential">
-                  <div th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}">
-                    <span
-                      th:if="${averageList.contains(additionalPotentialValue.key)}"
-                      th:text="|${additionalPotentialValue.key.replace('%', '')}|"></span>
+                  <div th:each="additionalPotentialValue : ${presetTotalStat.averageAdditionalPotentialValue}" class="d-flex flex-row justify-content-between w-100">
+                    <span th:if="${averageList.contains(additionalPotentialValue.key)}"
+                          th:text="|${additionalPotentialValue.key.replace('%', '')}|"></span>
                     <span th:if="${averageList.contains(additionalPotentialValue.key)}"
                           th:text="|${additionalPotentialValue.key.contains('%') ? additionalPotentialValue.value + '%' : additionalPotentialValue.value}|"></span>
                   </div>
@@ -1030,14 +1030,14 @@
               <div class="preset-stat-value">
                 <span>전체 수치</span>
                 <div class="preset-stat-value-potential">
-                  <div th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}">
+                  <div th:each="additionalPotentialTotalValue : ${presetTotalStat.totalAdditionalPotentialValue}" class="d-flex flex-row justify-content-between w-100">
                     <span
                       th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
                       th:text="|${additionalPotentialTotalValue.key.replace('%', '')}|"></span>
-                    <span
-                            th:if="${totalList.contains(additionalPotentialTotalValue.key)}"
-                            th:text="|${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}${additionalPotentialTotalValue.key.contains('%') ? '%':''}|"></span>
-                    <span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>
+                    <div th:if="${totalList.contains(additionalPotentialTotalValue.key)}">
+                      <span th:text="|${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}${additionalPotentialTotalValue.key.contains('%') ? '%':''}|"></span>
+                      <span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -16,7 +16,8 @@ public class PresetTotalStat {
     private Map<Integer, Float> averageAddOption;
 
     // 주문서 작
-    private List<Float> averageEtcOption;
+    //private List<Float> averageEtcOption;
+    private Map<String, List<Float>> averageEtcOption;
 
     // 잠재 등급 갯수
     private Map<String, Integer> potentialGradeCount;
