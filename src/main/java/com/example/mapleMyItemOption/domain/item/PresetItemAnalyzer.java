@@ -13,16 +13,40 @@ import java.util.*;
  * 개별 아이템의 주요 능력치만 분석
  */
 @Component
-public class PresetItemAnalyzer {
+public class PresetItemAnalyzer extends ItemAnalyzer{
     private final List<String> weaponList = new ArrayList<>(List.of("무기", "보조무기", "엠블렘"));
 
-    public void getStarforce(MyItem myItem, Item item) {
+    public Item analyzeItem(MyItem myItem, Character character){
+        Item item = new Item();
+        initItem(myItem, item);
+
+        getStarforce(myItem, item);
+        getAddOption(myItem, item, character);
+        getEtcOption(myItem, item, character);
+
+        getPotentialValue(myItem, item, character, false);
+        getPotentialValue(myItem, item, character, true);
+
+        return item;
+    }
+
+    private void initItem(MyItem myItem, Item item){
+        item.setItemName(myItem.getItemName());
+        item.setItemImage(myItem.getItemIcon());
+        item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
+        item.setSpecialRingLevel(myItem.getSpecialRingLevel());
+
+        item.setPotentialGrade(myItem.getPotentialOptionGrade());
+        item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
+    }
+
+    private void getStarforce(MyItem myItem, Item item) {
         item.setStarforce(myItem.getStarforce());
 
         item.setStarforceScroll(myItem.getStarforceScrollFlag().equals("사용"));
     }
 
-    public void getAddOption(MyItem myItem, Item item, Character character) {
+    private void getAddOption(MyItem myItem, Item item, Character character) {
 
         String mainStat = getMainStat(character);
         MyItemOption itemAddOption = myItem.getItemAddOption();
@@ -74,57 +98,14 @@ public class PresetItemAnalyzer {
         }
     }
 
-    public List<Integer> getStarforceScrollValue(MyItem myItem){
-        Integer equipmentLevel = myItem.getItemBaseOption().getBaseEquipmentLevel();
-        Integer starforce = myItem.getStarforce();
+    private void getEtcOption(MyItem myItem, Item item, Character character){
 
-        int statTwoCount = (int) Math.ceil((double) (equipmentLevel - 80) / 10 / 2);
-        int statThreeCount = (int) Math.floor((double) (equipmentLevel - 80) / 10 / 2);
-        int baseStat = 2 + statTwoCount * 2 + statThreeCount * 3;
-        int totalStat = 0;
-        int basePower = 2 + (equipmentLevel - 80) / 10;
-        int totalPower = 0;
-
-
-        for (int i = 1; i <= starforce; i++) {
-            if (i < 6) {
-                int addStat = baseStat + ((i + 2) * (i - 1) / 2) - i + 1;
-                totalStat += addStat;
-            } else if(i < 13){
-                int addPower = i - 6 + basePower;
-                if(i == 12){
-                    addPower++;
-                }
-                totalPower += addPower;
-            }
-        }
-        List<Integer> starforceScrollValue = new ArrayList<>();
-        starforceScrollValue.add(totalPower);
-        starforceScrollValue.add(totalStat);
-
-        return starforceScrollValue;
-    }
-
-    public void getEtcOption(MyItem myItem, Item item, Character character){
-
-        if(myItem.getScrollUpgrade() == 0 &&
-                myItem.getScrollUpgradeableCount() == 0 &&
-                myItem.getScrollResilienceCount() == 0){
+        if(myItem.getScrollUpgrade() == 0){
             // 주문서 작 못하는 아이템 제외
             return;
         }
 
-        // 주문서 작 안한 아이템 제외
-        if(myItem.getScrollUpgrade() == 0){
-            return;
-        }
-
-        List<Integer> starforceScrollValue = new ArrayList<>(List.of(0, 0));
-        if(myItem.getStarforceScrollFlag().equals("사용")) {
-            starforceScrollValue = getStarforceScrollValue(myItem);
-            /*System.out.print(myItem.getItemName() + " ");
-            System.out.println(starforceScrollValue);*/
-        }
+        List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
 
         List<Float> etcOption = new ArrayList<>();
 
@@ -152,12 +133,14 @@ public class PresetItemAnalyzer {
         item.setEtcOption(etcOption);
     }
 
-    public void getPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
+    private void getPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
 
+        // 에디 잠재 없는 경우
         if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
             return;
         }
 
+        // 잠재 없는 경우
         if(!additional && myItem.getPotentialOptionGrade() == null){
             return;
         }
@@ -167,129 +150,70 @@ public class PresetItemAnalyzer {
         String mainStat = getMainStat(character);
         String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
 
-        String potentialOption1;
-        String potentialOption2;
-        String potentialOption3;
-
-        if(additional){
-            potentialOption1 = Optional.ofNullable(myItem.getAdditionalPotentialOption_1()).orElse("");
-            potentialOption2 = Optional.ofNullable(myItem.getAdditionalPotentialOption_2()).orElse("");
-            potentialOption3 = Optional.ofNullable(myItem.getAdditionalPotentialOption_3()).orElse("");
-        } else {
-            potentialOption1 = Optional.ofNullable(myItem.getPotentialOption_1()).orElse("");
-            potentialOption2 = Optional.ofNullable(myItem.getPotentialOption_2()).orElse("");
-            potentialOption3 = Optional.ofNullable(myItem.getPotentialOption_3()).orElse("");
-        }
-
-        List<String> potentialOptions = new ArrayList<>(List.of(potentialOption1, potentialOption2, potentialOption3));
-
         String mainStatPercent = mainStat+"%";
         String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat;
+
+        List<String> optionList = new ArrayList<>(PotentialOption.OPTION_LIST);
+        optionList.add(perLevelStat);
+
+        List<String> potentialOptions = initPotentialOptions(myItem, additional);
+
         for (String potentialOption : potentialOptions){
-            // 주스탯 % 체크
+            // 주스탯% or 올스탯% 체크
             if((potentialOption.startsWith(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
                     && potentialOption.endsWith("%")){
+
                 if(potentialOption.contains(mainStat)){
-                    String optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
-                    Float optionValue = Float.parseFloat(optionValueString);
+                    // 주스탯 % 수치 추가
+                    Float optionValue = getPotentialOptionValue(potentialOption, mainStat);
 
-                    Float currentValue = potentialValue.getOrDefault(mainStatPercent, 0F);
-                    potentialValue.put(mainStatPercent, currentValue + optionValue);
+                    potentialValue.putIfAbsent(mainStatPercent, 0F);
+                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> v + optionValue);
+
                 } else if (!mainStat.equals(ClassMainStat.HP)) {
-                    String optionValueString = potentialOption.replace(PotentialOption.ALL_STAT + " : +", "").replace("%", "");
-                    float optionValue = Float.parseFloat(optionValueString);
+                    //데몬어벤져일 경우 올스탯 제외
+                    // 올스탯 % 수치를 주스탯 수치로 변환하여 추가
+                    Float optionValue = getPotentialOptionValue(potentialOption, PotentialOption.ALL_STAT);
 
-                    float currentValue = potentialValue.getOrDefault(mainStatPercent, 0F);
-                    potentialValue.put(mainStatPercent, currentValue + optionValue * 1.12F);
-                }
+                    potentialValue.putIfAbsent(mainStatPercent, 0F);
+                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> {
 
-            }
-
-            if (potentialOption.startsWith(perLevelStat)) { // 렙당 주스탯
-                // "캐릭터 기준 9레벨 당 STR : +1"
-
-                String optionValueString = potentialOption.replace(perLevelStat + " : +", "");
-                Float optionValue = Float.parseFloat(optionValueString);
-
-                Float currentOptionValue = potentialValue.getOrDefault("렙당", 0F);
-                potentialValue.put("렙당", currentOptionValue + optionValue);
-
-            }
-
-            // 그 외 유효 옵션 체크 (크뎀, 공마%, 보공%)
-            for(String option : PotentialOption.OPTION_LIST){
-                if(potentialOption.startsWith(option)) {
-                    if(option.equals(PotentialOption.ATTACK_POWER) || option.equals(PotentialOption.MAGIC_POWER)){
-                        // 직업에 따라 공격력 or 마력만 집계
-                        if(!power.equals(option)){
-                            continue;
+                        if(ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass())) {
+                            System.out.println("듀섀카");
+                            return v + optionValue * 1.23F;
                         }
-                    }
-
-                    String optionCategory = potentialOption.endsWith("%") ? option + "%" : option; // % 옵션일 경우 뒤에 % 추가
-                    // 글자 수 줄이기
-                    if(optionCategory.contains(PotentialOption.BOSS_DAMAGE)){
-                        optionCategory = "보공%";
-                    } else if (optionCategory.contains(PotentialOption.IGNORE_ARMOR)) {
-                        optionCategory = "방무%";
-                    } else if(optionCategory.contains(PotentialOption.CRITICAL_DAMAGE)){
-                        optionCategory = "크뎀%";
-                    } else if(optionCategory.contains(PotentialOption.ITEM_DROP)){
-                        optionCategory = "아획%";
-                    } else if(optionCategory.contains(PotentialOption.MONEY_DROP)){
-                        optionCategory = "메획%";
-                    } else if(optionCategory.contains(PotentialOption.SKILL_COOL_TIME)){
-                        optionCategory = "쿨감";
-                    }
-
-                    // 퍼센트 옵션일 경우 뒤에 % 제거
-                    String optionValueString = potentialOption.endsWith("%") ?
-                            potentialOption.replace(option + " : +", "").replace("%", "") :
-                            (potentialOption.contains(PotentialOption.SKILL_COOL_TIME) ?
-                                    potentialOption.replace(option + " : ", "")
-                                            .replace("초(10초 이하는 10%감소, 5초 미만으로 감소 불가)", "")
-                                            .replace("초(10초 이하는 5%감소, 5초 미만으로 감소 불가)", "") :
-                                    potentialOption.replace(option + " : +", ""));
-
-                    Float optionValue = Float.parseFloat(optionValueString);
-
-                    Float currentOptionValue = potentialValue.getOrDefault(optionCategory, 0F);
-                    potentialValue.put(optionCategory, currentOptionValue + optionValue);
+                        return v + optionValue * 1.12F;
+                    });
 
                 }
+            }
+            // 그 외 유효 옵션 체크 (크뎀, 공마%, 보공%, 렙당 주스탯)
+            for(String option : optionList){
+                if(!potentialOption.startsWith(option)) {
+                    continue;
+                }
+
+                if(option.equals(PotentialOption.ATTACK_POWER) || option.equals(PotentialOption.MAGIC_POWER)){
+                    // 직업에 따라 공격력 or 마력만 집계
+                    if(!power.equals(option)){
+                        continue;
+                    }
+                }
+
+                String optionCategory = getShortOptionCategory(potentialOption, option);
+
+                Float optionValue = getPotentialOptionValue(potentialOption, option);
+
+                potentialValue.putIfAbsent(optionCategory, 0F);
+                potentialValue.computeIfPresent(optionCategory, (k, v) -> v + optionValue);
+
             }
         }
+
         if(additional){
             item.setAdditionalPotentialValue(potentialValue);
         } else {
             item.setPotentialValue(potentialValue);
         }
-    }
-
-    private String getMainStat(Character character){
-
-        String characterClass = character.getCharacterClass();
-
-        if (ClassMainStat.STR_CLASS.contains(characterClass)){
-            return ClassMainStat.STR;
-
-        } else if (ClassMainStat.DEX_CLASS.contains(characterClass)){
-            return ClassMainStat.DEX;
-
-        } else if (ClassMainStat.LUK_CLASS.contains(characterClass)){
-            return ClassMainStat.LUK;
-
-        } else if (ClassMainStat.INT_CLASS.contains(characterClass)) {
-            return ClassMainStat.INT;
-
-        } else if (ClassMainStat.HP_CLASS.contains(characterClass)) {
-            return ClassMainStat.HP;
-
-        } else if (ClassMainStat.ALL_STAT_CLASS.contains(characterClass)) {
-            return ClassMainStat.ALL_STAT;
-        }
-
-        // 초보자 계열은 str
-        return ClassMainStat.STR;
     }
 }

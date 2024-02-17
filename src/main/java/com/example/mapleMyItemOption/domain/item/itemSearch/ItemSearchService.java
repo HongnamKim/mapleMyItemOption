@@ -91,89 +91,37 @@ public class ItemSearchService {
         return presetTotalStats;
     }
 
-    public Map<String, Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum, ItemSlotCategory category){
+    public Map<String, Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum, List<String> itemCategory){
 
-        List<MyItem> preset = myItemEquipment.getPreset1();
-
-        Map<String, Item> presetItemStats = new HashMap<>();
+        List<MyItem> preset;
 
         switch (presetNum){
             case 2 -> preset = myItemEquipment.getPreset2();
             case 3 -> preset = myItemEquipment.getPreset3();
+            default -> preset = myItemEquipment.getPreset1();
         }
 
+        Map<String, Item> presetItemStats = new HashMap<>();
+
         for(MyItem myItem : preset) {
-            Item item = new Item();
-            item.setItemName(myItem.getItemName());
-            item.setItemImage(myItem.getItemIcon());
-            item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
-            item.setSpecialRingLevel(myItem.getSpecialRingLevel());
+            if(!itemCategory.contains(myItem.getItemEquipmentSlot())){
+                continue;
+            }
 
-            item.setPotentialGrade(myItem.getPotentialOptionGrade());
-            item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
-
-            presetItemAnalyzer.getStarforce(myItem, item);
-            presetItemAnalyzer.getAddOption(myItem, item, character);
-            presetItemAnalyzer.getEtcOption(myItem, item, character);
-
-            presetItemAnalyzer.getPotentialValue(myItem, item, character, false);
-            presetItemAnalyzer.getPotentialValue(myItem, item, character, true);
+            Item item = presetItemAnalyzer.analyzeItem(myItem, character);
 
             presetItemStats.put(myItem.getItemEquipmentSlot(), item);
 
         }
 
-        Map<String, Item> presetItemStatsWeapon = new LinkedHashMap<>();
-        for(String slot : ItemSlot.WEAPONS){
+        Map<String, Item> sortedPresetItemStats = new LinkedHashMap<>();
+
+        for(String slot : itemCategory) {
             Optional.ofNullable(presetItemStats.get(slot))
-                    .ifPresent(item -> presetItemStatsWeapon.put(slot, item));
-            /*Item item = presetItemStats.get(slot);
-            if(item == null){
-                continue;
-            }
-            presetItemStatsWeapon.put(slot, item);*/
+                    .ifPresent(item -> sortedPresetItemStats.put(slot, item));
         }
 
-        Map<String, Item> presetItemStatsArmors = new LinkedHashMap<>();
-        for(String slot : ItemSlot.ARMORS){
-            Optional.ofNullable(presetItemStats.get(slot))
-                    .ifPresent(item -> presetItemStatsArmors.put(slot, item));
-            /*Item item = presetItemStats.get(slot);
-            if(item == null){
-                continue;
-            }
-            presetItemStatsArmors.put(slot, item);*/
-        }
-
-        Map<String, Item> presetItemStatsAccessories = new LinkedHashMap<>();
-        for(String slot : ItemSlot.ACCESSORIES){
-            Optional.ofNullable(presetItemStats.get(slot)).ifPresent(item1 -> presetItemStatsAccessories.put(slot, item1));
-            /*Item item = presetItemStats.get(slot);
-            if(item == null){
-                continue;
-            }
-            presetItemStatsAccessories.put(slot, item);*/
-        }
-
-        Map<String, Item> presetItemStatsOthers = new LinkedHashMap<>();
-        for(String slot : ItemSlot.OTHERS){
-            Optional.ofNullable(presetItemStats.get(slot))
-                    .ifPresent(item -> presetItemStatsOthers.put(slot, item));
-            /*Item item = presetItemStats.get(slot);
-            if(item == null){
-                continue;
-            }
-            presetItemStatsOthers.put(slot, item);*/
-        }
-
-        switch (category){
-            case WEAPONS -> {return presetItemStatsWeapon;}
-            case ARMORS -> {return presetItemStatsArmors;}
-            case ACCESSORIES -> {return presetItemStatsAccessories;}
-            case OTHERS -> {return presetItemStatsOthers;}
-        }
-
-        return null;
+        return sortedPresetItemStats;
     }
 
 }

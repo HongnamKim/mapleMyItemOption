@@ -3,11 +3,15 @@ package com.example.mapleMyItemOption;
 import com.example.mapleMyItemOption.api.ApiService;
 import com.example.mapleMyItemOption.api.ExternalApiService;
 import com.example.mapleMyItemOption.api.InternalApiService;
+import com.example.mapleMyItemOption.domain.item.ItemAnalyzer;
+import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
+import com.example.mapleMyItemOption.domain.item.PotentialOption;
 import com.example.mapleMyItemOption.domain.repository.MemorySearchHistoryRepository;
 import com.example.mapleMyItemOption.domain.repository.SearchHistoryRepository;
 import com.example.mapleMyItemOption.web.argumentResolver.CharacterResolver;
 import com.example.mapleMyItemOption.web.argumentResolver.MyItemEquipmentResolver;
 import com.example.mapleMyItemOption.web.interceptor.LogInterceptor;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +27,19 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ApiService apiService(){
-        //return new ExternalApiService();
-        return new InternalApiService();
+        return new ExternalApiService();
+        //return new InternalApiService();
+    }
+
+    @PostConstruct
+    public void initShortCategoryOption(){
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.PER_LEVEL, "렙당");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.BOSS_DAMAGE, "보공%");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.IGNORE_ARMOR, "방무%");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.CRITICAL_DAMAGE, "크뎀%");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.ITEM_DROP, "아획%");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.MONEY_DROP, "메획%");
+        ItemAnalyzer.shortOptionCategory.put(PotentialOption.SKILL_COOL_TIME, "쿨감");
     }
 
     @Bean

@@ -12,7 +12,7 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class PresetTotalStatAnalyzer {
+public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
     private final PresetItemAnalyzer presetItemAnalyzer;
 
@@ -59,22 +59,7 @@ public class PresetTotalStatAnalyzer {
 
         for (MyItem myItem : preset) {
 
-            String potentialOption1; // 윗잠 첫째줄
-            String potentialOption2; // 윗잠 둘째줄
-            String potentialOption3; // 윗잠 셋째줄
-
-            if(additional) {
-                potentialOption1 = Optional.ofNullable(myItem.getAdditionalPotentialOption_1()).orElse("");
-                potentialOption2 = Optional.ofNullable(myItem.getAdditionalPotentialOption_2()).orElse("");
-                potentialOption3 = Optional.ofNullable(myItem.getAdditionalPotentialOption_3()).orElse("");
-
-            }else{
-                potentialOption1 = Optional.ofNullable(myItem.getPotentialOption_1()).orElse("");
-                potentialOption2 = Optional.ofNullable(myItem.getPotentialOption_2()).orElse("");
-                potentialOption3 = Optional.ofNullable(myItem.getPotentialOption_3()).orElse("");
-
-            }
-            List<String> potentialOptions = new ArrayList<>(List.of(potentialOption1, potentialOption2, potentialOption3));
+            List<String> potentialOptions = initPotentialOptions(myItem, additional);
 
             Set<String> potentialOptionCategory = new HashSet<>(); // 하나의 아이템이 갖고 있는 옵션 종류
 
@@ -152,7 +137,9 @@ public class PresetTotalStatAnalyzer {
                 } else { // 주스탯, 올스탯 제외 옵션 수치 파악
                     for (String option : PotentialOption.OPTION_LIST){
 
-                        if(potentialOption.startsWith(option)) {
+                        if(!potentialOption.startsWith(option)) {
+                            continue;
+                        }
                             if(option.equals(PotentialOption.ATTACK_POWER) || option.equals(PotentialOption.MAGIC_POWER)){
                                 // 직업에 따라 공격력 or 마력만 집계
                                 if(!power.equals(option)){
@@ -181,7 +168,7 @@ public class PresetTotalStatAnalyzer {
                             Float currentOptionLine = presetPotentialLines.getOrDefault(optionCategory, 0F);
                             presetPotentialLines.put(optionCategory, currentOptionLine + 1);
 
-                        }
+
                     }
                 }
             }
@@ -194,15 +181,13 @@ public class PresetTotalStatAnalyzer {
         } // 한 개의 아이템 분석 완료
 
 
-
-
         // 순서 정렬
         Map<String, Float> presetAveragePotentialValue = new LinkedHashMap<>();
         for(String option : PotentialOption.AVERAGE_LIST){
             Float totalValue = presetPotentialValue.getOrDefault(option, 0F);
             Float itemCount = presetPotentialItems.getOrDefault(option, 0F);
 
-            if(totalValue != 0 && itemCount != 0) {
+            if(itemCount != 0) {
                 presetAveragePotentialValue.put(option, Float.parseFloat(String.format("%.1f", totalValue / itemCount)));
             }
         }
@@ -474,10 +459,7 @@ public class PresetTotalStatAnalyzer {
                 itemCategory = "기타 장비";
             }
 
-            List<Integer> starforceScrollValue = new ArrayList<>(List.of(0, 0));
-            if(myItem.getStarforceScrollFlag().equals("사용")) {
-                starforceScrollValue = presetItemAnalyzer.getStarforceScrollValue(myItem);
-            }
+            List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
 
             switch (mainStat){
                 case "STR" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getStr() - starforceScrollValue.get(1);
@@ -494,48 +476,9 @@ public class PresetTotalStatAnalyzer {
 
             Integer currentCount = averageEtcOptionCount.getOrDefault(itemCategory, 0);
             averageEtcOptionCount.put(itemCategory, currentCount + myItem.getScrollUpgrade());
-
-            /*if(myItem.getScrollUpgrade() == 0 &&
-                    myItem.getScrollUpgradeableCount() == 0 &&
-                    myItem.getScrollResilienceCount() == 0){
-                // 주문서 작 못하는 아이템 제외
-                continue;
-            }
-
-            if(myItem.getItemName().contains("제네시스") || myItem.getItemEquipmentSlot().equals("기계 심장")){ // 제네 무기 제외
-                continue;
-            }
-
-            switch (mainStat) { // 주스탯에 따라서 총합에 반영
-                case "STR" -> totalMainStatOption += itemEtcOption.getStr();
-                case "DEX" -> totalMainStatOption += itemEtcOption.getDex();
-                case "LUK" -> totalMainStatOption += itemEtcOption.getLuk();
-                case "INT" -> totalMainStatOption += itemEtcOption.getIntel();
-            }
-
-            if(mainStat.equals("INT")){
-                totalPowerOption += itemEtcOption.getMagicPower();
-            } else {
-                totalPowerOption += itemEtcOption.getAttackPower();
-            }
-
-            totalUpgradeCount += myItem.getScrollUpgrade();*/
         }
 
-        /*System.out.println(averageEtcOptionTotal.get("무보엠")[0] + " " + averageEtcOptionTotal.get("무보엠")[1]);
-        System.out.println(averageEtcOptionTotal.get("장신구")[0] + " " + averageEtcOptionTotal.get("장신구")[1]);
-        System.out.println(averageEtcOptionTotal.get("방어구")[0] + " " + averageEtcOptionTotal.get("방어구")[1]);
-        System.out.println(averageEtcOptionTotal.get("기타 장비")[0] + " " + averageEtcOptionTotal.get("기타 장비")[1]);*/
-
-        // 주문서 없는 리부트 유저인 경우
-        /*if(totalUpgradeCount == 0){
-            return new ArrayList<>(List.of(0F, 0F));
-        }*/
-
-
         Map<String, List<Float>> result = new LinkedHashMap<>();
-
-
 
         for(String key : categoryKey){
             int count = Optional.ofNullable(averageEtcOptionCount.get(key)).orElse(0);
@@ -551,15 +494,6 @@ public class PresetTotalStatAnalyzer {
         }
 
         return result;
-
-        /*float avgStat = totalMainStatOption / totalUpgradeCount;
-        float avgPower = totalPowerOption / totalUpgradeCount;
-
-        List<Float> averageEtcPowerStat = new ArrayList<>();
-        averageEtcPowerStat.add(avgPower);
-        averageEtcPowerStat.add(avgStat);
-
-        return averageEtcPowerStat;*/
     }
 
 
@@ -697,41 +631,6 @@ public class PresetTotalStatAnalyzer {
         }
 
         return minStarforce;
-    }
-
-
-
-
-    /**
-     * 직업의 주스탯 파악
-     * @param character Character 객체
-     * @return 직업의 주스탯 STR, DEX, LUK, INT, HP, 올스탯
-     */
-    private String getMainStat(Character character){
-
-        String characterClass = character.getCharacterClass();
-
-        if (ClassMainStat.STR_CLASS.contains(characterClass)){
-            return ClassMainStat.STR;
-
-        } else if (ClassMainStat.DEX_CLASS.contains(characterClass)){
-            return ClassMainStat.DEX;
-
-        } else if (ClassMainStat.LUK_CLASS.contains(characterClass)){
-            return ClassMainStat.LUK;
-
-        } else if (ClassMainStat.INT_CLASS.contains(characterClass)) {
-            return ClassMainStat.INT;
-
-        } else if (ClassMainStat.HP_CLASS.contains(characterClass)) {
-            return ClassMainStat.HP;
-
-        } else if (ClassMainStat.ALL_STAT_CLASS.contains(characterClass)) {
-            return ClassMainStat.ALL_STAT;
-        }
-
-        // 초보자 계열은 str
-        return ClassMainStat.STR;
     }
 
     private List<List<MyItem>> getPresets(MyItemEquipment myItemEquipment) {
