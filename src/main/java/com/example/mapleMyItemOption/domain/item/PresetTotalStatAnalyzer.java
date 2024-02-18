@@ -58,6 +58,32 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                                                                      // {"공격력%" : 9}
 
         for (MyItem myItem : preset) {
+            Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional);
+
+            if (potentialValue == null){
+                continue;
+            }
+
+            for (Map.Entry<String, Float> potential : potentialValue.entrySet()) {
+                presetPotentialValue.putIfAbsent(potential.getKey(), 0F);
+                presetPotentialValue.computeIfPresent(potential.getKey(), (k, v) -> v + potential.getValue());
+            }
+
+            for(String potentialOption : potentialValue.keySet()){
+                presetPotentialItems.putIfAbsent(potentialOption, 0F);
+                presetPotentialItems.computeIfPresent(potentialOption, (k, v) -> v + 1);
+            }
+
+
+           /* // 에디 잠재 없는 경우
+            if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
+                continue;
+            }
+
+            // 잠재 없는 경우
+            if(!additional && myItem.getPotentialOptionGrade() == null){
+                continue;
+            }
 
             List<String> potentialOptions = initPotentialOptions(myItem, additional);
 
@@ -65,7 +91,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
             // 윗잠 1,2,3 번째 줄마다 순회하면서 수치 계산
             for(String potentialOption : potentialOptions){
-                if(potentialOption.length() == 0) { // 잠재 없을 경우 생략
+                if(potentialOption.length() == 0) { // 잠재 2줄일 경우 3번째 생략
                     continue;
                 }
 
@@ -177,20 +203,41 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             for(String option : potentialOptionCategory) {
                 Float currentItemCount = presetPotentialItems.getOrDefault(option, 0F);
                 presetPotentialItems.put(option, currentItemCount + 1);
-            }
-        } // 한 개의 아이템 분석 완료
+            }*/
+        } // 한 개의 프리셋 내의 아이템 분석 완료
 
 
         // 순서 정렬
         Map<String, Float> presetAveragePotentialValue = new LinkedHashMap<>();
+        List<String> averageOptionList = PotentialOption.AVERAGE_LIST;
+        //averageOptionList.add(mainStat+"%");
+
+        Float mainStatValue = presetPotentialValue.getOrDefault(mainStat + "%", 0F);
+        presetPotentialValue.put(PotentialOption.TOTAL_STAT_PERCENT, mainStatValue);
+        presetPotentialValue.remove(mainStat+"%");
+
+        Float mainStatCount = presetPotentialItems.getOrDefault(mainStat + "%", 0F);
+        presetPotentialItems.put(PotentialOption.TOTAL_STAT_PERCENT, mainStatCount);
+        presetPotentialItems.remove(mainStat+"%");
+
         for(String option : PotentialOption.AVERAGE_LIST){
             Float totalValue = presetPotentialValue.getOrDefault(option, 0F);
             Float itemCount = presetPotentialItems.getOrDefault(option, 0F);
 
+            if(option.equals(PotentialOption.TOTAL_STAT_PERCENT)){
+                System.out.println(presetPotentialValue.getOrDefault(option, 0F));
+                System.out.println(presetPotentialItems.getOrDefault(option, 0F));
+            }
+
+            float average = totalValue / itemCount;
+            Float roundedAvg = Math.round(average * 10) / 10F;
+
             if(itemCount != 0) {
-                presetAveragePotentialValue.put(option, Float.parseFloat(String.format("%.1f", totalValue / itemCount)));
+                presetAveragePotentialValue.put(option, roundedAvg);
             }
         }
+
+        System.out.println(presetPotentialValue);
         // 순서 정렬
         Map<String, Float> orderedPresetPotentialLines = new LinkedHashMap<>();
         Map<String, Float> orderedPresetPotentialValue = new LinkedHashMap<>();
@@ -254,20 +301,24 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             }
             switch (potentialOptionGrade){
                 case PotentialOption.LEGENDARY -> {
-                    int currentCount = gradeCount.get(PotentialOption.LEGENDARY);
-                    gradeCount.put(PotentialOption.LEGENDARY, currentCount + 1);
+                    //int currentCount = gradeCount.get(PotentialOption.LEGENDARY);
+                    //gradeCount.put(PotentialOption.LEGENDARY, currentCount + 1);
+                    gradeCount.computeIfPresent(PotentialOption.LEGENDARY, (k, v) -> v + 1);
                 }
                 case PotentialOption.UNIQUE -> {
-                    int currentCount = gradeCount.get(PotentialOption.UNIQUE);
-                    gradeCount.put(PotentialOption.UNIQUE, currentCount + 1);
+                    //int currentCount = gradeCount.get(PotentialOption.UNIQUE);
+                    //gradeCount.put(PotentialOption.UNIQUE, currentCount + 1);
+                    gradeCount.computeIfPresent(PotentialOption.UNIQUE, (k, v) -> v + 1);
                 }
                 case PotentialOption.EPIC -> {
-                    int currentCount = gradeCount.get(PotentialOption.EPIC);
-                    gradeCount.put(PotentialOption.EPIC, currentCount + 1);
+                    //int currentCount = gradeCount.get(PotentialOption.EPIC);
+                    //gradeCount.put(PotentialOption.EPIC, currentCount + 1);
+                    gradeCount.computeIfPresent(PotentialOption.EPIC, (k, v) -> v + 1);
                 }
                 case PotentialOption.RARE -> {
-                    int currentCount = gradeCount.get(PotentialOption.RARE);
-                    gradeCount.put(PotentialOption.RARE, currentCount + 1);
+                    //int currentCount = gradeCount.get(PotentialOption.RARE);
+                    //gradeCount.put(PotentialOption.RARE, currentCount + 1);
+                    gradeCount.computeIfPresent(PotentialOption.RARE, (k, v) -> v + 1);
                 }
             }
         }
@@ -351,7 +402,11 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             Float totalStat = levelTotalAddOptionStat.get(level);
             Float itemCounts = levelTotalAddOptionItems.get(level);
 
-            levelAverageAddOptionStat.put(level, Float.parseFloat(String.format("%.1f",totalStat / itemCounts)));
+            float average = totalStat / itemCounts;
+            Float roundedAvg = Math.round(average * 10) / 10F;
+
+            levelAverageAddOptionStat.put(level, roundedAvg);
+
         }
 
         // 레벨대 순서 정렬

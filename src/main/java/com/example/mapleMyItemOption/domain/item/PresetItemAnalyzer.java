@@ -20,12 +20,12 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         Item item = new Item();
         initItem(myItem, item);
 
-        getStarforce(myItem, item);
-        getAddOption(myItem, item, character);
-        getEtcOption(myItem, item, character);
+        setItemStarforce(myItem, item);
+        setItemAddOption(myItem, item, character);
+        setItemEtcOption(myItem, item, character);
 
-        getPotentialValue(myItem, item, character, false);
-        getPotentialValue(myItem, item, character, true);
+        setItemPotentialValue(myItem, item, character, false);
+        setItemPotentialValue(myItem, item, character, true);
 
         return item;
     }
@@ -40,13 +40,13 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
     }
 
-    private void getStarforce(MyItem myItem, Item item) {
+    private void setItemStarforce(MyItem myItem, Item item) {
         item.setStarforce(myItem.getStarforce());
 
         item.setStarforceScroll(myItem.getStarforceScrollFlag().equals("사용"));
     }
 
-    private void getAddOption(MyItem myItem, Item item, Character character) {
+    private void setItemAddOption(MyItem myItem, Item item, Character character) {
 
         String mainStat = getMainStat(character);
         MyItemOption itemAddOption = myItem.getItemAddOption();
@@ -98,7 +98,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
     }
 
-    private void getEtcOption(MyItem myItem, Item item, Character character){
+    private void setItemEtcOption(MyItem myItem, Item item, Character character){
 
         if(myItem.getScrollUpgrade() == 0){
             // 주문서 작 못하는 아이템 제외
@@ -113,13 +113,16 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
         String mainStat = getMainStat(character);
 
-        float power;
         if(mainStat.equals(ClassMainStat.INT)){
-            power = Float.parseFloat(String.format("%.1f", (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade()));
-            etcOption.add(power);
+            float avgPower = (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
+            Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
+
+            etcOption.add(roundedAvgPower);
         } else {
-            power = Float.parseFloat(String.format("%.1f", (float) (itemEtcOption.getAttackPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade()));
-            etcOption.add(power);
+            float avgPower = (float) (itemEtcOption.getAttackPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
+            Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
+
+            etcOption.add(roundedAvgPower);
         }
 
         switch (mainStat){
@@ -133,9 +136,9 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         item.setEtcOption(etcOption);
     }
 
-    private void getPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
+    private void setItemPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
 
-        // 에디 잠재 없는 경우
+        /*// 에디 잠재 없는 경우
         if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
             return;
         }
@@ -159,6 +162,10 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         List<String> potentialOptions = initPotentialOptions(myItem, additional);
 
         for (String potentialOption : potentialOptions){
+            if(potentialOption.length() == 0) { // 잠재 2줄일 경우 3번째 생략
+                continue;
+            }
+
             // 주스탯% or 올스탯% 체크
             if((potentialOption.startsWith(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
                     && potentialOption.endsWith("%")){
@@ -208,7 +215,9 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
                 potentialValue.computeIfPresent(optionCategory, (k, v) -> v + optionValue);
 
             }
-        }
+        }*/
+
+        Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional);
 
         if(additional){
             item.setAdditionalPotentialValue(potentialValue);

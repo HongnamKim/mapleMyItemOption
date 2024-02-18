@@ -973,7 +973,7 @@
                       th:text="${potentialTotalValue.key.replace('%', '')}"></span>
                     <div th:if="${totalList.contains(potentialTotalValue.key)}">
                       <span th:text="|${#numbers.formatInteger(potentialTotalValue.value, 0)}${potentialTotalValue.key.contains('%')?'%':''}|"></span>
-                      <span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"></span>
+                      <!--<span th:text="|(${#numbers.formatInteger(presetTotalStat.potentialOptionLines.get(potentialTotalValue.key), 0)} 줄)|"></span>-->
                     </div>
                   </div>
 
@@ -1036,7 +1036,7 @@
                       th:text="|${additionalPotentialTotalValue.key.replace('%', '')}|"></span>
                     <div th:if="${totalList.contains(additionalPotentialTotalValue.key)}">
                       <span th:text="|${#numbers.formatInteger(additionalPotentialTotalValue.value, 0)}${additionalPotentialTotalValue.key.contains('%') ? '%':''}|"></span>
-                      <span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>
+                      <!--<span th:text="|(${#numbers.formatInteger(presetTotalStat.additionalPotentialOptionLines.get(additionalPotentialTotalValue.key), 0)}줄)|"></span>-->
                     </div>
                   </div>
                 </div>

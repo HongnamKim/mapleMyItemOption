@@ -36,6 +36,12 @@ public class ItemAnalyzer {
         return ClassMainStat.STR;
     }
 
+    /**
+     * MyItem 의 잠재옵션을 리스트로 받아오는 메소드
+     * @param myItem 분석할 아이템
+     * @param additional 에디셔널일 경우 true, 그 외 false
+     * @return 아이템이 갖고 있는 잠재옵션 List<String>
+     */
     List<String> initPotentialOptions(MyItem myItem, boolean additional){
         String potentialOption1;
         String potentialOption2;
@@ -54,6 +60,102 @@ public class ItemAnalyzer {
         return new ArrayList<>(List.of(potentialOption1, potentialOption2, potentialOption3));
     }
 
+    /**
+     * 잠재능력 옵션 별 수치 반환하는 메소드
+     * @param myItem 분석할 아이템
+     * @param character 캐릭터 직업
+     * @param additional 에디셔널이면 true, 그 외 false
+     * @return Map<옵션명(String), 수치(Float)>
+     */
+    Map<String, Float> getPotentialValue(MyItem myItem, Character character, boolean additional){
+        // 에디 잠재 없는 경우
+        if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
+            return null;
+        }
+
+        // 잠재 없는 경우
+        if(!additional && myItem.getPotentialOptionGrade() == null){
+            return null;
+        }
+
+        Map<String, Float> potentialValue = new HashMap<>();
+
+        String mainStat = getMainStat(character);
+        String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
+
+        String mainStatPercent = mainStat+"%"; // STR%
+        String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat; // 캐릭터 기준 9레벨 당 STR
+
+        List<String> optionList = new ArrayList<>(PotentialOption.OPTION_LIST);
+        optionList.add(perLevelStat);
+
+        List<String> potentialOptions = initPotentialOptions(myItem, additional);
+
+        for (String potentialOption : potentialOptions){
+            if(potentialOption.length() == 0) { // 잠재 2줄일 경우 3번째 생략
+                continue;
+            }
+
+            // 주스탯% or 올스탯% 체크
+            if((potentialOption.startsWith(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
+                    && potentialOption.endsWith("%")){
+
+                if(potentialOption.contains(mainStat)){
+                    // 주스탯 % 수치 추가
+                    Float optionValue = getPotentialOptionValue(potentialOption, mainStat);
+
+                    potentialValue.putIfAbsent(mainStatPercent, 0F);
+                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> v + optionValue);
+
+                } else if (!mainStat.equals(ClassMainStat.HP)) {
+                    //데몬어벤져일 경우 올스탯 제외
+                    // 올스탯 % 수치를 주스탯 수치로 변환하여 추가
+                    Float optionValue = getPotentialOptionValue(potentialOption, PotentialOption.ALL_STAT);
+
+                    potentialValue.putIfAbsent(mainStatPercent, 0F);
+                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> {
+
+                        if(ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass())) {
+                            return v + optionValue * 1.23F;
+                        }
+                        return v + optionValue * 1.12F;
+                    });
+
+                }
+            }
+            // 그 외 유효 옵션 체크 (크뎀, 공마%, 보공%, 렙당 주스탯)
+            for(String option : optionList){
+                if(!potentialOption.startsWith(option)) {
+                    continue;
+                }
+
+                if(option.equals(PotentialOption.ATTACK_POWER) || option.equals(PotentialOption.MAGIC_POWER)){
+                    // 직업에 따라 공격력 or 마력만 집계
+                    if(!power.equals(option)){
+                        continue;
+                    }
+                }
+
+                String optionCategory = getShortOptionCategory(potentialOption, option);
+
+                Float optionValue = getPotentialOptionValue(potentialOption, option);
+
+                potentialValue.putIfAbsent(optionCategory, 0F);
+                potentialValue.computeIfPresent(optionCategory, (k, v) -> v + optionValue);
+
+            }
+        }
+
+        return potentialValue;
+    }
+
+    /**
+     * 잠재 옵션의 수치를 반환하는 메소드
+     * 잠재옵션이 어떤 종류인지 파악 후 사용
+     * @param potentialOption 잠재옵션 String
+     * @param option 잠재옵션이 어떤 종류의 옵션인지
+     * @return 잠재옵션 수치 Float
+     */
     Float getPotentialOptionValue(String potentialOption, String option){
         if(potentialOption.endsWith("%")){
             String optionValueString = potentialOption.replace(option+ " : +","").replace("%","");
@@ -71,6 +173,7 @@ public class ItemAnalyzer {
         String optionValueString = potentialOption.replace(option + " : +", "");
         return Float.parseFloat(optionValueString);
     }
+
 
     String getShortOptionCategory(String potentialOption, String option) {
         String optionCategory = potentialOption.endsWith("%") ? option + "%" : option;

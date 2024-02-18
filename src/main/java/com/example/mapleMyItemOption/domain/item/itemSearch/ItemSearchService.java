@@ -58,8 +58,8 @@ public class ItemSearchService {
         List<Map<String, Float>> presetTotalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.TOTAL);
         List<Map<String, Float>> presetTotalAdditionalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.TOTAL);
 
-        List<Map<String, Float>> presetPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.LINES);
-        List<Map<String, Float>> presetAdditionalPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.LINES);
+        //List<Map<String, Float>> presetPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.LINES);
+        //List<Map<String, Float>> presetAdditionalPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.LINES);
 
 
         // 불러온 정보 프리셋 별로 넣기
@@ -82,8 +82,8 @@ public class ItemSearchService {
             presetTotalStat.setTotalPotentialValue(presetTotalPotentialValues.get(i)); // 잠재 총합 수치
             presetTotalStat.setTotalAdditionalPotentialValue(presetTotalAdditionalPotentialValues.get(i));
 
-            presetTotalStat.setPotentialOptionLines(presetPotentialLines.get(i)); // 잠재 옵션 개수
-            presetTotalStat.setAdditionalPotentialOptionLines(presetAdditionalPotentialLines.get(i)); // 에디 옵션 개수
+            //presetTotalStat.setPotentialOptionLines(presetPotentialLines.get(i)); // 잠재 옵션 개수
+            //presetTotalStat.setAdditionalPotentialOptionLines(presetAdditionalPotentialLines.get(i)); // 에디 옵션 개수
 
             presetTotalStats.add(presetTotalStat);
         }
