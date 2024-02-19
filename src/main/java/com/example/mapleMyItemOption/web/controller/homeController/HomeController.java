@@ -150,7 +150,7 @@ public class HomeController {
         model.addAttribute(character);
 
         // 장비 프리셋의 평균 수치
-        List<PresetTotalStat> presetTotalStats = itemSearchService.getPresetTotalStats(myItemEquipment, character, false);
+        List<PresetTotalStat> presetTotalStats = itemSearchService.getPresetTotalStats(myItemEquipment, character);
         PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
         model.addAttribute("presetTotalStat", presetTotalStat);
 
@@ -167,8 +167,8 @@ public class HomeController {
         model.addAttribute("itemOthers", presetItemStatsOthers);
 
 
-        model.addAttribute("averageList", PotentialOption.AVERAGE_LIST); // 잠재 옵션 표시 조건문을 위함
-        model.addAttribute("totalList", PotentialOption.TOTAL_LIST); // 잠재 옵션 표시 조건문을 위함
+        model.addAttribute("averageList", PotentialOption.AVERAGE_LIST_SHORTEN); // 잠재 옵션 표시 조건문을 위함
+        model.addAttribute("totalList", PotentialOption.TOTAL_LIST_SHORTEN); // 잠재 옵션 표시 조건문을 위함
 
         return "my-character";
     }

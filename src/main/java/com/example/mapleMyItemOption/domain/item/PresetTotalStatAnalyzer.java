@@ -21,17 +21,16 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param myItemEquipment 조회하는 캐릭터의 장비
      * @param character 조회하는 캐릭터 정보
      * @param additional 에디셔널을 조회하는지
-     * @param specificStat 주스탯% 와 올스탯% 를 분리하여 데이터를 얻을지
      * @param dataOption 평균 / 총합 / 개수
      * @return 프리셋 별 잠재능력과 수치 List<Map<옵션, 수치>>
      */
-    public List<Map<String, Float>> getPresetPotentialValues(MyItemEquipment myItemEquipment, Character character, boolean additional, boolean specificStat, PotentialValuesOption dataOption){
+    public List<Map<String, Float>> getPresetPotentialValues(MyItemEquipment myItemEquipment, Character character, boolean additional, PotentialValuesOption dataOption){
         List<Map<String, Float>> presetPotentialValues = new ArrayList<>();
 
         List<List<MyItem>> presets = getPresets(myItemEquipment);
 
         for (List<MyItem> preset : presets) {
-            presetPotentialValues.add(getPresetPotentialValue(preset, character, additional, specificStat, dataOption));
+            presetPotentialValues.add(getPresetPotentialValue(preset, character, additional, dataOption));
         }
 
         return presetPotentialValues;
@@ -42,13 +41,10 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param preset MyItemEquipment 의 프리셋 (List<MyItem>)
      * @param character 조회하는 캐릭터 정보
      * @param additional 에디셔널을 조회하는지
-     * @param specificStat 주스탯% 와 올스탯% 를 분리하여 데이터를 얻을지
      * @param dataOption 평균 / 총합 / 개수
      * @return Map<옵션종류, 수치>
      */
-    private Map<String, Float> getPresetPotentialValue(List<MyItem> preset, Character character, boolean additional, boolean specificStat, PotentialValuesOption dataOption) {
-        // mainStat == "STR", "DEX", "INT", "LUK", "HP", "올스탯"
-        String mainStat = getMainStat(character);
+    private Map<String, Float> getPresetPotentialValue(List<MyItem> preset, Character character, boolean additional, PotentialValuesOption dataOption) {
 
         Map<String, Float> presetPotentialValue = new HashMap<>(); // 옵션별 수치 총합
                                                                    // {"STR%" : 150, "공격력%" : 90}
@@ -58,23 +54,32 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                                                                      // {"공격력%" : 9}
 
         for (MyItem myItem : preset) {
-            Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional);
 
-            if (potentialValue == null){
+            Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional, false);
+            Map<String, Float> potentialLine = getPotentialValue(myItem, character, additional, true);
+
+            if (potentialValue == null || potentialLine == null){
                 continue;
             }
 
+            // 옵션 수치 총합, 아이템 개수 업데이트
             for (Map.Entry<String, Float> potential : potentialValue.entrySet()) {
-                presetPotentialValue.putIfAbsent(potential.getKey(), 0F);
-                presetPotentialValue.computeIfPresent(potential.getKey(), (k, v) -> v + potential.getValue());
+                String option = potential.getKey();
+                Float value = potential.getValue();
+
+                // ex) 드랍 200%
+                presetPotentialValue.putIfAbsent(option, 0F);
+                presetPotentialValue.computeIfPresent(option, (k, v) -> v + value);
+
+                // ex) 드랍 5개
+                presetPotentialItems.putIfAbsent(option, 0F);
+                presetPotentialItems.computeIfPresent(option, (k, v) -> v + 1);
             }
-
-            for(String potentialOption : potentialValue.keySet()){
-                presetPotentialItems.putIfAbsent(potentialOption, 0F);
-                presetPotentialItems.computeIfPresent(potentialOption, (k, v) -> v + 1);
+            // key 의 옵션의 개수 ex) 드랍 10줄
+            for (Map.Entry<String, Float> potential : potentialLine.entrySet()) {
+                presetPotentialLines.putIfAbsent(potential.getKey(), 0F);
+                presetPotentialLines.computeIfPresent(potential.getKey(), (k, v) -> v + potential.getValue());
             }
-
-
            /* // 에디 잠재 없는 경우
             if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
                 continue;
@@ -208,40 +213,25 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
 
         // 순서 정렬
-        Map<String, Float> presetAveragePotentialValue = new LinkedHashMap<>();
-        List<String> averageOptionList = PotentialOption.AVERAGE_LIST;
-        //averageOptionList.add(mainStat+"%");
+        Map<String, Float> orderedPresetAveragePotentialValue = new LinkedHashMap<>();
 
-        Float mainStatValue = presetPotentialValue.getOrDefault(mainStat + "%", 0F);
-        presetPotentialValue.put(PotentialOption.TOTAL_STAT_PERCENT, mainStatValue);
-        presetPotentialValue.remove(mainStat+"%");
-
-        Float mainStatCount = presetPotentialItems.getOrDefault(mainStat + "%", 0F);
-        presetPotentialItems.put(PotentialOption.TOTAL_STAT_PERCENT, mainStatCount);
-        presetPotentialItems.remove(mainStat+"%");
-
-        for(String option : PotentialOption.AVERAGE_LIST){
+        for(String option : PotentialOption.AVERAGE_LIST_SHORTEN){
             Float totalValue = presetPotentialValue.getOrDefault(option, 0F);
             Float itemCount = presetPotentialItems.getOrDefault(option, 0F);
-
-            if(option.equals(PotentialOption.TOTAL_STAT_PERCENT)){
-                System.out.println(presetPotentialValue.getOrDefault(option, 0F));
-                System.out.println(presetPotentialItems.getOrDefault(option, 0F));
-            }
 
             float average = totalValue / itemCount;
             Float roundedAvg = Math.round(average * 10) / 10F;
 
             if(itemCount != 0) {
-                presetAveragePotentialValue.put(option, roundedAvg);
+                orderedPresetAveragePotentialValue.put(option, roundedAvg);
             }
         }
 
-        System.out.println(presetPotentialValue);
         // 순서 정렬
         Map<String, Float> orderedPresetPotentialLines = new LinkedHashMap<>();
         Map<String, Float> orderedPresetPotentialValue = new LinkedHashMap<>();
-        for(String option : PotentialOption.TOTAL_LIST) {
+
+        for(String option : PotentialOption.TOTAL_LIST_SHORTEN) {
             Float totalLines = presetPotentialLines.getOrDefault(option, 0F);
             Float totalValue = presetPotentialValue.getOrDefault(option, 0F);
             if(totalLines != 0){
@@ -251,11 +241,26 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
         }
 
         switch (dataOption){
-            case AVERAGE -> {return presetAveragePotentialValue;}
-            case LINES -> {return orderedPresetPotentialLines;}
-            case TOTAL -> {return orderedPresetPotentialValue;}
+            case AVERAGE -> {
+                if(orderedPresetAveragePotentialValue.isEmpty()){
+                    return null;
+                }
+                return orderedPresetAveragePotentialValue;
+            }
+            case LINES -> {
+                if(orderedPresetPotentialLines.isEmpty()){
+                    return null;
+                }
+                return orderedPresetPotentialLines;
+            }
+            case TOTAL -> {
+                if(orderedPresetPotentialValue.isEmpty()){
+                    return null;
+                }
+                return orderedPresetPotentialValue;
+            }
         }
-        return presetAveragePotentialValue;
+        return orderedPresetAveragePotentialValue;
     }
 
 
@@ -288,6 +293,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
     private Map<String, Integer> countPotentialGrade(List<MyItem> preset, boolean additional) {
         Map<String, Integer> gradeCount = new LinkedHashMap<>();
 
+        // 잠재능력 옵션 등급의 순서 고정을 위함
         for(String grade : PotentialOption.GRADE_LIST){
             gradeCount.put(grade, 0);
         }
@@ -295,44 +301,31 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
         for(MyItem myItem : preset) { // 잠재능력 등급 카운트
 
             String potentialOptionGrade = additional ? myItem.getAdditionalPotentialOptionGrade() : myItem.getPotentialOptionGrade();
-            //updatePotentialGradeMap(gradeCount, potentialOptionGrade);
+
             if(potentialOptionGrade == null) {
                 continue;
             }
             switch (potentialOptionGrade){
                 case PotentialOption.LEGENDARY -> {
-                    //int currentCount = gradeCount.get(PotentialOption.LEGENDARY);
-                    //gradeCount.put(PotentialOption.LEGENDARY, currentCount + 1);
                     gradeCount.computeIfPresent(PotentialOption.LEGENDARY, (k, v) -> v + 1);
                 }
                 case PotentialOption.UNIQUE -> {
-                    //int currentCount = gradeCount.get(PotentialOption.UNIQUE);
-                    //gradeCount.put(PotentialOption.UNIQUE, currentCount + 1);
                     gradeCount.computeIfPresent(PotentialOption.UNIQUE, (k, v) -> v + 1);
                 }
                 case PotentialOption.EPIC -> {
-                    //int currentCount = gradeCount.get(PotentialOption.EPIC);
-                    //gradeCount.put(PotentialOption.EPIC, currentCount + 1);
                     gradeCount.computeIfPresent(PotentialOption.EPIC, (k, v) -> v + 1);
                 }
                 case PotentialOption.RARE -> {
-                    //int currentCount = gradeCount.get(PotentialOption.RARE);
-                    //gradeCount.put(PotentialOption.RARE, currentCount + 1);
                     gradeCount.computeIfPresent(PotentialOption.RARE, (k, v) -> v + 1);
                 }
             }
         }
 
-        // 카운트 0 인 등급 제외하여 반환
-        Map<String, Integer> resultGradeCount = new LinkedHashMap<>();
-
-        for (String grade : gradeCount.keySet()){
-            if(gradeCount.get(grade) != 0){
-                resultGradeCount.put(grade, gradeCount.get(grade));
-            }
+        if (gradeCount.isEmpty()){
+            return null;
         }
 
-        return resultGradeCount;
+        return gradeCount;
     }
 
 

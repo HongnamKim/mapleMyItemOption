@@ -67,7 +67,7 @@ public class ItemAnalyzer {
      * @param additional 에디셔널이면 true, 그 외 false
      * @return Map<옵션명(String), 수치(Float)>
      */
-    Map<String, Float> getPotentialValue(MyItem myItem, Character character, boolean additional){
+    Map<String, Float> getPotentialValue(MyItem myItem, Character character, boolean additional, boolean lines){
         // 에디 잠재 없는 경우
         if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
             return null;
@@ -79,11 +79,13 @@ public class ItemAnalyzer {
         }
 
         Map<String, Float> potentialValue = new HashMap<>();
+        Map<String, Float> potentialLines = new HashMap<>();
 
         String mainStat = getMainStat(character);
         String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
 
-        String mainStatPercent = mainStat+"%"; // STR%
+        //String mainStatPercent = mainStat+"%"; // STR%
+        String mainStatPercent = PotentialOption.TOTAL_STAT_PERCENT; // 주스탯%
         String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat; // 캐릭터 기준 9레벨 당 STR
 
         List<String> optionList = new ArrayList<>(PotentialOption.OPTION_LIST);
@@ -102,24 +104,35 @@ public class ItemAnalyzer {
 
                 if(potentialOption.contains(mainStat)){
                     // 주스탯 % 수치 추가
-                    Float optionValue = getPotentialOptionValue(potentialOption, mainStat);
 
-                    potentialValue.putIfAbsent(mainStatPercent, 0F);
-                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> v + optionValue);
+
+                    if(lines){
+                        potentialLines.putIfAbsent(mainStatPercent, 0F);
+                        potentialLines.computeIfPresent(mainStatPercent, (k, v) -> v + 1);
+                    } else {
+                        Float optionValue = getPotentialOptionValue(potentialOption, mainStat);
+
+                        potentialValue.putIfAbsent(mainStatPercent, 0F);
+                        potentialValue.computeIfPresent(mainStatPercent, (k, v) -> v + optionValue);
+                    }
 
                 } else if (!mainStat.equals(ClassMainStat.HP)) {
                     //데몬어벤져일 경우 올스탯 제외
                     // 올스탯 % 수치를 주스탯 수치로 변환하여 추가
-                    Float optionValue = getPotentialOptionValue(potentialOption, PotentialOption.ALL_STAT);
+                    if(lines){
+                        potentialLines.putIfAbsent(mainStatPercent, 0F);
+                        potentialLines.computeIfPresent(mainStatPercent, (k, v) -> v + 1);
+                    } else {
+                        Float optionValue = getPotentialOptionValue(potentialOption, PotentialOption.ALL_STAT);
 
-                    potentialValue.putIfAbsent(mainStatPercent, 0F);
-                    potentialValue.computeIfPresent(mainStatPercent, (k, v) -> {
-
-                        if(ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass())) {
-                            return v + optionValue * 1.23F;
-                        }
-                        return v + optionValue * 1.12F;
-                    });
+                        potentialValue.putIfAbsent(mainStatPercent, 0F);
+                        potentialValue.computeIfPresent(mainStatPercent, (k, v) -> {
+                            if(ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass())) {
+                                return v + optionValue * 1.23F;
+                            }
+                            return v + optionValue * 1.12F;
+                        });
+                    }
 
                 }
             }
@@ -138,12 +151,21 @@ public class ItemAnalyzer {
 
                 String optionCategory = getShortOptionCategory(potentialOption, option);
 
-                Float optionValue = getPotentialOptionValue(potentialOption, option);
+                if(lines){
+                    potentialLines.putIfAbsent(optionCategory, 0F);
+                    potentialLines.computeIfPresent(optionCategory, (k, v) -> v + 1);
+                } else {
+                    Float optionValue = getPotentialOptionValue(potentialOption, option);
 
-                potentialValue.putIfAbsent(optionCategory, 0F);
-                potentialValue.computeIfPresent(optionCategory, (k, v) -> v + optionValue);
+                    potentialValue.putIfAbsent(optionCategory, 0F);
+                    potentialValue.computeIfPresent(optionCategory, (k, v) -> v + optionValue);
+                }
 
             }
+        }
+
+        if(lines){
+            return potentialLines;
         }
 
         return potentialValue;

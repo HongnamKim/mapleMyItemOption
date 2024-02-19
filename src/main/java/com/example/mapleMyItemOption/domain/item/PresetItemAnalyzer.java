@@ -63,6 +63,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             case ClassMainStat.LUK -> mainStatPoint = itemAddOption.getLuk();
             case ClassMainStat.HP -> mainStatPoint = itemAddOption.getMaxHp();
         }
+
         Integer power;
         if (mainStat.equals(ClassMainStat.INT)) {
             power = itemAddOption.getMagicPower();
@@ -217,7 +218,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             }
         }*/
 
-        Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional);
+        Map<String, Float> potentialValue = getPotentialValue(myItem, character, additional, false);
 
         if(additional){
             item.setAdditionalPotentialValue(potentialValue);

@@ -35,10 +35,9 @@ public class ItemSearchService {
      * 프리셋 별 종합 옵션 정보 (스타포스, 추가옵션, 잠재, 에디셔널, 주문서)
      * @param myItemEquipment MyItemEquipment 캐릭터 장비 정보
      * @param character Character 캐릭터 기본 정보
-     * @param specificStat 주스탯% 올스탯% 따로할지, 합쳐서 할지
      * @return
      */
-    public List<PresetTotalStat> getPresetTotalStats (MyItemEquipment myItemEquipment, Character character, boolean specificStat){
+    public List<PresetTotalStat> getPresetTotalStats (MyItemEquipment myItemEquipment, Character character){
         List<PresetTotalStat> presetTotalStats = new ArrayList<>();
 
         List<Float> presetAverageStarforce = presetTotalStatAnalyzer.getPresetAverageStarforce(myItemEquipment);
@@ -52,14 +51,14 @@ public class ItemSearchService {
         List<Map<String, Integer>> presetPotentialGradeCount = presetTotalStatAnalyzer.getPresetPotentialGradeCount(myItemEquipment, false);
         List<Map<String, Integer>> presetAdditionalPotentialGradeCount = presetTotalStatAnalyzer.getPresetPotentialGradeCount(myItemEquipment, true);
 
-        List<Map<String, Float>> presetAveragePotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.AVERAGE);
-        List<Map<String, Float>> presetAverageAdditionalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.AVERAGE);
+        List<Map<String, Float>> presetAveragePotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, PotentialValuesOption.AVERAGE);
+        List<Map<String, Float>> presetAverageAdditionalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, PotentialValuesOption.AVERAGE);
 
-        List<Map<String, Float>> presetTotalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.TOTAL);
-        List<Map<String, Float>> presetTotalAdditionalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.TOTAL);
+        List<Map<String, Float>> presetTotalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, PotentialValuesOption.TOTAL);
+        List<Map<String, Float>> presetTotalAdditionalPotentialValues = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, PotentialValuesOption.TOTAL);
 
-        //List<Map<String, Float>> presetPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, specificStat, PotentialValuesOption.LINES);
-        //List<Map<String, Float>> presetAdditionalPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, specificStat, PotentialValuesOption.LINES);
+        List<Map<String, Float>> presetPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, false, PotentialValuesOption.LINES);
+        List<Map<String, Float>> presetAdditionalPotentialLines = presetTotalStatAnalyzer.getPresetPotentialValues(myItemEquipment, character, true, PotentialValuesOption.LINES);
 
 
         // 불러온 정보 프리셋 별로 넣기
@@ -82,8 +81,12 @@ public class ItemSearchService {
             presetTotalStat.setTotalPotentialValue(presetTotalPotentialValues.get(i)); // 잠재 총합 수치
             presetTotalStat.setTotalAdditionalPotentialValue(presetTotalAdditionalPotentialValues.get(i));
 
-            //presetTotalStat.setPotentialOptionLines(presetPotentialLines.get(i)); // 잠재 옵션 개수
-            //presetTotalStat.setAdditionalPotentialOptionLines(presetAdditionalPotentialLines.get(i)); // 에디 옵션 개수
+            presetTotalStat.setPotentialOptionLines(presetPotentialLines.get(i)); // 잠재 옵션 개수
+            presetTotalStat.setAdditionalPotentialOptionLines(presetAdditionalPotentialLines.get(i)); // 에디 옵션 개수
+
+            if(i == 0){
+                System.out.println(presetTotalStat);
+            }
 
             presetTotalStats.add(presetTotalStat);
         }
