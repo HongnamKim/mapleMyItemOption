@@ -54,6 +54,7 @@
 
     <div th:object="${character}" class="character-container">
       <div class="character-container-top">
+        <!--캐릭터 창 왼쪽 영역-->
         <div class="character-container-sub">
           <div class="character-container-sub-sub">
             <div class="character-text-box text-center background-main">
@@ -70,23 +71,25 @@
             <div class="character-text-box text-space-between background-sub">
               <span class="text-color-white">유니온</span>
               <span th:text="*{characterUnionLevel}" class="text-color-black"
-                >9000</span
+                >-</span
               >
             </div>
             <div class="character-text-box text-space-between background-sub">
               <span class="text-color-white">무릉도장</span>
               <span th:text="*{dojangFloor}" class="text-color-black"
-                >70층</span
+                >-</span
               >
             </div>
             <div class="character-text-box text-space-between background-sub">
               <span class="text-color-white">인기도</span>
               <span th:text="*{characterPopularity}" class="text-color-black"
-                >123</span
+                >-</span
               >
             </div>
           </div>
         </div>
+
+        <!--캐릭터 창 중앙 영역-->
         <div class="character-container-sub pt-0">
           <div
             class="character-text-box text-center background-main mt-0 level-text-box"
@@ -108,6 +111,8 @@
             >
           </div>
         </div>
+
+        <!--캐릭터 창 오른쪽 영역-->
         <div class="character-container-sub">
           <div class="character-container-sub-sub">
             <div
@@ -140,12 +145,13 @@
             </div>
 
             <div class="character-text-box text-center background-sub">
-              <span th:text="*{characterGuildName}">길드 이름</span>
+              <span th:text="${character.characterGuildName != null ? character.characterGuildName : '-'}">길드 이름</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!--전투력 수치 표시 영역-->
       <div class="character-container-bottom background-point-sub">
         <div class="character-assault-box">
           <span class="text-color-white">전투력</span>
@@ -184,6 +190,7 @@
     </div>
 
     <div class="preset-button-container">
+      <!--1번 프리셋 버튼-->
       <button
         th:onclick="|location.href='@{/my-character/1}'|"
         th:classappend="${presetNo == 1 ? 'background-sub-light text-color-black' : 'background-main text-color-white'}"
@@ -192,6 +199,7 @@
         1번 프리셋
       </button>
 
+      <!--2번 프리셋 버튼-->
       <button
         th:onclick="|location.href='@{/my-character/2}'|"
         th:classappend="${presetNo == 2 ? 'background-sub-light text-color-black' : 'background-main text-color-white'}"
@@ -200,6 +208,7 @@
         2번 프리셋
       </button>
 
+      <!--3번 프리셋 버튼-->
       <button
         th:onclick="|location.href='@{/my-character/3}'|"
         th:classappend="${presetNo == 3 ? 'background-sub-light text-color-black' : 'background-main text-color-white'}"
@@ -211,6 +220,7 @@
 
     <div class="preset-container background-sub-light">
       <div class="preset-item-container accordion" id="accordionExample">
+        <!--무보엠-->
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingOne">
             <button
@@ -247,6 +257,7 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
+                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -369,6 +380,7 @@
           </div>
         </div>
 
+        <!--방어구-->
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingTwo">
             <button
@@ -405,6 +417,7 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
+                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -527,6 +540,7 @@
           </div>
         </div>
 
+        <!--장신구-->
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingThree">
             <button
@@ -563,6 +577,7 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
+                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -694,6 +709,7 @@
           </div>
         </div>
 
+        <!--기타 장비-->
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingFour">
             <button
@@ -730,6 +746,7 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
+                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -855,6 +872,7 @@
 
       <div class="preset-stat-container">
         <div class="preset-stat-container-upper">
+          <!--스타포스-->
           <div class="preset-stat-specific-container background-white">
             <div class="preset-stat-title">
               <span class="preset-stat-title-text">스타포스</span>
@@ -882,6 +900,7 @@
             </div>
           </div>
 
+          <!--추가옵션-->
           <div
             class="preset-stat-specific-container preset-stat-specific-container-center background-white"
           >
@@ -903,6 +922,7 @@
             </div>
           </div>
 
+          <!--주문서-->
           <div class="preset-stat-specific-container background-white" th:if="${isNormalServer}">
             <div class="preset-stat-title">
               <span class="preset-stat-title-text">평균 주문서 옵션</span>
@@ -922,6 +942,7 @@
         </div>
 
         <div class="preset-stat-container-upper">
+          <!--잠재능력-->
           <div
             class="preset-stat-specific-container background-white"
             th:classappend="${isNormalServer ? 'margin-right-p5rem' : ''}"
@@ -982,7 +1003,7 @@
             </div>
           </div>
 
-
+          <!--에디셔널 잠재능력-->
           <div
             class="preset-stat-specific-container background-white"
             th:if="${isNormalServer}"

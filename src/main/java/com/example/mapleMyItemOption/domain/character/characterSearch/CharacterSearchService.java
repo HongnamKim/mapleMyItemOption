@@ -4,6 +4,7 @@ import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.api.ApiService;
 
 import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

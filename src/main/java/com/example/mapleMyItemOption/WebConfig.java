@@ -4,7 +4,6 @@ import com.example.mapleMyItemOption.api.ApiService;
 import com.example.mapleMyItemOption.api.ExternalApiService;
 import com.example.mapleMyItemOption.api.InternalApiService;
 import com.example.mapleMyItemOption.domain.item.ItemAnalyzer;
-import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
 import com.example.mapleMyItemOption.domain.repository.MemorySearchHistoryRepository;
 import com.example.mapleMyItemOption.domain.repository.SearchHistoryRepository;
@@ -40,28 +39,6 @@ public class WebConfig implements WebMvcConfigurer {
         ItemAnalyzer.shortOptionCategory.put(PotentialOption.ITEM_DROP, "드랍%"); // 아이템 드롭률 : 드랍%
         ItemAnalyzer.shortOptionCategory.put(PotentialOption.MONEY_DROP, "메획%"); // 메소 획득량 : 메획%
         ItemAnalyzer.shortOptionCategory.put(PotentialOption.SKILL_COOL_TIME, "쿨감"); // 모든 스킬의 재사용 대기시간 : 쿨감
-
-        /*
-        주스탯%, 캐릭터 기준 9레벨 당 주스탯, 공격력, 마력
-
-        주스탯%, 렙당, 공격력, 마력
-         */
-
-        /*for(String shortOption : ItemAnalyzer.shortOptionCategory.keySet()){
-            //System.out.println(option);
-            for(String option : PotentialOption.AVERAGE_LIST){
-                if (option.contains(shortOption)){
-                    System.out.println(option + " : " + ItemAnalyzer.shortOptionCategory.get(shortOption));
-                }
-            }
-        }
-        System.out.println(PotentialOption.AVERAGE_LIST_SHORTEN);
-
-        for(String option : PotentialOption.TOTAL_LIST){
-            String shortOption = ItemAnalyzer.shortOptionCategory.getOrDefault(option, option);
-            PotentialOption.TOTAL_LIST_SHORTEN.add(shortOption);
-        }*/
-        //System.out.println(PotentialOption.TOTAL_LIST_SHORTEN);
     }
 
     @Bean

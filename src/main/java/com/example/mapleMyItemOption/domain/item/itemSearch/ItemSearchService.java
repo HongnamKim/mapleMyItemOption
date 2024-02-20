@@ -84,10 +84,6 @@ public class ItemSearchService {
             presetTotalStat.setPotentialOptionLines(presetPotentialLines.get(i)); // 잠재 옵션 개수
             presetTotalStat.setAdditionalPotentialOptionLines(presetAdditionalPotentialLines.get(i)); // 에디 옵션 개수
 
-            if(i == 0){
-                System.out.println(presetTotalStat);
-            }
-
             presetTotalStats.add(presetTotalStat);
         }
 

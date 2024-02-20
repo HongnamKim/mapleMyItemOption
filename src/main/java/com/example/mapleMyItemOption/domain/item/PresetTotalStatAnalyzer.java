@@ -14,8 +14,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
-    private final PresetItemAnalyzer presetItemAnalyzer;
-
     /**
      * 각각 프리셋 별로 잠재능력 옵션들의 수치를 구하는 메소드
      * @param myItemEquipment 조회하는 캐릭터의 장비
@@ -77,8 +75,11 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             }
             // key 의 옵션의 개수 ex) 드랍 10줄
             for (Map.Entry<String, Float> potential : potentialLine.entrySet()) {
-                presetPotentialLines.putIfAbsent(potential.getKey(), 0F);
-                presetPotentialLines.computeIfPresent(potential.getKey(), (k, v) -> v + potential.getValue());
+                String option = potential.getKey();
+                Float value = potential.getValue();
+
+                presetPotentialLines.putIfAbsent(option, 0F);
+                presetPotentialLines.computeIfPresent(option, (k, v) -> v + value);
             }
            /* // 에디 잠재 없는 경우
             if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
@@ -334,14 +335,13 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * 프리셋 별 아이템 평균 추옵 계산
      * @param myItemEquipment 캐릭터 장비 정보
      * @param character 캐릭터 기본 정보(주스탯 확보용)
-     * @return
+     * @return 각 프리셋 별 아이템 평균 추가옵션
      */
     public List<Map<Integer, Float>> getPresetAverageAddOption(MyItemEquipment myItemEquipment, Character character){
         String mainStat = getMainStat(character);
 
         List<List<MyItem>> presets = getPresets(myItemEquipment);
 
-        //List<Float> presetAverageAddOption = new ArrayList<>();
         List<Map<Integer, Float>> presetLevelAverageAddOption = new ArrayList<>();
 
         for(List<MyItem> preset : presets){
@@ -353,9 +353,9 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
     /**
      * 하나의 프리셋에서 평균 추가옵션 수치
-     * @param preset
-     * @param mainStat
-     * @return
+     * @param preset 프리셋 내의 아이템 리스트
+     * @param mainStat 캐릭터 주스탯
+     * @return 장비 렙제 별 평균 추가 옵션
      */
     private Map<Integer, Float> getAverageAddOption(List<MyItem> preset, String mainStat){
 
@@ -453,38 +453,28 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
     }
 
     public List<Map<String, List<Float>>> getPresetAverageEtcOption(MyItemEquipment myItemEquipment, Character character){
-        //List<List<Float>> presetAverageEtcOption = new ArrayList<>();
 
         List<Map<String, List<Float>>> presetAverageEtcOptionCategory = new ArrayList<>();
 
         String mainStat = getMainStat(character);
         List<List<MyItem>> presets = getPresets(myItemEquipment);
 
-
         for(List<MyItem> preset : presets) {
-            //presetAverageEtcOption.add(getAverageEtcOption(preset, mainStat));
             presetAverageEtcOptionCategory.add(getAverageEtcOption(preset, mainStat));
         }
 
-        //return presetAverageEtcOption;
         return presetAverageEtcOptionCategory;
     }
 
     private Map<String, List<Float>> getAverageEtcOption(List<MyItem> preset, String mainStat) {
-        /*
-        Float totalMainStatOption = 0F; // 주스탯 총합
-        Float totalPowerOption = 0F; // 공마 총합
-        Float totalUpgradeCount = 0F; // 총 업그레이드 횟수
-        */
 
         Map<String, float[]> averageEtcOptionTotal = new HashMap<>(); // 장비 카테고리 별 주문서 옵션 합
-        String[] categoryKey = {"무보엠", "방어구", "장신구", "기타 장비"};
-        for(String key : categoryKey){
+
+        for(String key : ItemSlot.SLOT_CATEGORY){ // ["무보엠", "방어구", "장신구", "기타 장비"]
             averageEtcOptionTotal.put(key, new float[]{0, 0});
         }
 
         Map<String, Integer> averageEtcOptionCount = new HashMap<>(); // 장비 카테고리 별 주문서 업그레이드 횟수
-
 
         for (MyItem myItem : preset){
             // 주문서 적용하지 않은 아이템 제외
@@ -509,12 +499,18 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
             List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
 
+            int etcStatOption;
             switch (mainStat){
-                case "STR" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getStr() - starforceScrollValue.get(1);
-                case "DEX" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getDex() - starforceScrollValue.get(1);
-                case "INT" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getIntel() - starforceScrollValue.get(1);
-                case "LUK" -> averageEtcOptionTotal.get(itemCategory)[1] += itemEtcOption.getLuk() - starforceScrollValue.get(1);
+                case ClassMainStat.STR -> etcStatOption = itemEtcOption.getStr();
+                case ClassMainStat.DEX -> etcStatOption = itemEtcOption.getDex();
+                case ClassMainStat.INT -> etcStatOption = itemEtcOption.getIntel();
+                case ClassMainStat.LUK -> etcStatOption = itemEtcOption.getLuk();
+                case ClassMainStat.HP -> etcStatOption = itemEtcOption.getMaxHp();
+                default -> etcStatOption = 0;
             }
+
+            int etcOption = (etcStatOption - starforceScrollValue.get(1) < 0) ? etcStatOption : etcStatOption - starforceScrollValue.get(1);
+            averageEtcOptionTotal.get(itemCategory)[1] += etcOption;
 
             if(mainStat.equals("INT")){
                 averageEtcOptionTotal.get(itemCategory)[0] += itemEtcOption.getMagicPower() - starforceScrollValue.get(0);
@@ -522,20 +518,21 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                 averageEtcOptionTotal.get(itemCategory)[0] += itemEtcOption.getAttackPower() - starforceScrollValue.get(0);
             }
 
-            Integer currentCount = averageEtcOptionCount.getOrDefault(itemCategory, 0);
-            averageEtcOptionCount.put(itemCategory, currentCount + myItem.getScrollUpgrade());
+            averageEtcOptionCount.putIfAbsent(itemCategory, 0);
+            averageEtcOptionCount.computeIfPresent(itemCategory, (k, v) -> v + myItem.getScrollUpgrade());
         }
 
         Map<String, List<Float>> result = new LinkedHashMap<>();
 
-        for(String key : categoryKey){
+        for(String key : ItemSlot.SLOT_CATEGORY){
             int count = Optional.ofNullable(averageEtcOptionCount.get(key)).orElse(0);
 
             if (count == 0) {
-                result.put(key, new ArrayList<>(List.of(0F, 0F)));
+                return null;
+                //result.put(key, new ArrayList<>(List.of(0F, 0F)));
             } else {
-                float avgPower = averageEtcOptionTotal.get(key)[0] / count;
-                float avgStat = averageEtcOptionTotal.get(key)[1] / count;
+                float avgPower = Math.round((averageEtcOptionTotal.get(key)[0] / count) * 10) / 10F;
+                float avgStat = Math.round((averageEtcOptionTotal.get(key)[1] / count) * 10) / 10F;
 
                 result.put(key, new ArrayList<>(List.of(avgPower, avgStat)));
             }
@@ -597,11 +594,6 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
         return presetMinimumStarforce;
     }
 
-
-
-
-
-
     /**
      * 하나의 프리셋에서 평균 스타포스 별 개수
      * @param preset 캐릭터의 프리셋 (List<MyItem>)
@@ -623,13 +615,12 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                     starforce += 10;
                 }
 
-                //System.out.println(myItem.getItemName() + " : " + starforce);
                 totalStarforce += starforce;
                 starforceItems++;
             }
         }
 
-        return totalStarforce/starforceItems;
+        return Math.round(totalStarforce/starforceItems * 10) / 10F;
     }
 
     /**

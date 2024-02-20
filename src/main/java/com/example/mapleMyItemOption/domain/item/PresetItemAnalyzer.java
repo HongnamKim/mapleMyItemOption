@@ -34,6 +34,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         item.setItemName(myItem.getItemName());
         item.setItemImage(myItem.getItemIcon());
         item.setItemEquipmentSlot(myItem.getItemEquipmentSlot());
+        item.setItemBaseEquipLevel(myItem.getItemBaseOption().getBaseEquipmentLevel());
         item.setSpecialRingLevel(myItem.getSpecialRingLevel());
 
         item.setPotentialGrade(myItem.getPotentialOptionGrade());
@@ -64,12 +65,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             case ClassMainStat.HP -> mainStatPoint = itemAddOption.getMaxHp();
         }
 
-        Integer power;
-        if (mainStat.equals(ClassMainStat.INT)) {
-            power = itemAddOption.getMagicPower();
-        } else {
-            power = itemAddOption.getAttackPower();
-        }
+        Integer power = mainStat.equals(ClassMainStat.INT) ? itemAddOption.getMagicPower() : itemAddOption.getAttackPower();
 
         Integer allStat = itemAddOption.getAllStat();
 
@@ -93,7 +89,6 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             }else{
                 addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
             }
-
 
             item.setAddOption(addOption);
         }
@@ -127,11 +122,41 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
 
         switch (mainStat){
-            case ClassMainStat.STR -> etcOption.add((float) (itemEtcOption.getStr() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
-            case ClassMainStat.DEX -> etcOption.add((float) (itemEtcOption.getDex() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
-            case ClassMainStat.INT -> etcOption.add((float) (itemEtcOption.getIntel() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
-            case ClassMainStat.LUK -> etcOption.add((float) (itemEtcOption.getLuk() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
-            case ClassMainStat.HP -> etcOption.add((float) (itemEtcOption.getMaxHp() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+            case ClassMainStat.STR -> {
+                if (itemEtcOption.getStr() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getStr() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getStr() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.DEX -> {
+                if (itemEtcOption.getDex() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getDex() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getDex() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.INT -> {
+                if (itemEtcOption.getIntel() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getIntel() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getIntel() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.LUK -> {
+                if (itemEtcOption.getLuk() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getLuk() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getLuk() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.HP -> {
+                if (itemEtcOption.getMaxHp() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getMaxHp() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getMaxHp() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
         }
 
         item.setEtcOption(etcOption);

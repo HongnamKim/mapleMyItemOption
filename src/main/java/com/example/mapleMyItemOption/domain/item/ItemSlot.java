@@ -35,6 +35,8 @@ public interface ItemSlot {
     List<String> ARMORS = new ArrayList<>(List.of(HAT, TOP, PANTS, SHOES, GLOVE, CLOAK, SHOULDER));
     List<String> OTHERS = new ArrayList<>(List.of(HEART, MEDAL));
 
+    List<String> SLOT_CATEGORY = new ArrayList<>(List.of("무보엠", "방어구", "장신구", "기타 장비"));
+
 }
 
 /*
