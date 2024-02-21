@@ -84,13 +84,13 @@ public class HomeController {
         //POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
         //세선에 객체 넣기
         try {
-            String date = dto.getDate();
+            String date = dto.getMaximumAssaultDate() ? characterSearchService.findMaximumAssaultDate(characterName, dto.getDate()) : dto.getDate();
 
-            searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
+            //searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
 
-            if(dto.getMaximumAssaultDate()){
+            /*if(dto.getMaximumAssaultDate()){
                 date = characterSearchService.findMaximumAssaultDate(characterName, dto.getDate());
-            }
+            }*/
 
             Character character = characterSearchService.searchMyCharacter(characterName, date);
             MyItemEquipment myItemEquipment = itemSearchService.searchMyItemEquipment(characterName, date);
