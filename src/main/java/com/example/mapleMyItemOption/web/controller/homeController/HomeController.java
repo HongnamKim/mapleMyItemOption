@@ -86,7 +86,7 @@ public class HomeController {
         try {
             String date = dto.getDate();
 
-            searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
+            //searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
 
             if(dto.getMaximumAssaultDate()){
                 date = characterSearchService.findMaximumAssaultDate(characterName, dto.getDate());
