@@ -464,8 +464,13 @@
                         <span
                           th:if="${!weaponList.contains(item.value.itemEquipmentSlot) && item.value.addOption != null}"
                           th:text="|*{addOption.mainStat}급|"
-                          >150급</span
-                        >
+                          >150급</span>
+                        <span
+                          th:if="*{compareAddOption != null}"
+                          th:text="${item.value.compareAddOption == 1 ? '평균 이상' : (item.value.compareAddOption == -1 ? '평균 이하' : '평균')}"
+                          class="margin-left-p5rem"
+                          th:classappend="${item.value.compareAddOption == 1 ? 'average-upper' : (item.value.compareAddOption == -1 ? 'average-under' : 'average')}"
+                        >평균</span>
                       </div>
 
                       <div th:if="*{addOption != null}" class="divider"></div>

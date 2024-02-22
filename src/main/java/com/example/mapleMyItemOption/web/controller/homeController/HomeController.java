@@ -4,6 +4,7 @@ import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.domain.character.characterSearch.CharacterSearchService;
 import com.example.mapleMyItemOption.domain.item.ItemSlot;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
+import com.example.mapleMyItemOption.domain.item.PresetItemAnalyzer;
 import com.example.mapleMyItemOption.domain.item.itemSearch.ItemSearchService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
@@ -154,6 +155,9 @@ public class HomeController {
         PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
         model.addAttribute("presetTotalStat", presetTotalStat);
 
+
+
+
         // 장비 프리셋 아이템 목록
         model.addAttribute("weaponList", new ArrayList<>(List.of("무기", "보조무기", "엠블렘")));
         //model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, preset));
@@ -161,6 +165,12 @@ public class HomeController {
         Map<String, Item> presetItemStatsArmors = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.ARMORS);
         Map<String, Item> presetItemStatsAccessories = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.ACCESSORIES);
         Map<String, Item> presetItemStatsOthers = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.OTHERS);
+
+        PresetItemAnalyzer presetItemAnalyzer = new PresetItemAnalyzer();
+        Map<Integer, Float> averageAddOption = presetTotalStat.getAverageAddOption();
+        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsArmors);
+        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsAccessories);
+
         model.addAttribute("itemWeapons", presetItemStatsWeapons);
         model.addAttribute("itemArmors", presetItemStatsArmors);
         model.addAttribute("itemAccessories", presetItemStatsAccessories);
