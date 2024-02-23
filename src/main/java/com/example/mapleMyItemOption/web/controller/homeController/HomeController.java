@@ -170,6 +170,7 @@ public class HomeController {
         Map<Integer, Float> averageAddOption = presetTotalStat.getAverageAddOption();
         presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsArmors);
         presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsAccessories);
+        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsOthers);
 
         model.addAttribute("itemWeapons", presetItemStatsWeapons);
         model.addAttribute("itemArmors", presetItemStatsArmors);
