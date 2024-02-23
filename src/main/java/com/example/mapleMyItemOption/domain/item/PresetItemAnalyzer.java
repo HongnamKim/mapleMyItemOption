@@ -86,8 +86,14 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
             Item.AddOption addOption = new Item.AddOption();
             if(mainStat.equals(ClassMainStat.HP)){
+                if (mainStatPoint == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint);
             }else{
+                if(mainStatPoint + allStat * 10 + power * 4 == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
             }
 
@@ -109,13 +115,18 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
             Integer addOptionValue = addOption.getMainStat();
 
-            if(averageAddOption.get(itemLevel) > addOptionValue){
-                item.setCompareAddOption(-1);
-            } else if(averageAddOption.get(itemLevel) < addOptionValue){
-                item.setCompareAddOption(1);
-            } else {
-                item.setCompareAddOption(0);
+            try{
+                if(averageAddOption.get(itemLevel) > addOptionValue){
+                    item.setCompareAddOption(-1);
+                } else if(averageAddOption.get(itemLevel) < addOptionValue){
+                    item.setCompareAddOption(1);
+                } else {
+                    item.setCompareAddOption(0);
+                }
+            } catch (Exception e){
+                System.out.println(averageAddOption);
             }
+
 
 
         }
