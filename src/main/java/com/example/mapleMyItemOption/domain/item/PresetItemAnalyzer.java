@@ -5,7 +5,6 @@ import com.example.mapleMyItemOption.domain.character.ClassMainStat;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemOption;
-import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -105,8 +104,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         for (Map.Entry<String, Item> presetItem : presetItems.entrySet()) {
             Item item = presetItem.getValue();
             int itemLevel = item.getItemBaseEquipLevel() / 10 * 10;
-            //System.out.println(itemLevel);
-            String itemName = item.getItemName();
+
             if(item.getAddOption() == null){
                 continue;
             }
@@ -115,20 +113,13 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
             Integer addOptionValue = addOption.getMainStat();
 
-            try{
-                if(averageAddOption.get(itemLevel) > addOptionValue){
-                    item.setCompareAddOption(-1);
-                } else if(averageAddOption.get(itemLevel) < addOptionValue){
-                    item.setCompareAddOption(1);
-                } else {
-                    item.setCompareAddOption(0);
-                }
-            } catch (Exception e){
-                System.out.println(averageAddOption);
+            if(averageAddOption.get(itemLevel) > addOptionValue){
+                item.setCompareAddOption(-1);
+            } else if(averageAddOption.get(itemLevel) < addOptionValue){
+                item.setCompareAddOption(1);
+            } else {
+                item.setCompareAddOption(0);
             }
-
-
-
         }
     }
 
