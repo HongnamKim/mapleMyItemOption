@@ -123,6 +123,23 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
     }
 
+    public void compareStarforce(Float averageStarforce, Map<String, Item> presetItems){
+        for(Item item : presetItems.values()){
+            Integer starforce = item.getStarforceScroll() ? item.getStarforce() + 10 : item.getStarforce();
+            if(item.getItemName().contains("타일런트")){
+                starforce += 10;
+            }
+
+            if(averageStarforce > starforce){
+                item.setCompareStarforce(-1);
+            } else if(averageStarforce < starforce){
+                item.setCompareStarforce(1);
+            } else{
+                item.setCompareStarforce(0);
+            }
+        }
+    }
+
     private void setItemEtcOption(MyItem myItem, Item item, Character character){
 
         // 주문서 작 못하는 아이템 제외

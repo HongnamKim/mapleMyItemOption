@@ -15,6 +15,7 @@ public class Item {
 
     Integer starforce;
     Boolean starforceScroll;
+    Integer compareStarforce;
 
     AddOption addOption;
     Integer compareAddOption;

@@ -172,6 +172,12 @@ public class HomeController {
         presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsAccessories);
         presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsOthers);
 
+        Float averageStarforce = presetTotalStat.getAverageStarforce();
+        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsWeapons);
+        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsArmors);
+        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsAccessories);
+        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsOthers);
+
         model.addAttribute("itemWeapons", presetItemStatsWeapons);
         model.addAttribute("itemArmors", presetItemStatsArmors);
         model.addAttribute("itemAccessories", presetItemStatsAccessories);

@@ -257,7 +257,8 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
+                      <span th:if="*{itemBaseEquipLevel != 0}"
+                            th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -265,6 +266,11 @@
                         th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
                         >★22</span
                       >
+                      <span
+                              th:if="*{starforce != 0}"
+                              th:text="*{compareStarforce == 1 ? '▲' : (compareStarforce == -1 ? '▼' : '-')}"
+                              th:classappend="*{compareStarforce == 1 ? 'average-upper' : (compareStarforce == -1 ? 'average-under' : 'average')}"
+                      ></span>
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
@@ -417,7 +423,8 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
+                      <span th:if="*{itemBaseEquipLevel != 0}"
+                            th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -425,6 +432,11 @@
                         th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
                         >★22</span
                       >
+                      <span
+                              th:if="*{starforce != 0}"
+                              th:text="*{compareStarforce == 1 ? '▲' : (compareStarforce == -1 ? '▼' : '-')}"
+                              th:classappend="*{compareStarforce == 1 ? 'average-upper' : (compareStarforce == -1 ? 'average-under' : 'average')}"
+                      ></span>
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
@@ -467,7 +479,7 @@
                           >150급</span>
                         <span
                           th:if="*{compareAddOption != null}"
-                          th:text="${item.value.compareAddOption == 1 ? '평균 이상' : (item.value.compareAddOption == -1 ? '평균 이하' : '평균')}"
+                          th:text="${item.value.compareAddOption == 1 ? '▲' : (item.value.compareAddOption == -1 ? '▼' : '-')}"
                           class="margin-left-p5rem"
                           th:classappend="${item.value.compareAddOption == 1 ? 'average-upper' : (item.value.compareAddOption == -1 ? 'average-under' : 'average')}"
                         >평균</span>
@@ -582,7 +594,8 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
+                      <span th:if="*{itemBaseEquipLevel != 0}"
+                            th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -590,6 +603,11 @@
                         th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
                         >★22</span
                       >
+                      <span
+                              th:if="*{starforce != 0}"
+                              th:text="*{compareStarforce == 1 ? '▲' : (compareStarforce == -1 ? '▼' : '-')}"
+                              th:classappend="*{compareStarforce == 1 ? 'average-upper' : (compareStarforce == -1 ? 'average-under' : 'average')}"
+                      ></span>
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
@@ -641,7 +659,7 @@
                           >150급</span
                         >
                         <span th:if="*{compareAddOption != null}"
-                              th:text="${item.value.compareAddOption == 1 ? '평균 이상' : (item.value.compareAddOption == -1 ? '평균 이하' : '평균')}"
+                              th:text="${item.value.compareAddOption == 1 ? '▲' : (item.value.compareAddOption == -1 ? '▼' : '-')}"
                               class="margin-left-p5rem"
                               th:classappend="${item.value.compareAddOption == 1 ? 'average-upper' : (item.value.compareAddOption == -1 ? 'average-under' : 'average')}"
                         >평균</span>
@@ -756,7 +774,8 @@
 
                   <div class="preset-item-sub preset-item-text-box">
                     <div class="preset-item-text-title">
-                      <span th:text="|Lv.*{itemBaseEquipLevel}|"></span>
+                      <span th:if="*{itemBaseEquipLevel != 0}"
+                            th:text="|Lv.*{itemBaseEquipLevel}|"></span>
                       <span
                         th:if="*{starforce != 0}"
                         th:text="|★*{starforce}|"
@@ -764,6 +783,11 @@
                         th:classappend="*{starforceScroll} ? 'preset-item-starforce-scroll' : ''"
                         >★22</span
                       >
+                      <span
+                              th:if="*{starforce != 0}"
+                              th:text="*{compareStarforce == 1 ? '▲' : (compareStarforce == -1 ? '▼' : '-')}"
+                              th:classappend="*{compareStarforce == 1 ? 'average-upper' : (compareStarforce == -1 ? 'average-under' : 'average')}"
+                      ></span>
                       <span th:text="*{itemName}">아이템 이름</span>
                     </div>
 
@@ -806,7 +830,7 @@
                           >150급</span
                         >
                         <span th:if="*{compareAddOption != null}"
-                              th:text="${item.value.compareAddOption == 1 ? '평균 이상' : (item.value.compareAddOption == -1 ? '평균 이하' : '평균')}"
+                              th:text="${item.value.compareAddOption == 1 ? '▲' : (item.value.compareAddOption == -1 ? '▼' : '-')}"
                               class="margin-left-p5rem"
                               th:classappend="${item.value.compareAddOption == 1 ? 'average-upper' : (item.value.compareAddOption == -1 ? 'average-under' : 'average')}"
                         >평균</span>
