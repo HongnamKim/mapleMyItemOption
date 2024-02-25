@@ -146,6 +146,18 @@
   border-top-left-radius: 0;
 }
 
+.average-upper {
+  color: red;
+}
+
+.average-under {
+  color: blue;
+}
+
+.average {
+  color: green;
+}
+
 .text-color-black {
   color: black;
 }
@@ -226,7 +238,7 @@
 }
 
 .preset-item-container {
-  width: 31%;
+  width: 35%;
   padding-right: 0.5rem;
 }
 
@@ -260,7 +272,11 @@
 }
 
 .preset-item-text-title {
-  /*border: 1px solid green;*/
+  /*display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid red;*/
 }
 
 .preset-item-starforce {
@@ -331,6 +347,10 @@
 
 .margin-right-p5rem {
   margin-right: 0.5rem;
+}
+
+.margin-left-p5rem {
+  margin-left: 0.5rem;
 }
 
 .preset-stat-title {
