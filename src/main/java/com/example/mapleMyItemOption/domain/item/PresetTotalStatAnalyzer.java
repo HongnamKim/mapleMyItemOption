@@ -620,6 +620,10 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             }
         }
 
+        if(starforceItems == 0F){
+            return 0F;
+        }
+
         return Math.round(totalStarforce/starforceItems * 10) / 10F;
     }
 
