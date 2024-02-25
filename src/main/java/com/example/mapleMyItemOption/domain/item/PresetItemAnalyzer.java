@@ -85,8 +85,14 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
             Item.AddOption addOption = new Item.AddOption();
             if(mainStat.equals(ClassMainStat.HP)){
+                if (mainStatPoint == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint);
             }else{
+                if(mainStatPoint + allStat * 10 + power * 4 == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
             }
 
@@ -94,21 +100,60 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
     }
 
+    public void compareAddOption(Map<Integer, Float> averageAddOption, Map<String, Item> presetItems){
+        for (Map.Entry<String, Item> presetItem : presetItems.entrySet()) {
+            Item item = presetItem.getValue();
+            int itemLevel = item.getItemBaseEquipLevel() / 10 * 10;
+
+            if(item.getAddOption() == null){
+                continue;
+            }
+
+            Item.AddOption addOption = item.getAddOption();
+
+            Integer addOptionValue = addOption.getMainStat();
+
+            if(averageAddOption.get(itemLevel) > addOptionValue){
+                item.setCompareAddOption(-1);
+            } else if(averageAddOption.get(itemLevel) < addOptionValue){
+                item.setCompareAddOption(1);
+            } else {
+                item.setCompareAddOption(0);
+            }
+        }
+    }
+
+    public void compareStarforce(Float averageStarforce, Map<String, Item> presetItems){
+        for(Item item : presetItems.values()){
+            Integer starforce = item.getStarforceScroll() ? item.getStarforce() + 10 : item.getStarforce();
+            if(item.getItemName().contains("타일런트")){
+                starforce += 10;
+            }
+
+            if(averageStarforce > starforce){
+                item.setCompareStarforce(-1);
+            } else if(averageStarforce < starforce){
+                item.setCompareStarforce(1);
+            } else{
+                item.setCompareStarforce(0);
+            }
+        }
+    }
+
     private void setItemEtcOption(MyItem myItem, Item item, Character character){
 
+        // 주문서 작 못하는 아이템 제외
         if(myItem.getScrollUpgrade() == 0){
-            // 주문서 작 못하는 아이템 제외
             return;
         }
 
+        MyItemOption itemEtcOption = myItem.getItemEtcOption();
         List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
 
         List<Float> etcOption = new ArrayList<>();
-
-        MyItemOption itemEtcOption = myItem.getItemEtcOption();
-
         String mainStat = getMainStat(character);
 
+        // 직업에 맞는 주문서의 공/마 옵션 추가
         if(mainStat.equals(ClassMainStat.INT)){
             float avgPower = (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
             Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
@@ -121,6 +166,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             etcOption.add(roundedAvgPower);
         }
 
+        // 주스탯에 맞는 주문서 옵션 추가
         switch (mainStat){
             case ClassMainStat.STR -> {
                 if (itemEtcOption.getStr() - starforceScrollValue.get(1) < 0) {

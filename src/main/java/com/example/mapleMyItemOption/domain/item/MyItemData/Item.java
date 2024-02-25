@@ -15,8 +15,10 @@ public class Item {
 
     Integer starforce;
     Boolean starforceScroll;
+    Integer compareStarforce;
 
     AddOption addOption;
+    Integer compareAddOption;
 
     List<Float> etcOption; //[공/마, 주스탯]
 
