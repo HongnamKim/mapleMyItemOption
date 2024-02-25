@@ -620,7 +620,8 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
             }
         }
 
-        if(starforceItems == 0){
+
+        if(starforceItems == 0F){
             return 0F;
         }
 
