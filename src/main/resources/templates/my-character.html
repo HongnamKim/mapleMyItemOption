@@ -70,7 +70,7 @@
           <div class="character-container-sub-sub">
             <div class="character-text-box text-space-between background-sub">
               <span class="text-color-white">유니온</span>
-              <span th:text="*{characterUnionLevel}" class="text-color-black"
+              <span th:text="*{characterUnionLevel != null ? characterUnionLevel : '-'}" class="text-color-black"
                 >-</span
               >
             </div>
