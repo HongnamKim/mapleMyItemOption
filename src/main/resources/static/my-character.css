@@ -238,7 +238,7 @@
 }
 
 .preset-item-container {
-  width: 31%;
+  width: 35%;
   padding-right: 0.5rem;
 }
 
@@ -272,7 +272,11 @@
 }
 
 .preset-item-text-title {
-  /*border: 1px solid green;*/
+  /*display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid red;*/
 }
 
 .preset-item-starforce {
