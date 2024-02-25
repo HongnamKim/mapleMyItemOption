@@ -68,6 +68,10 @@ public class ItemSearchService {
             presetTotalStat.setMaximumStarforce(presetMaximumStarforce.get(i)); // 최대 스타포스
             presetTotalStat.setMinimumStarforce(presetMinimumStarforce.get(i)); // 최소 스타포스
 
+            if(presetMinimumStarforce.get(i) > presetMaximumStarforce.get(i)){
+                presetTotalStat.setMinimumStarforce(0);
+            }
+
             presetTotalStat.setAverageAddOption(presetAverageAddOption.get(i)); // 추옵
 
             presetTotalStat.setAverageEtcOption(presetAverageEtcOption.get(i)); // 주문서 공/주스탯
