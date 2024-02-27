@@ -154,9 +154,6 @@ public class HomeController {
         PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
         model.addAttribute("presetTotalStat", presetTotalStat);
 
-
-
-
         // 장비 프리셋 아이템 목록
         model.addAttribute("weaponList", new ArrayList<>(List.of("무기", "보조무기", "엠블렘")));
         Map<String, Item> presetItemStatsWeapons = itemSearchService.getPresetItemStats(presetTotalStat, myItemEquipment, character, preset, ItemSlot.CATEGORY_WEAPONS);

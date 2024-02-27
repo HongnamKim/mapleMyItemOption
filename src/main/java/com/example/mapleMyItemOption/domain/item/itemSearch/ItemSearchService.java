@@ -94,40 +94,6 @@ public class ItemSearchService {
         return presetTotalStats;
     }
 
-    @Deprecated
-    public Map<String, Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum, List<String> itemCategory){
-
-        List<MyItem> preset;
-
-        switch (presetNum){
-            case 2 -> preset = myItemEquipment.getPreset2();
-            case 3 -> preset = myItemEquipment.getPreset3();
-            default -> preset = myItemEquipment.getPreset1();
-        }
-
-        Map<String, Item> presetItemStats = new HashMap<>();
-
-        for(MyItem myItem : preset) {
-            if(!itemCategory.contains(myItem.getItemEquipmentSlot())){
-                continue;
-            }
-
-            Item item = presetItemAnalyzer.analyzeItem(myItem, character);
-
-            presetItemStats.put(myItem.getItemEquipmentSlot(), item);
-
-        }
-
-        Map<String, Item> sortedPresetItemStats = new LinkedHashMap<>();
-
-        for(String slot : itemCategory) {
-            Optional.ofNullable(presetItemStats.get(slot))
-                    .ifPresent(item -> sortedPresetItemStats.put(slot, item));
-        }
-
-        return sortedPresetItemStats;
-    }
-
     public Map<String, Item> getPresetItemStats (PresetTotalStat presetTotalStat, MyItemEquipment myItemEquipment, Character character, Integer presetNum, String category) throws IllegalArgumentException{
 
         List<MyItem> preset;
@@ -171,4 +137,37 @@ public class ItemSearchService {
         return sortedPresetItemStats;
     }
 
+    @Deprecated
+    public Map<String, Item> getPresetItemStats (MyItemEquipment myItemEquipment, Character character, Integer presetNum, List<String> itemCategory){
+
+        List<MyItem> preset;
+
+        switch (presetNum){
+            case 2 -> preset = myItemEquipment.getPreset2();
+            case 3 -> preset = myItemEquipment.getPreset3();
+            default -> preset = myItemEquipment.getPreset1();
+        }
+
+        Map<String, Item> presetItemStats = new HashMap<>();
+
+        for(MyItem myItem : preset) {
+            if(!itemCategory.contains(myItem.getItemEquipmentSlot())){
+                continue;
+            }
+
+            Item item = presetItemAnalyzer.analyzeItem(myItem, character);
+
+            presetItemStats.put(myItem.getItemEquipmentSlot(), item);
+
+        }
+
+        Map<String, Item> sortedPresetItemStats = new LinkedHashMap<>();
+
+        for(String slot : itemCategory) {
+            Optional.ofNullable(presetItemStats.get(slot))
+                    .ifPresent(item -> sortedPresetItemStats.put(slot, item));
+        }
+
+        return sortedPresetItemStats;
+    }
 }
