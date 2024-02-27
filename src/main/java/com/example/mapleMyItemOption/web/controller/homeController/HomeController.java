@@ -123,7 +123,6 @@ public class HomeController {
             return "redirect:/";
         }
 
-
         // 검색 input 초기값 설정
         int hour = LocalTime.now().getHour();
         int minusDay = 1;
@@ -160,32 +159,10 @@ public class HomeController {
 
         // 장비 프리셋 아이템 목록
         model.addAttribute("weaponList", new ArrayList<>(List.of("무기", "보조무기", "엠블렘")));
-        //model.addAttribute("presetItemEquipment", itemSearchService.getPresetItemStats(myItemEquipment, character, preset));
-        Map<String, Item> presetItemStatsWeapons = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.WEAPONS);
-        Map<String, Item> presetItemStatsArmors = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.ARMORS);
-        Map<String, Item> presetItemStatsAccessories = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.ACCESSORIES);
-        Map<String, Item> presetItemStatsOthers = itemSearchService.getPresetItemStats(myItemEquipment, character, preset, ItemSlot.OTHERS);
-
-        PresetItemAnalyzer presetItemAnalyzer = new PresetItemAnalyzer();
-        Map<Integer, Float> averageAddOption = presetTotalStat.getAverageAddOption();
-        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsArmors);
-        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsAccessories);
-        presetItemAnalyzer.compareAddOption(averageAddOption, presetItemStatsOthers);
-
-        Float averageStarforce = presetTotalStat.getAverageStarforce();
-        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsWeapons);
-        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsArmors);
-        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsAccessories);
-        presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsOthers);
-
-        if(!character.getWorldName().contains("리부트")){
-            Map<String, List<Float>> averageEtcOption = presetTotalStat.getAverageEtcOption();
-            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("무보엠"), presetItemStatsWeapons);
-            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("방어구"), presetItemStatsArmors);
-            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("장신구"), presetItemStatsAccessories);
-            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("기타 장비"), presetItemStatsOthers);
-        }
-
+        Map<String, Item> presetItemStatsWeapons = itemSearchService.getPresetItemStats(presetTotalStat, myItemEquipment, character, preset, ItemSlot.CATEGORY_WEAPONS);
+        Map<String, Item> presetItemStatsArmors = itemSearchService.getPresetItemStats(presetTotalStat, myItemEquipment, character, preset, ItemSlot.CATEGORY_ARMORS);
+        Map<String, Item> presetItemStatsAccessories = itemSearchService.getPresetItemStats(presetTotalStat, myItemEquipment, character, preset, ItemSlot.CATEGORY_ACCESSORIES);
+        Map<String, Item> presetItemStatsOthers = itemSearchService.getPresetItemStats(presetTotalStat, myItemEquipment, character, preset, ItemSlot.CATEGORY_OTHERS);
 
         model.addAttribute("itemWeapons", presetItemStatsWeapons);
         model.addAttribute("itemArmors", presetItemStatsArmors);
