@@ -140,6 +140,37 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
     }
 
+    public void compareEtcOption(List<Float> averageEtcOption, Map<String, Item> presetItems){
+
+        // 공/마 + 주스탯 --> 주스탯 옵션으로 변환
+        float etcOption = averageEtcOption.get(0) * 4 + averageEtcOption.get(1);
+        //System.out.println(etcOption);
+
+        for(Item item : presetItems.values()){
+            if(item.getEtcOption() == null){
+                //System.out.println(item.getItemName());
+                continue;
+            }
+
+            Float power = item.getEtcOption().get(0);
+            Float mainStat = item.getEtcOption().get(1);
+            float itemEtcOption = power * 4 + mainStat;
+
+            if(etcOption > itemEtcOption){
+                //System.out.println(item.getItemName() + " 평균 이하" + itemEtcOption);
+                item.setCompareEtcOption(-1);
+            } else if (etcOption < itemEtcOption) {
+                //System.out.println(item.getItemName() + " 평균 이상" + itemEtcOption);
+                item.setCompareEtcOption(1);
+            } else {
+                //System.out.println(item.getItemName() + " 평균" + itemEtcOption);
+                item.setCompareEtcOption(0);
+            }
+
+            //System.out.println(item.getItemName() + " " + power + " " + mainStat);
+        }
+    }
+
     private void setItemEtcOption(MyItem myItem, Item item, Character character){
 
         // 주문서 작 못하는 아이템 제외

@@ -178,6 +178,15 @@ public class HomeController {
         presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsAccessories);
         presetItemAnalyzer.compareStarforce(averageStarforce, presetItemStatsOthers);
 
+        if(!character.getWorldName().contains("리부트")){
+            Map<String, List<Float>> averageEtcOption = presetTotalStat.getAverageEtcOption();
+            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("무보엠"), presetItemStatsWeapons);
+            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("방어구"), presetItemStatsArmors);
+            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("장신구"), presetItemStatsAccessories);
+            presetItemAnalyzer.compareEtcOption(averageEtcOption.get("기타 장비"), presetItemStatsOthers);
+        }
+
+
         model.addAttribute("itemWeapons", presetItemStatsWeapons);
         model.addAttribute("itemArmors", presetItemStatsArmors);
         model.addAttribute("itemAccessories", presetItemStatsAccessories);
