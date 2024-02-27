@@ -4,6 +4,7 @@ import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.api.ApiService;
 
 import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
+import com.example.mapleMyItemOption.exceptions.IllegalDateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,16 @@ public class CharacterSearchService {
      * @param date 검색 기준 날짜
      * @return Character 객체
      */
-    public Character searchMyCharacter(String characterName, String date) {
+    public Character searchMyCharacter(String characterName, String date) throws IllegalDateException{
         String ocid = apiService.fetchCharacterOcid(characterName);
 
         // 캐릭터 정보 fetch
         CharacterBasicInfo characterBasicInfo = apiService.fetchCharacterBasicInfo(ocid, date);
+
+        if(characterBasicInfo.getCharacterName() == null) {
+            throw new IllegalDateException();
+        }
+
         CharacterTotalStat characterTotalStat = apiService.fetchCharacterTotalStat(ocid, date);
         CharacterDojang characterDojang = apiService.fetchCharacterDojang(ocid, date);
         CharacterPopularity characterPopularity = apiService.fetchCharacterPopularity(ocid, date);

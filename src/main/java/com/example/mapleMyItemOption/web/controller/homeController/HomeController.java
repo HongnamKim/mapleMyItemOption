@@ -10,6 +10,7 @@ import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
 import com.example.mapleMyItemOption.domain.searchHistory.SearchHistoryService;
+import com.example.mapleMyItemOption.exceptions.IllegalDateException;
 import com.example.mapleMyItemOption.web.SessionConst;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionMyItemEquipment;
@@ -94,6 +95,7 @@ public class HomeController {
             }*/
 
             Character character = characterSearchService.searchMyCharacter(characterName, date);
+
             MyItemEquipment myItemEquipment = itemSearchService.searchMyItemEquipment(characterName, date);
 
             HttpSession session = request.getSession();
@@ -105,8 +107,13 @@ public class HomeController {
             return "redirect:/my-character/" + presetNo;
 
         } catch (HttpClientErrorException e) {
-            System.out.println(e.getMessage());
-            response.sendError(e.getStatusCode().value());
+            // 존재하지 않는 캐릭터 이름
+            log.error(e.getMessage());
+            response.sendError(404);
+        } catch (IllegalDateException dateException){
+            // 현재는 존재하나, 생성 전 날짜를 조회한 경우
+            log.error("Date Selection Error");
+            response.sendError(400);
         }
 
         return null;
