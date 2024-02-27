@@ -5,6 +5,7 @@ import com.example.mapleMyItemOption.domain.character.ClassMainStat;
 import com.example.mapleMyItemOption.domain.item.MyItemData.Item;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItem;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemOption;
+import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -16,13 +17,20 @@ import java.util.*;
 public class PresetItemAnalyzer extends ItemAnalyzer{
     private final List<String> weaponList = new ArrayList<>(List.of("무기", "보조무기", "엠블렘"));
 
-    public Item analyzeItem(MyItem myItem, Character character){
+    public Item analyzeItem(PresetTotalStat presetTotalStat, MyItem myItem, Character character, String category){
+
+        Integer equipmentLevel = myItem.getItemBaseOption().getBaseEquipmentLevel() / 10 * 10;
+
+        Float averageStarforce = presetTotalStat.getAverageStarforce();
+        Float averageAddOption = presetTotalStat.getAverageAddOption().get(equipmentLevel);
+        List<Float> averageEtcOption = presetTotalStat.getAverageEtcOption().get(category);
+
         Item item = new Item();
         initItem(myItem, item);
 
-        setItemStarforce(myItem, item);
-        setItemAddOption(myItem, item, character);
-        setItemEtcOption(myItem, item, character);
+        setItemStarforce(myItem, item, averageStarforce);
+        setItemAddOption(myItem, item, character, averageAddOption);
+        setItemEtcOption(myItem, item, character, averageEtcOption);
 
         setItemPotentialValue(myItem, item, character, false);
         setItemPotentialValue(myItem, item, character, true);
@@ -40,14 +48,37 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         item.setPotentialGrade(myItem.getPotentialOptionGrade());
         item.setAdditionalPotentialGrade(myItem.getAdditionalPotentialOptionGrade());
     }
-
-    private void setItemStarforce(MyItem myItem, Item item) {
+    private void setItemStarforce(MyItem myItem, Item item, Float averageStarforce) {
         item.setStarforce(myItem.getStarforce());
 
         item.setStarforceScroll(myItem.getStarforceScrollFlag().equals("사용"));
+
+        if(myItem.getItemEquipmentSlot().equals("기계 심장")){
+            return;
+        }
+
+        // 스타포스 평균과 비교
+        compareStarforce(averageStarforce, item);
     }
 
-    private void setItemAddOption(MyItem myItem, Item item, Character character) {
+    public void compareStarforce(Float averageStarforce, Item item){
+
+            Integer starforce = item.getStarforceScroll() ? item.getStarforce() + 10 : item.getStarforce();
+            if(item.getItemName().contains("타일런트")){
+                starforce += 10;
+            }
+
+            if(averageStarforce > starforce){
+                item.setCompareStarforce(-1);
+            } else if(averageStarforce < starforce){
+                item.setCompareStarforce(1);
+            } else{
+                item.setCompareStarforce(0);
+            }
+
+    }
+
+    private void setItemAddOption(MyItem myItem, Item item, Character character, Float averageAddOption) {
 
         String mainStat = getMainStat(character);
         MyItemOption itemAddOption = myItem.getItemAddOption();
@@ -81,34 +112,75 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             addOption.setAllStat(allStat);
 
             item.setAddOption(addOption);
+            item.setCompareAddOption(null);
         } else {
 
             Item.AddOption addOption = new Item.AddOption();
             if(mainStat.equals(ClassMainStat.HP)){
+                if (mainStatPoint == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint);
             }else{
+                if(mainStatPoint + allStat * 10 + power * 4 == 0){
+                    return;
+                }
                 addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
             }
 
             item.setAddOption(addOption);
+
+            Integer addOptionValue = addOption.getMainStat();
+
+            if(averageAddOption > addOptionValue){
+                item.setCompareAddOption(-1);
+            } else if(averageAddOption < addOptionValue){
+                item.setCompareAddOption(1);
+            } else {
+                item.setCompareAddOption(0);
+            }
         }
     }
 
-    private void setItemEtcOption(MyItem myItem, Item item, Character character){
+    public void compareAddOption(Map<Integer, Float> averageAddOption, Map<String, Item> presetItems){
+        for (Map.Entry<String, Item> presetItem : presetItems.entrySet()) {
+            Item item = presetItem.getValue();
+            int itemLevel = item.getItemBaseEquipLevel() / 10 * 10;
 
+            if(item.getAddOption() == null){
+                continue;
+            }
+
+            Item.AddOption addOption = item.getAddOption();
+
+            Integer addOptionValue = addOption.getMainStat();
+
+            if(averageAddOption.get(itemLevel) > addOptionValue){
+                item.setCompareAddOption(-1);
+            } else if(averageAddOption.get(itemLevel) < addOptionValue){
+                item.setCompareAddOption(1);
+            } else {
+                item.setCompareAddOption(0);
+            }
+        }
+    }
+
+
+
+    private void setItemEtcOption(MyItem myItem, Item item, Character character, List<Float> averageEtcOption){
+
+        // 주문서 작 못하는 아이템 제외
         if(myItem.getScrollUpgrade() == 0){
-            // 주문서 작 못하는 아이템 제외
             return;
         }
 
+        MyItemOption itemEtcOption = myItem.getItemEtcOption();
         List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
 
         List<Float> etcOption = new ArrayList<>();
-
-        MyItemOption itemEtcOption = myItem.getItemEtcOption();
-
         String mainStat = getMainStat(character);
 
+        // 직업에 맞는 주문서의 공/마 옵션 추가
         if(mainStat.equals(ClassMainStat.INT)){
             float avgPower = (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
             Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
@@ -121,6 +193,7 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
             etcOption.add(roundedAvgPower);
         }
 
+        // 주스탯에 맞는 주문서 옵션 추가
         switch (mainStat){
             case ClassMainStat.STR -> {
                 if (itemEtcOption.getStr() - starforceScrollValue.get(1) < 0) {
@@ -160,6 +233,31 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         }
 
         item.setEtcOption(etcOption);
+        compareEtcOption(averageEtcOption, item);
+    }
+
+    public void compareEtcOption(List<Float> averageEtcOption, Item item){
+
+        // 공/마 + 주스탯 --> 주스탯 옵션으로 변환
+        float etcOption = averageEtcOption.get(0) * 4 + averageEtcOption.get(1);
+
+        if(item.getEtcOption() == null){
+            return;
+        }
+
+        Float power = item.getEtcOption().get(0);
+        Float mainStat = item.getEtcOption().get(1);
+
+        float itemEtcOption = power * 4 + mainStat;
+
+        if(etcOption > itemEtcOption){
+            item.setCompareEtcOption(-1);
+        } else if (etcOption < itemEtcOption) {
+            item.setCompareEtcOption(1);
+        } else {
+            item.setCompareEtcOption(0);
+        }
+
     }
 
     private void setItemPotentialValue(MyItem myItem, Item item, Character character, boolean additional){
@@ -250,5 +348,150 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
         } else {
             item.setPotentialValue(potentialValue);
         }
+    }
+
+    @Deprecated
+    public Item analyzeItem(MyItem myItem, Character character){
+        Item item = new Item();
+        initItem(myItem, item);
+
+        setItemStarforce(myItem, item);
+        setItemAddOption(myItem, item, character);
+        setItemEtcOption(myItem, item, character);
+
+        setItemPotentialValue(myItem, item, character, false);
+        setItemPotentialValue(myItem, item, character, true);
+
+        return item;
+    }
+
+    @Deprecated
+    private void setItemStarforce(MyItem myItem, Item item) {
+        item.setStarforce(myItem.getStarforce());
+
+        item.setStarforceScroll(myItem.getStarforceScrollFlag().equals("사용"));
+    }
+
+    @Deprecated
+    private void setItemAddOption(MyItem myItem, Item item, Character character) {
+
+        String mainStat = getMainStat(character);
+        MyItemOption itemAddOption = myItem.getItemAddOption();
+        if(itemAddOption.getStr() == 0 && itemAddOption.getDex() == 0 && itemAddOption.getLuk() == 0 && itemAddOption.getIntel() == 0 && itemAddOption.getMaxHp() == 0){
+            // 추가옵션이 없는 아이템 제외 (견장)
+            return;
+        }
+
+        Integer mainStatPoint = 0;
+        switch (mainStat) {
+            case ClassMainStat.STR -> mainStatPoint = itemAddOption.getStr();
+            case ClassMainStat.DEX -> mainStatPoint = itemAddOption.getDex();
+            case ClassMainStat.INT -> mainStatPoint = itemAddOption.getIntel();
+            case ClassMainStat.LUK -> mainStatPoint = itemAddOption.getLuk();
+            case ClassMainStat.HP -> mainStatPoint = itemAddOption.getMaxHp();
+        }
+
+        Integer power = mainStat.equals(ClassMainStat.INT) ? itemAddOption.getMagicPower() : itemAddOption.getAttackPower();
+
+        Integer allStat = itemAddOption.getAllStat();
+
+        if(weaponList.contains(myItem.getItemEquipmentSlot())){ // 무보엠일 경우
+            Integer damage = itemAddOption.getDamage();
+            Integer bossDamage = itemAddOption.getBossDamage();
+
+            Item.AddOption addOption = new Item.AddOption();
+            addOption.setMainStat(mainStatPoint);
+            addOption.setPower(power);
+            addOption.setBossDamage(bossDamage);
+            addOption.setDamage(damage);
+            addOption.setAllStat(allStat);
+
+            item.setAddOption(addOption);
+        } else {
+
+            Item.AddOption addOption = new Item.AddOption();
+            if(mainStat.equals(ClassMainStat.HP)){
+                if (mainStatPoint == 0){
+                    return;
+                }
+                addOption.setMainStat(mainStatPoint);
+            }else{
+                if(mainStatPoint + allStat * 10 + power * 4 == 0){
+                    return;
+                }
+                addOption.setMainStat(mainStatPoint + allStat * 10 + power * 4);
+            }
+
+            item.setAddOption(addOption);
+        }
+    }
+
+    @Deprecated
+    private void setItemEtcOption(MyItem myItem, Item item, Character character){
+
+        // 주문서 작 못하는 아이템 제외
+        if(myItem.getScrollUpgrade() == 0){
+            return;
+        }
+
+        MyItemOption itemEtcOption = myItem.getItemEtcOption();
+        List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
+
+        List<Float> etcOption = new ArrayList<>();
+        String mainStat = getMainStat(character);
+
+        // 직업에 맞는 주문서의 공/마 옵션 추가
+        if(mainStat.equals(ClassMainStat.INT)){
+            float avgPower = (float) (itemEtcOption.getMagicPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
+            Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
+
+            etcOption.add(roundedAvgPower);
+        } else {
+            float avgPower = (float) (itemEtcOption.getAttackPower() - starforceScrollValue.get(0)) / myItem.getScrollUpgrade();
+            Float roundedAvgPower = Math.round(avgPower * 10) / 10F;
+
+            etcOption.add(roundedAvgPower);
+        }
+
+        // 주스탯에 맞는 주문서 옵션 추가
+        switch (mainStat){
+            case ClassMainStat.STR -> {
+                if (itemEtcOption.getStr() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getStr() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getStr() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.DEX -> {
+                if (itemEtcOption.getDex() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getDex() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getDex() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.INT -> {
+                if (itemEtcOption.getIntel() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getIntel() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getIntel() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.LUK -> {
+                if (itemEtcOption.getLuk() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getLuk() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getLuk() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+            case ClassMainStat.HP -> {
+                if (itemEtcOption.getMaxHp() - starforceScrollValue.get(1) < 0) {
+                    etcOption.add((float) itemEtcOption.getMaxHp() / myItem.getScrollUpgrade());
+                } else {
+                    etcOption.add((float) (itemEtcOption.getMaxHp() - starforceScrollValue.get(1)) / myItem.getScrollUpgrade());
+                }
+            }
+        }
+
+        item.setEtcOption(etcOption);
     }
 }
