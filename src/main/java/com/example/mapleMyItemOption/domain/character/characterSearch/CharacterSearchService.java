@@ -4,7 +4,6 @@ import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.api.ApiService;
 
 import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,12 +60,19 @@ public class CharacterSearchService {
             if(beforeDate.isEqual(minDate)){
                 break;
             }
-            long assault = apiService.fetchCharacterTotalStat(ocid, beforeDate.toString())
+
+            CharacterTotalStat characterTotalStat = apiService.fetchCharacterTotalStat(ocid, beforeDate.toString());
+
+            // 캐릭터 생성 이전 날짜일 경우
+            if(characterTotalStat.getCharacterClass() == null && characterTotalStat.getFinalStat().isEmpty()){
+                break;
+            }
+
+            long assault = characterTotalStat
                     .getFinalStat()
                     .get(FinalStatOrder.ASSAULT.getOrder())
                     .getStatValue()
                     .longValue();
-
 
             if(assault >= maximumAssault){
                 maximumAssault = assault;
