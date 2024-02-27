@@ -488,13 +488,13 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
             String itemCategory;
             if(ItemSlot.WEAPONS.contains(itemEquipmentSlot)){
-                itemCategory = "무보엠";
+                itemCategory = ItemSlot.CATEGORY_WEAPONS;
             } else if (ItemSlot.ARMORS.contains(itemEquipmentSlot)) {
-                itemCategory = "방어구";
+                itemCategory = ItemSlot.CATEGORY_ARMORS;
             } else if (ItemSlot.ACCESSORIES.contains(itemEquipmentSlot)) {
-                itemCategory = "장신구";
+                itemCategory = ItemSlot.CATEGORY_ACCESSORIES;
             } else {
-                itemCategory = "기타 장비";
+                itemCategory = ItemSlot.CATEGORY_OTHERS;
             }
 
             List<Integer> starforceScrollValue = getStarforceScrollValue(myItem);
