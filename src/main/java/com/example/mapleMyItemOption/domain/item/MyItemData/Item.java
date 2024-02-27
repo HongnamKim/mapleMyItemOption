@@ -21,6 +21,7 @@ public class Item {
     Integer compareAddOption;
 
     List<Float> etcOption; //[공/마, 주스탯]
+    Integer compareEtcOption;
 
     String potentialGrade;
     Map<String, Float> potentialValue;

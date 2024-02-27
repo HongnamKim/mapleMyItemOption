@@ -498,6 +498,11 @@
                           th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
                           >6 / 2작</span
                         >
+                        <span
+                                th:if="*{!etcOption.isEmpty()}"
+                                th:text="*{compareEtcOption == 1 ? '▲' : (compareEtcOption == -1 ? '▼' : '-')}"
+                                th:classappend="*{compareEtcOption == 1 ? 'average-upper' : (compareEtcOption == -1 ? 'average-under' : 'average')}"
+                        ></span>
                       </div>
 
                       <div
@@ -678,6 +683,11 @@
                           th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
                           >6 / 2작</span
                         >
+                        <span
+                                th:if="*{!etcOption.isEmpty()}"
+                                th:text="*{compareEtcOption == 1 ? '▲' : (compareEtcOption == -1 ? '▼' : '-')}"
+                                th:classappend="*{compareEtcOption == 1 ? 'average-upper' : (compareEtcOption == -1 ? 'average-under' : 'average')}"
+                        ></span>
                       </div>
 
                       <div
@@ -849,6 +859,11 @@
                           th:text="| ${#numbers.formatDecimal(item.value.etcOption[0], 1, 1)} / ${#numbers.formatDecimal(item.value.etcOption[1], 1, 1)} 작|"
                           >6 / 2작</span
                         >
+                        <span
+                                th:if="*{!etcOption.isEmpty()}"
+                                th:text="*{compareEtcOption == 1 ? '▲' : (compareEtcOption == -1 ? '▼' : '-')}"
+                                th:classappend="*{compareEtcOption == 1 ? 'average-upper' : (compareEtcOption == -1 ? 'average-under' : 'average')}"
+                        ></span>
                       </div>
 
                       <div

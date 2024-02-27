@@ -30,9 +30,10 @@ public interface ItemSlot {
     String BADGE = "뱃지";
     String EMBLEM = "엠블렘";
 
-    List<String> ACCESSORIES = new ArrayList<>(List.of(FACE_ACC, EYE_ACC, EAR_RING, RING_1, RING_2, RING_3, RING_4, PENDANT_1, PENDANT_2, BELT, POCKET, BADGE));
+
     List<String> WEAPONS = new ArrayList<>(List.of(WEAPON, SUB_WEAPON, EMBLEM));
     List<String> ARMORS = new ArrayList<>(List.of(HAT, TOP, PANTS, SHOES, GLOVE, CLOAK, SHOULDER));
+    List<String> ACCESSORIES = new ArrayList<>(List.of(FACE_ACC, EYE_ACC, EAR_RING, RING_1, RING_2, RING_3, RING_4, PENDANT_1, PENDANT_2, BELT, POCKET, BADGE));
     List<String> OTHERS = new ArrayList<>(List.of(HEART, MEDAL));
 
     List<String> SLOT_CATEGORY = new ArrayList<>(List.of("무보엠", "방어구", "장신구", "기타 장비"));
