@@ -23,7 +23,8 @@ public class PresetItemAnalyzer extends ItemAnalyzer{
 
         Float averageStarforce = presetTotalStat.getAverageStarforce();
         Float averageAddOption = presetTotalStat.getAverageAddOption().get(equipmentLevel);
-        List<Float> averageEtcOption = presetTotalStat.getAverageEtcOption().get(category);
+        //List<Float> averageEtcOption = presetTotalStat.getAverageEtcOption().get(category);
+        List<Float> averageEtcOption = Optional.ofNullable(presetTotalStat.getAverageEtcOption()).flatMap(map -> Optional.ofNullable(map.get(category))).orElse(null);
 
         Item item = new Item();
         initItem(myItem, item);
