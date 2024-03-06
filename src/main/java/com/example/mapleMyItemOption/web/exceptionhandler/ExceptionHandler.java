@@ -55,9 +55,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 
             log.error("INTERNET CONNECTION FAILURE");
 
-            return new ModelAndView("error/502");
+            return new ModelAndView("error/500");
         } else {
             response.setStatus(500);
+            log.error("Internal ERROR", ex);
             return new ModelAndView("error/500");
         }
 
