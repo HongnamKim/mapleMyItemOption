@@ -14,12 +14,14 @@ import java.util.UUID;
 @Component
 public class LogInterceptor implements HandlerInterceptor {
 
+    public static final String UUID = "uuid";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if(request.getMethod().equals("POST")){
-            String uuid = UUID.randomUUID().toString();
-            request.setAttribute("uuid", uuid);
+        if("POST".equals(request.getMethod())){
+            String uuid = java.util.UUID.randomUUID().toString();
+            request.setAttribute(UUID, uuid);
 
             logRequest(request, uuid, false);
         }
@@ -29,20 +31,25 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        if("POST".equals(request.getMethod())){
+            String uuid = (String) request.getAttribute(UUID);
+            log.info("SUCCESS [{}]", uuid);
+        }
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
-        if(request.getMethod().equals("POST")){
-            String uuid = (String) request.getAttribute("uuid");
+        if (ex != null){
+            log.error(ex.getMessage());
+        }
+
+        if("POST".equals(request.getMethod())){
+            String uuid = (String) request.getAttribute(UUID);
             logRequest(request, uuid, true);
         }
 
-        if (ex != null){
-            log.error("Search Error", ex);
-            throw ex;
-        }
+
     }
 
     private void logRequest(HttpServletRequest request, String uuid, Boolean completion) {
