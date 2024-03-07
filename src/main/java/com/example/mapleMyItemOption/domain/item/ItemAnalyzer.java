@@ -9,7 +9,7 @@ import java.util.*;
 public class ItemAnalyzer {
 
     public static final Map<String, String> shortOptionCategory = new HashMap<>();
-    String getMainStat(Character character){
+    public String getMainStat(Character character){
 
         String characterClass = character.getCharacterClass();
 
@@ -61,7 +61,7 @@ public class ItemAnalyzer {
     }
 
     /**
-     * 잠재능력 옵션 별 수치 반환하는 메소드
+     * 하나의 아이템에서 잠재능력 옵션 별 수치 반환하는 메소드
      * @param myItem 분석할 아이템
      * @param character 캐릭터 직업
      * @param additional 에디셔널이면 true, 그 외 false
@@ -168,6 +168,9 @@ public class ItemAnalyzer {
             return potentialLines;
         }
 
+        if(potentialValue.isEmpty()){
+            return null;
+        }
         return potentialValue;
     }
 

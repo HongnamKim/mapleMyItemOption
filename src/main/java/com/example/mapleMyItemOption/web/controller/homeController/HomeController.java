@@ -8,7 +8,6 @@ import com.example.mapleMyItemOption.domain.item.itemSearch.ItemSearchService;
 import com.example.mapleMyItemOption.domain.item.MyItemData.MyItemEquipment;
 import com.example.mapleMyItemOption.domain.item.itemSearch.PresetTotalStat;
 import com.example.mapleMyItemOption.domain.item.PotentialOption;
-import com.example.mapleMyItemOption.domain.searchHistory.SearchHistoryService;
 import com.example.mapleMyItemOption.exceptions.IllegalDateException;
 import com.example.mapleMyItemOption.web.SessionConst;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
@@ -136,8 +135,7 @@ public class HomeController {
         model.addAttribute(character);
 
         // 장비 프리셋의 평균 수치
-        List<PresetTotalStat> presetTotalStats = itemSearchService.getPresetTotalStats(myItemEquipment, character);
-        PresetTotalStat presetTotalStat = presetTotalStats.get(preset - 1);
+        PresetTotalStat presetTotalStat = itemSearchService.getPresetTotalStat(myItemEquipment, character, preset);
         model.addAttribute("presetTotalStat", presetTotalStat);
 
         // 장비 프리셋 아이템 목록
