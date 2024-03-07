@@ -9,7 +9,6 @@ import com.example.mapleMyItemOption.domain.repository.MemorySearchHistoryReposi
 import com.example.mapleMyItemOption.domain.repository.SearchHistoryRepository;
 import com.example.mapleMyItemOption.web.argumentResolver.CharacterResolver;
 import com.example.mapleMyItemOption.web.argumentResolver.MyItemEquipmentResolver;
-import com.example.mapleMyItemOption.web.exceptionhandler.ErrorCode;
 import com.example.mapleMyItemOption.web.exceptionhandler.ExceptionHandler;
 import com.example.mapleMyItemOption.web.interceptor.LogInterceptor;
 import jakarta.annotation.PostConstruct;

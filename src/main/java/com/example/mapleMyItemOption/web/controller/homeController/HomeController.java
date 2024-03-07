@@ -14,7 +14,6 @@ import com.example.mapleMyItemOption.web.SessionConst;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionCharacter;
 import com.example.mapleMyItemOption.web.argumentResolver.SessionMyItemEquipment;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -63,14 +57,10 @@ public class HomeController {
     public String homeSearch(HttpServletRequest request,
                              @Validated @ModelAttribute("characterDto") CharacterDto dto, BindingResult bindingResult) throws IllegalDateException {
 
-        if (bindingResult.hasErrors()){ // 캐릭터 이름 검증
+        if (bindingResult.hasErrors()){ // 입력 값 검증
             log.info("SEARCH ERROR = {}", bindingResult);
 
             return "home";
-        }
-
-        if(dto.getCharacterName().equals("notfound")){
-            throw new RuntimeException("테스트 에러");
         }
 
         LocalDate inputDate = LocalDate.parse(dto.getDate(), DateTimeFormatter.ISO_DATE);
@@ -88,35 +78,6 @@ public class HomeController {
 
         //POST 로 들어온 캐릭터 이름, 날짜로 캐릭터 조회, 필요한 객체 생성
         //세선에 객체 넣기
-        /*try {
-            String date = dto.getMaximumAssaultDate() ? characterSearchService.findMaximumAssaultDate(characterName, dto.getDate()) : dto.getDate();
-
-            //searchHistoryService.saveSearchHistory(dto.getCharacterName(), dto.getDate(), dto.getMaximumAssaultDate());
-
-            Character character = characterSearchService.searchMyCharacter(characterName, date);
-
-            MyItemEquipment myItemEquipment = itemSearchService.searchMyItemEquipment(characterName, date);
-
-            HttpSession session = request.getSession();
-            session.setAttribute(SessionConst.CHARACTER, character);
-            session.setAttribute(SessionConst.MY_ITEM_EQUIPMENT, myItemEquipment);
-
-            Integer presetNo = myItemEquipment.getPresetNo();
-
-            return "redirect:/my-character/" + presetNo;
-
-        } catch (HttpClientErrorException e) {
-            // 존재하지 않는 캐릭터 이름
-            //log.error(e.getMessage());
-            //response.sendError(404);
-            throw e;
-        } catch (IllegalDateException dateException){
-            // 현재는 존재하나, 생성 전 날짜를 조회한 경우
-            log.error("Date Selection Error");
-            response.sendError(400);
-        }
-
-        return null;*/
 
         String date = dto.getMaximumAssaultDate() ? characterSearchService.findMaximumAssaultDate(characterName, dto.getDate()) : dto.getDate();
 

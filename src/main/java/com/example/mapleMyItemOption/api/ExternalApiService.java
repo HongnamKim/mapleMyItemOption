@@ -33,6 +33,8 @@ public class ExternalApiService implements ApiService{
     @Value("${api.key}")
     private String API_KEY;
 
+    public static String API_PIVOT_DATE = "2023-12-21";
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 

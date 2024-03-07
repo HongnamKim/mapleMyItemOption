@@ -1,5 +1,6 @@
 package com.example.mapleMyItemOption.domain.character.characterSearch;
 
+import com.example.mapleMyItemOption.api.ExternalApiService;
 import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.api.ApiService;
 
@@ -23,6 +24,7 @@ import java.util.Date;
 public class CharacterSearchService {
 
     private final ApiService apiService;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * 캐틱터의 이름으로 기본 정보를 불러오는 메소드
@@ -32,15 +34,14 @@ public class CharacterSearchService {
      */
     public Character searchMyCharacter(String characterName, String date) throws IllegalDateException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         try{
-            Date inputDate = formatter.parse(date);
-            Date pivot = formatter.parse("2023-12-21");
+            Date inputDate = dateFormatter.parse(date);
+            Date pivot = dateFormatter.parse(ExternalApiService.API_PIVOT_DATE);
 
             if(inputDate.before(pivot)){
-                IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE0001.getDescription());
+                IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE00001.getDescription());
 
-                ex.setErrorCode("SERVICE0001");
+                ex.setErrorCode(ErrorCode.SERVICE00001.getErrorCode());
                 ex.setCharacterName(characterName);
                 ex.setDate(date);
 
@@ -56,9 +57,8 @@ public class CharacterSearchService {
         CharacterBasicInfo characterBasicInfo = apiService.fetchCharacterBasicInfo(ocid, date);
 
         if(characterBasicInfo.getCharacterName() == null) {
-            IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE0002.getDescription());
-
-            ex.setErrorCode("SERVICE0002");
+            IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE00002.getDescription());
+            ex.setErrorCode(ErrorCode.SERVICE00002.getErrorCode());
             ex.setCharacterName(characterName);
             ex.setDate(date);
 
