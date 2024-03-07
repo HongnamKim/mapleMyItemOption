@@ -1,22 +1,30 @@
 package com.example.mapleMyItemOption.domain.character.characterSearch;
 
+import com.example.mapleMyItemOption.api.ExternalApiService;
 import com.example.mapleMyItemOption.domain.character.Character;
 import com.example.mapleMyItemOption.api.ApiService;
 
 import com.example.mapleMyItemOption.domain.character.charaterDataDto.*;
 import com.example.mapleMyItemOption.exceptions.IllegalDateException;
+import com.example.mapleMyItemOption.web.exceptionhandler.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CharacterSearchService {
 
     private final ApiService apiService;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * 캐틱터의 이름으로 기본 정보를 불러오는 메소드
@@ -24,14 +32,37 @@ public class CharacterSearchService {
      * @param date 검색 기준 날짜
      * @return Character 객체
      */
-    public Character searchMyCharacter(String characterName, String date) throws IllegalDateException{
+    public Character searchMyCharacter(String characterName, String date) throws IllegalDateException {
+
+        try{
+            Date inputDate = dateFormatter.parse(date);
+            Date pivot = dateFormatter.parse(ExternalApiService.API_PIVOT_DATE);
+
+            if(inputDate.before(pivot)){
+                IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE00001.getDescription());
+
+                ex.setErrorCode(ErrorCode.SERVICE00001.getErrorCode());
+                ex.setCharacterName(characterName);
+                ex.setDate(date);
+
+                throw ex;
+            }
+        } catch (ParseException e){
+            log.error("Date ParseException",e);
+        }
+
         String ocid = apiService.fetchCharacterOcid(characterName);
 
         // 캐릭터 정보 fetch
         CharacterBasicInfo characterBasicInfo = apiService.fetchCharacterBasicInfo(ocid, date);
 
         if(characterBasicInfo.getCharacterName() == null) {
-            throw new IllegalDateException();
+            IllegalDateException ex = new IllegalDateException(ErrorCode.SERVICE00002.getDescription());
+            ex.setErrorCode(ErrorCode.SERVICE00002.getErrorCode());
+            ex.setCharacterName(characterName);
+            ex.setDate(date);
+
+            throw ex;
         }
 
         CharacterTotalStat characterTotalStat = apiService.fetchCharacterTotalStat(ocid, date);

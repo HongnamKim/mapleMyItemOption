@@ -33,6 +33,8 @@ public class ExternalApiService implements ApiService{
     @Value("${api.key}")
     private String API_KEY;
 
+    public static String API_PIVOT_DATE = "2023-12-21";
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
@@ -110,10 +112,26 @@ public class ExternalApiService implements ApiService{
 
 
         } catch (HttpClientErrorException e){
+            /*try{
+                clientErrorExHandler(e);
+            } catch (JsonProcessingException ex){
+                throw new RuntimeException();
+            }*/
+
             throw e;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void clientErrorExHandler(HttpClientErrorException exception) throws JsonProcessingException {
+        String responseBodyAsString = exception.getResponseBodyAsString();
+        System.out.println(responseBodyAsString);
+        ErrorMessage errorMessage = objectMapper.readValue(responseBodyAsString, ErrorMessage.class);
+        System.out.println(errorMessage);
+        HttpStatusCode statusCode = exception.getStatusCode();
+        //System.out.println(statusCode.value());
+
     }
 
     /**

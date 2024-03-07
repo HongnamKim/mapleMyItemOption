@@ -14,14 +14,16 @@ import java.util.UUID;
 @Component
 public class LogInterceptor implements HandlerInterceptor {
 
+    public static final String LOG_ID = "logId";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if(request.getMethod().equals("POST")){
+        if("POST".equals(request.getMethod())){
             String uuid = UUID.randomUUID().toString();
-            request.setAttribute("uuid", uuid);
+            request.setAttribute(LOG_ID, uuid);
 
-            logRequest(request, uuid, false);
+            logRequest(request, LogType.REQUEST);
         }
 
         return true;
@@ -29,32 +31,35 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        if("POST".equals(request.getMethod())){
+            logRequest(request, LogType.SUCCESS);
+        }
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
-        if(request.getMethod().equals("POST")){
-            String uuid = (String) request.getAttribute("uuid");
-            logRequest(request, uuid, true);
+        if (ex != null){
+            log.error(ex.getMessage());
         }
 
-        if (ex != null){
-            log.error("Search Error", ex);
-            throw ex;
+        if("POST".equals(request.getMethod())){
+            logRequest(request, LogType.RESPONSE);
         }
     }
 
-    private void logRequest(HttpServletRequest request, String uuid, Boolean completion) {
+    private void logRequest(HttpServletRequest request, LogType logType) {
         Map<String, String[]> parameterMap = request.getParameterMap();
         String[] characterName = parameterMap.get("characterName");
         String[] dates = parameterMap.get("date");
         String[] maxDate = parameterMap.get("maximumAssaultDate");
 
-        if(completion){
-            log.info("RESPONSE [{}][{}][{}][{}]", uuid, characterName[0], dates[0], maxDate != null);
-        } else {
-            log.info("REQUEST [{}][{}][{}][{}]", uuid, characterName[0], dates[0], maxDate != null);
+        String uuid =  (String)request.getAttribute(LOG_ID);
+
+        switch(logType){
+            case REQUEST -> log.info("REQUEST [{}][{}][{}][{}]", uuid, characterName[0], dates[0], maxDate != null);
+            case SUCCESS -> log.info("SUCCESS [{}][{}][{}][{}]", uuid, characterName[0], dates[0], maxDate != null);
+            case RESPONSE -> log.info("RESPONSE [{}][{}][{}][{}]", uuid, characterName[0], dates[0], maxDate != null);
         }
     }
 }

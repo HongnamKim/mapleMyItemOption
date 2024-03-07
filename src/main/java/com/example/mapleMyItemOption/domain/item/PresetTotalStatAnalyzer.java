@@ -42,7 +42,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param dataOption 평균 / 총합 / 개수
      * @return Map<옵션종류, 수치>
      */
-    private Map<String, Float> getPresetPotentialValue(List<MyItem> preset, Character character, boolean additional, PotentialValuesOption dataOption) {
+    public Map<String, Float> getPresetPotentialValue(List<MyItem> preset, Character character, boolean additional, PotentialValuesOption dataOption) {
 
         Map<String, Float> presetPotentialValue = new HashMap<>(); // 옵션별 수치 총합
                                                                    // {"STR%" : 150, "공격력%" : 90}
@@ -65,11 +65,11 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                 String option = potential.getKey();
                 Float value = potential.getValue();
 
-                // ex) 드랍 200%
+                // ex) 드랍 옵션 수치 총합 200%
                 presetPotentialValue.putIfAbsent(option, 0F);
                 presetPotentialValue.computeIfPresent(option, (k, v) -> v + value);
 
-                // ex) 드랍 5개
+                // ex) 드랍 옵션 보유 아이템 5개
                 presetPotentialItems.putIfAbsent(option, 0F);
                 presetPotentialItems.computeIfPresent(option, (k, v) -> v + 1);
             }
@@ -81,135 +81,6 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                 presetPotentialLines.putIfAbsent(option, 0F);
                 presetPotentialLines.computeIfPresent(option, (k, v) -> v + value);
             }
-           /* // 에디 잠재 없는 경우
-            if(additional && myItem.getAdditionalPotentialOptionGrade() == null){
-                continue;
-            }
-
-            // 잠재 없는 경우
-            if(!additional && myItem.getPotentialOptionGrade() == null){
-                continue;
-            }
-
-            List<String> potentialOptions = initPotentialOptions(myItem, additional);
-
-            Set<String> potentialOptionCategory = new HashSet<>(); // 하나의 아이템이 갖고 있는 옵션 종류
-
-            // 윗잠 1,2,3 번째 줄마다 순회하면서 수치 계산
-            for(String potentialOption : potentialOptions){
-                if(potentialOption.length() == 0) { // 잠재 2줄일 경우 3번째 생략
-                    continue;
-                }
-
-                String mainStatPercent = mainStat+"%";
-                String power = mainStat.equals(ClassMainStat.INT) ? PotentialOption.MAGIC_POWER : PotentialOption.ATTACK_POWER;
-                String perLevelStat = PotentialOption.PER_LEVEL + " " + mainStat;
-
-                if((potentialOption.contains(mainStat) || potentialOption.startsWith(PotentialOption.ALL_STAT))
-                        && potentialOption.endsWith("%")){ // 주스탯 퍼센트, 올스탯 퍼센트 옵션
-
-                    potentialOptionCategory.add(PotentialOption.TOTAL_STAT_PERCENT); // 옵션 종류 추가
-                    // "STR : +4%" or "올스탯 : +6%"
-                    String optionValueString;
-                    Float optionValue = 0F;
-
-                    if(potentialOption.contains(mainStat)) { // 주스탯
-
-                        optionValueString = potentialOption.replace(mainStat + " : +", "").replace("%", "");
-                        optionValue = Float.parseFloat(optionValueString);
-
-                        if(specificStat){
-                            potentialOptionCategory.add(mainStatPercent); // 옵션 종류 추가
-                            Float currentOptionValue = presetPotentialValue.getOrDefault(mainStatPercent, 0F);
-                            presetPotentialValue.put(mainStatPercent, currentOptionValue + optionValue);
-
-                            Float currentOptionLine = presetPotentialLines.getOrDefault(mainStatPercent, 0F);
-                            presetPotentialLines.put(mainStatPercent, currentOptionLine + 1);
-                        }
-
-                    } else if (!mainStat.equals(ClassMainStat.HP)){ // 올스탯, 데벤일 때는 제외
-
-
-                        optionValueString = potentialOption.replace(PotentialOption.ALL_STAT + " : +", "").replace("%", "");
-                        optionValue = Float.parseFloat(optionValueString);
-
-                        if(specificStat) {
-                            potentialOptionCategory.add(PotentialOption.ALL_STAT_PERCENT);
-                            Float currentOptionValue = presetPotentialValue.getOrDefault(PotentialOption.ALL_STAT_PERCENT, 0F);
-                            presetPotentialValue.put(PotentialOption.ALL_STAT_PERCENT, currentOptionValue + optionValue);
-
-                            Float currentOptionLine = presetPotentialLines.getOrDefault(PotentialOption.ALL_STAT_PERCENT, 0F);
-                            presetPotentialLines.put(PotentialOption.ALL_STAT_PERCENT, currentOptionLine + 1);
-                        }
-
-                        // 총 스탯 계산용 (듀섀카 1.23 효율로 계산)
-                        optionValue = ClassMainStat.TWO_SUB_STAT_CLASS.contains(character.getCharacterClass()) ? optionValue * 1.23F : optionValue * 1.12F;
-                    }
-                    Float currentOptionValue = presetPotentialValue.getOrDefault(PotentialOption.TOTAL_STAT_PERCENT, 0F);
-
-                    presetPotentialValue.put(PotentialOption.TOTAL_STAT_PERCENT, currentOptionValue + optionValue);
-
-                    Float currentOptionLine = presetPotentialLines.getOrDefault(PotentialOption.TOTAL_STAT_PERCENT, 0F);
-                    presetPotentialLines.put(PotentialOption.TOTAL_STAT_PERCENT, currentOptionLine + 1);
-
-                } else if (potentialOption.startsWith(perLevelStat)) { // 렙당 주스탯
-                    String mapKey = PotentialOption.PER_LEVEL + " 주스탯";
-
-                    potentialOptionCategory.add(mapKey);
-                    //"캐릭터 기준 9레벨 당 STR : +1"
-                    String optionValueString = potentialOption.replace(perLevelStat + " : +", "");
-                    Float optionValue = Float.parseFloat(optionValueString);
-
-                    Float currentOptionValue = presetPotentialValue.getOrDefault(mapKey, 0F);
-                    presetPotentialValue.put(mapKey, currentOptionValue + optionValue);
-
-                    Float currentOptionLine = presetPotentialLines.getOrDefault(mapKey, 0F);
-                    presetPotentialLines.put(mapKey, currentOptionLine + 1);
-
-                } else { // 주스탯, 올스탯 제외 옵션 수치 파악
-                    for (String option : PotentialOption.OPTION_LIST){
-
-                        if(!potentialOption.startsWith(option)) {
-                            continue;
-                        }
-                            if(option.equals(PotentialOption.ATTACK_POWER) || option.equals(PotentialOption.MAGIC_POWER)){
-                                // 직업에 따라 공격력 or 마력만 집계
-                                if(!power.equals(option)){
-                                    continue;
-                                }
-                            }
-
-                            String optionCategory = potentialOption.endsWith("%") ? option + "%" : option; // % 옵션일 경우 뒤에 % 추가
-
-                            potentialOptionCategory.add(optionCategory);
-
-                            // 퍼센트 옵션일 경우 뒤에 % 제거
-                            String optionValueString = potentialOption.endsWith("%") ?
-                                    potentialOption.replace(option + " : +", "").replace("%", "") :
-                                    (potentialOption.contains(PotentialOption.SKILL_COOL_TIME) ?
-                                            potentialOption.replace(option + " : ", "")
-                                                    .replace("초(10초 이하는 10%감소, 5초 미만으로 감소 불가)", "")
-                                                    .replace("초(10초 이하는 5%감소, 5초 미만으로 감소 불가)", "") :
-                                            potentialOption.replace(option + " : +", ""));
-
-                            Float optionValue = Float.parseFloat(optionValueString);
-
-                            Float currentOptionValue = presetPotentialValue.getOrDefault(optionCategory, 0F);
-                            presetPotentialValue.put(optionCategory, currentOptionValue + optionValue);
-
-                            Float currentOptionLine = presetPotentialLines.getOrDefault(optionCategory, 0F);
-                            presetPotentialLines.put(optionCategory, currentOptionLine + 1);
-
-
-                    }
-                }
-            }
-
-            // ex) 템이 크힘올이면 각각 개수 1개씩 추가
-            for(String option : potentialOptionCategory) {
-                Float currentItemCount = presetPotentialItems.getOrDefault(option, 0F);
-                presetPotentialItems.put(option, currentItemCount + 1);
-            }*/
         } // 한 개의 프리셋 내의 아이템 분석 완료
 
 
@@ -269,7 +140,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
 
     /**
      * 프리셋 별 잠재능력 등급 개수 확인
-     * @param myItemEquipment
+     * @param myItemEquipment 캐릭터 장비 총 목록
      * @param additional true 일 경우 에디 / false 일 경우 윗잠
      * @return 각 프리셋 별 Map 을 담는 List
      */
@@ -291,7 +162,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param additional true 일 경우 에디 / false 일 경우 윗잠
      * @return 등급 별 갯수 Map
      */
-    private Map<String, Integer> countPotentialGrade(List<MyItem> preset, boolean additional) {
+    public Map<String, Integer> countPotentialGrade(List<MyItem> preset, boolean additional) {
         Map<String, Integer> gradeCount = new LinkedHashMap<>();
 
         // 잠재능력 옵션 등급의 순서 고정을 위함
@@ -307,18 +178,18 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
                 continue;
             }
             switch (potentialOptionGrade){
-                case PotentialOption.LEGENDARY -> {
+                case PotentialOption.LEGENDARY ->
                     gradeCount.computeIfPresent(PotentialOption.LEGENDARY, (k, v) -> v + 1);
-                }
-                case PotentialOption.UNIQUE -> {
+
+                case PotentialOption.UNIQUE ->
                     gradeCount.computeIfPresent(PotentialOption.UNIQUE, (k, v) -> v + 1);
-                }
-                case PotentialOption.EPIC -> {
+
+                case PotentialOption.EPIC ->
                     gradeCount.computeIfPresent(PotentialOption.EPIC, (k, v) -> v + 1);
-                }
-                case PotentialOption.RARE -> {
+
+                case PotentialOption.RARE ->
                     gradeCount.computeIfPresent(PotentialOption.RARE, (k, v) -> v + 1);
-                }
+
             }
         }
 
@@ -357,7 +228,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param mainStat 캐릭터 주스탯
      * @return 장비 렙제 별 평균 추가 옵션
      */
-    private Map<Integer, Float> getAverageAddOption(List<MyItem> preset, String mainStat){
+    public Map<Integer, Float> getAverageAddOption(List<MyItem> preset, String mainStat){
 
         Map<Integer, Float> levelTotalAddOptionStat = new HashMap<>(); // 레벨대 별 추가옵션 총합
         Map<Integer, Float> levelTotalAddOptionItems = new HashMap<>(); // 레벨대 별 아이템 개수
@@ -466,7 +337,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
         return presetAverageEtcOptionCategory;
     }
 
-    private Map<String, List<Float>> getAverageEtcOption(List<MyItem> preset, String mainStat) {
+    public Map<String, List<Float>> getAverageEtcOption(List<MyItem> preset, String mainStat) {
 
         Map<String, float[]> averageEtcOptionTotal = new HashMap<>(); // 장비 카테고리 별 주문서 옵션 합
 
@@ -599,7 +470,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param preset 캐릭터의 프리셋 (List<MyItem>)
      * @return 평균 스타포스 별 개수
      */
-    private Float getAverageStarforce(List<MyItem> preset){
+    public Float getAverageStarforce(List<MyItem> preset){
 
         float starforceItems = 0;
         float totalStarforce = 0L;
@@ -633,7 +504,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param preset 캐릭터의 프리셋 (List<MyItem>)
      * @return 최대 스타포스 별 개수
      */
-    private Integer getMaximumStarforce(List<MyItem> preset){
+    public Integer getMaximumStarforce(List<MyItem> preset){
         int maxStarforce = 0;
         for (MyItem myItem : preset) {
             if(myItem.getItemEquipmentPart().equals("기계 심장")){
@@ -657,7 +528,7 @@ public class PresetTotalStatAnalyzer extends ItemAnalyzer{
      * @param preset 캐릭터의 프리셋 (List<MyItem>)
      * @return 최소 스타포스 별 개수
      */
-    private Integer getMinimumStarforce(List<MyItem> preset) {
+    public Integer getMinimumStarforce(List<MyItem> preset) {
         int minStarforce = 25;
         for (MyItem myItem : preset) {
             if(myItem.getItemEquipmentPart().equals("기계 심장")){

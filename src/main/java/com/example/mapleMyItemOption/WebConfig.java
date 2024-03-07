@@ -9,12 +9,14 @@ import com.example.mapleMyItemOption.domain.repository.MemorySearchHistoryReposi
 import com.example.mapleMyItemOption.domain.repository.SearchHistoryRepository;
 import com.example.mapleMyItemOption.web.argumentResolver.CharacterResolver;
 import com.example.mapleMyItemOption.web.argumentResolver.MyItemEquipmentResolver;
+import com.example.mapleMyItemOption.web.exceptionhandler.ExceptionHandler;
 import com.example.mapleMyItemOption.web.interceptor.LogInterceptor;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -44,6 +46,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public SearchHistoryRepository searchHistoryRepository(){
         return new MemorySearchHistoryRepository();
+    }
+
+    @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+        resolvers.add(new ExceptionHandler());
     }
 
     @Override
